@@ -1,0 +1,9 @@
+using HardwareTestApp.src.Domain.Models;
+
+namespace HardwareTestApp.src.Domain.Interfaces;
+
+public interface IG6TAdapter : IDisposable
+{
+    Task<G6TResponse> SendCommandAsync(G6TCommand command, CancellationToken ct = default);
+    bool IsConnected { get; }
+}
