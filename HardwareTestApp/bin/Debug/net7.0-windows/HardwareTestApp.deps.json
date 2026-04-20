@@ -11,7 +11,8 @@
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "OpenCvSharp4": "4.13.0.20260302",
           "OpenCvSharp4.runtime.win": "4.13.0.20260302",
-          "System.IO.Ports": "8.0.0"
+          "System.IO.Ports": "8.0.0",
+          "DVPCameraCS64": "1.1.0.0"
         },
         "runtime": {
           "HardwareTestApp.dll": {}
@@ -136,6 +137,14 @@
             "fileVersion": "8.0.23.53103"
           }
         }
+      },
+      "DVPCameraCS64/1.1.0.0": {
+        "runtime": {
+          "DVPCameraCS64.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
       }
     }
   },
@@ -221,6 +230,11 @@
       "sha512": "sha512-MaiPbx2/QXZc62gm/DrajRrGPG1lU4m08GWMoWiymPYM+ba4kfACp2PbiYpqJ4QiFGhHD00zX3RoVDTucjWe9g==",
       "path": "system.io.ports/8.0.0",
       "hashPath": "system.io.ports.8.0.0.nupkg.sha512"
+    },
+    "DVPCameraCS64/1.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

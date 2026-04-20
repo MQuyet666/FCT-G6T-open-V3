@@ -21,7 +21,7 @@ public class TestOrchestrator
         return _g6t.SendCommandAsync(new G6TCommand
         {
             CommandId = G6TCommandId.PowerControl,
-            Data = new byte[] { 0x01 },
+            Data = new byte[] { (byte)G6TPowerState.On },
         }, ct);
     }
 
@@ -31,7 +31,7 @@ public class TestOrchestrator
         return _g6t.SendCommandAsync(new G6TCommand
         {
             CommandId = G6TCommandId.PowerControl,
-            Data = new byte[] { 0x00 },
+            Data = new byte[] { (byte)G6TPowerState.Off },
         }, ct);
     }
 
@@ -46,10 +46,11 @@ public class TestOrchestrator
 
     public Task<G6TResponse> SetCalibPinAsync(bool set, CancellationToken ct = default)
     {
+        var calibPinState = set ? G6TCalibPinState.Set : G6TCalibPinState.Unset;
         return _g6t.SendCommandAsync(new G6TCommand
         {
             CommandId = G6TCommandId.SetCalibPin,
-            Data = new[] { set ? (byte)0x01 : (byte)0x00 },
+            Data = new[] { (byte)calibPinState },
         }, ct);
     }
 

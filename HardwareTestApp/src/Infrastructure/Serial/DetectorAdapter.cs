@@ -1,0 +1,204 @@
+using System.IO;
+using System.Text;
+using HardwareTestApp.src.Domain.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+using HardwareTestApp.src.HAL;
+using Microsoft.Extensions.Logging;
+
+namespace HardwareTestApp.src.Infrastructure.Serial;
+
+public class DetectorAdapter : IDetectorAdapter
+{
+    private const int DefaultBaudRate = 9600;
+    private const int RetryCount = 1;
+    private static readonly TimeSpan AckTimeout = TimeSpan.FromSeconds(3);
+
+    private const byte Soh = 0x01;
+    private const byte Stx = 0x02;
+    private const byte Etx = 0x03;
+
+    private readonly ISerialPortWrapper _port;
+    private readonly ILogger<DetectorAdapter> _logger;
+    private string _connectedComPort = string.Empty;
+
+    public DetectorAdapter(ISerialPortWrapper port, ILogger<DetectorAdapter> logger)
+    {
+        _port = port;
+        _logger = logger;
+    }
+
+    public bool IsConnected => _port.IsOpen;
+    public string ConnectedComPort => _connectedComPort;
+
+    public void Connect(string comPort, int baudRate)
+    {
+        if (string.IsNullOrWhiteSpace(comPort))
+        {
+            throw new ArgumentException("COM port không hợp lệ.", nameof(comPort));
+        }
+
+        if (_port.IsOpen)
+        {
+            _port.Close();
+        }
+
+        var effectiveBaudRate = baudRate > 0 ? baudRate : DefaultBaudRate;
+        _port.Open(comPort, effectiveBaudRate);
+        _connectedComPort = comPort;
+        _logger.LogInformation("Detector connected on {ComPort} @ {BaudRate}", comPort, effectiveBaudRate);
+    }
+
+    public void Disconnect()
+    {
+        if (_port.IsOpen)
+        {
+            _port.Close();
+        }
+
+        _connectedComPort = string.Empty;
+    }
+
+    public Task<DetectorResponse> ReadTemperatureAsync(CancellationToken ct = default)
+    {
+        return SendReadCommandAsync("1.0.3()", "1.0.3(", ct);
+    }
+
+    public Task<DetectorResponse> ReadSmokeAsync(CancellationToken ct = default)
+    {
+        return SendReadCommandAsync("1.0.5()", "1.0.5(", ct);
+    }
+
+    private async Task<DetectorResponse> SendReadCommandAsync(string payload, string expectedPrefix, CancellationToken ct)
+    {
+        var tx = BuildRequest(payload);
+        var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
+        Exception? lastError = null;
+
+        for (var attempt = 1; attempt <= RetryCount + 1; attempt++)
+        {
+            await _port.WriteAsync(tx, CancellationToken.None).ConfigureAwait(false);
+
+            byte[] rx;
+            using (var attemptCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
+            {
+                attemptCts.CancelAfter(AckTimeout);
+                rx = await _port.ReadVariableFrameAsync(Stx, Etx, attemptCts.Token).ConfigureAwait(false);
+            }
+
+            try
+            {
+                var parsedPayload = ParseResponse(rx, expectedPrefix);
+                return new DetectorResponse
+                {
+                    ComPort = portName,
+                    TxFrame = tx,
+                    RxFrame = rx,
+                    Payload = parsedPayload,
+                    Value = ExtractValue(parsedPayload),
+                };
+            }
+            catch (InvalidDataException ex)
+            {
+                lastError = new InvalidDataException($"{ex.Message} | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] {ToHex(rx)}", ex);
+                if (attempt <= RetryCount)
+                {
+                    continue;
+                }
+
+                throw lastError;
+            }
+        }
+
+        throw lastError ?? new TimeoutException($"Detector timeout | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] <empty>");
+    }
+
+    private static byte[] BuildRequest(string payload)
+    {
+        var body = new List<byte>
+        {
+            Soh,
+            (byte)'R',
+            (byte)'1',
+            Stx,
+        };
+
+        body.AddRange(Encoding.ASCII.GetBytes(payload));
+        body.Add(Etx);
+        body.Add(CalcBcc(body.ToArray()));
+        return body.ToArray();
+    }
+
+    private static string ParseResponse(byte[] frame, string expectedPrefix)
+    {
+        if (frame.Length < 4)
+        {
+            throw new InvalidDataException($"Response quá ngắn: {frame.Length} bytes");
+        }
+
+        if (frame[0] != Stx)
+        {
+            throw new InvalidDataException($"STX không hợp lệ: 0x{frame[0]:X2}");
+        }
+
+        var etxIndex = Array.IndexOf(frame, Etx);
+        if (etxIndex < 0 || etxIndex >= frame.Length - 1)
+        {
+            throw new InvalidDataException("Không tìm thấy ETX/BCC hợp lệ trong response.");
+        }
+
+        var frameWithoutBcc = frame[..^1];
+        var expectedBcc = CalcBcc(frameWithoutBcc);
+        var actualBcc = frame[^1];
+        if (expectedBcc != actualBcc)
+        {
+            throw new InvalidDataException($"BCC không khớp — expected 0x{expectedBcc:X2}, got 0x{actualBcc:X2}");
+        }
+
+        var payload = Encoding.ASCII.GetString(frame, 1, etxIndex - 1);
+        if (!payload.StartsWith(expectedPrefix, StringComparison.Ordinal))
+        {
+            throw new InvalidDataException($"Payload không đúng định dạng mong đợi: {payload}");
+        }
+
+        return payload;
+    }
+
+    private static string ExtractValue(string payload)
+    {
+        var start = payload.IndexOf('(');
+        var end = payload.LastIndexOf(')');
+        if (start < 0 || end <= start)
+        {
+            return string.Empty;
+        }
+
+        return payload[(start + 1)..end];
+    }
+
+    private static byte CalcBcc(byte[] buffer)
+    {
+        byte bcc = 0;
+        for (var i = 1; i < buffer.Length; i++)
+        {
+            bcc ^= buffer[i];
+        }
+
+        return bcc;
+    }
+
+    private static string ToHex(byte[] data)
+    {
+        if (data.Length == 0)
+        {
+            return "<empty>";
+        }
+
+        return string.Join(" ", data.Select(b => $"{b:X2}"));
+    }
+
+    public void Dispose()
+    {
+        Disconnect();
+        _port.Dispose();
+    }
+}

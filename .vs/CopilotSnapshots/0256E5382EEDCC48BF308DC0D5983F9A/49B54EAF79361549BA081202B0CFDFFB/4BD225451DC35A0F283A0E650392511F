@@ -1,0 +1,135 @@
+﻿using System.IO;
+using HardwareTestApp.src.Domain.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+using HardwareTestApp.src.HAL;
+using Microsoft.Extensions.Logging;
+
+namespace HardwareTestApp.src.Infrastructure.Serial;
+
+public class G6TAdapter : IG6TAdapter
+{
+    private static readonly byte[] FrameHeader = { 0x1F, 0x2F, 0x3F, 0xFF };
+    private const byte DirSend = 0x00;
+    private const byte DirReceive = 0x01;
+
+    private readonly ISerialPortWrapper _port;
+    private readonly ILogger<G6TAdapter> _logger;
+
+    public bool IsConnected => _port.IsOpen;
+
+    public G6TAdapter(ISerialPortWrapper port, ILogger<G6TAdapter> logger)
+    {
+        _port = port;
+        _logger = logger;
+    }
+
+    public void Connect(string comPort, int baudRate = 115200)
+    {
+        if (string.IsNullOrWhiteSpace(comPort))
+        {
+            throw new ArgumentException("COM port không hợp lệ.", nameof(comPort));
+        }
+
+        if (_port.IsOpen)
+        {
+            _port.Close();
+        }
+
+        _port.Open(comPort, baudRate);
+        _logger.LogInformation("G6T connected on {ComPort} @ {BaudRate}", comPort, baudRate);
+    }
+
+    public void Disconnect()
+    {
+        if (_port.IsOpen)
+        {
+            _port.Close();
+            _logger.LogInformation("G6T disconnected.");
+        }
+    }
+
+    public async Task<G6TResponse> SendCommandAsync(G6TCommand command, CancellationToken ct = default)
+    {
+        var frame = BuildFrame(command);
+
+        _logger.LogDebug("G6T TX: {Frame}", BytesToHex(frame));
+        await _port.WriteAsync(frame, ct).ConfigureAwait(false);
+
+        var raw = await _port.ReadFrameAsync(ct).ConfigureAwait(false);
+        _logger.LogDebug("G6T RX: {Frame}", BytesToHex(raw));
+
+        return ParseResponse(raw);
+    }
+
+    internal byte[] BuildFrame(G6TCommand command)
+    {
+        var body = new List<byte>();
+        body.AddRange(FrameHeader);
+        body.Add(DirSend);
+        body.Add((byte)command.CommandId);
+        body.AddRange(command.Data);
+
+        var bcc = CalcBcc(body.ToArray());
+        body.Add(bcc);
+
+        return body.ToArray();
+    }
+
+    internal static byte CalcBcc(byte[] frame)
+    {
+        byte bcc = 0;
+        for (var i = 1; i < frame.Length; i++)
+        {
+            bcc ^= frame[i];
+        }
+
+        return bcc;
+    }
+
+    private G6TResponse ParseResponse(byte[] raw)
+    {
+        if (raw is null || raw.Length < 8)
+        {
+            throw new InvalidDataException($"Response quá ngắn: {raw?.Length ?? 0} bytes");
+        }
+
+        if (raw[0] != FrameHeader[0] || raw[1] != FrameHeader[1] || raw[2] != FrameHeader[2] || raw[3] != FrameHeader[3])
+        {
+            throw new InvalidDataException("Header response không hợp lệ.");
+        }
+
+        var bodyWithoutBcc = raw[..^1];
+        var expectedBcc = CalcBcc(bodyWithoutBcc);
+        var actualBcc = raw[^1];
+
+        if (expectedBcc != actualBcc)
+        {
+            throw new InvalidDataException($"BCC không khớp — expected 0x{expectedBcc:X2}, got 0x{actualBcc:X2}");
+        }
+
+        if (raw[4] != DirReceive)
+        {
+            throw new InvalidDataException($"Direction byte không hợp lệ: 0x{raw[4]:X2}");
+        }
+
+        var cmdId = (G6TCommandId)raw[5];
+        var status = (G6TStatus)raw[6];
+
+        return new G6TResponse
+        {
+            CommandId = cmdId,
+            Status = status,
+        };
+    }
+
+    private static string BytesToHex(byte[] data)
+    {
+        return string.Join(" ", data.Select(b => $"{b:X2}"));
+    }
+
+    public void Dispose()
+    {
+        Disconnect();
+        _port.Dispose();
+    }
+}

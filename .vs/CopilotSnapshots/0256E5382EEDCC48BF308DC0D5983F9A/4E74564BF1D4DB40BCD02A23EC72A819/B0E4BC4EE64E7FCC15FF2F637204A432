@@ -1,0 +1,381 @@
+﻿using HardwareTestApp.src.Application.Interfaces;
+using HardwareTestApp.src.Domain.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+using Microsoft.Extensions.Logging;
+using System.Linq;
+
+namespace HardwareTestApp.src.Application.Services;
+
+public class SmokeDeviceTestService : ISmokeDeviceTestService
+{
+    private const int G6tBaudRate = 9600;
+    private static readonly TimeSpan AckTimeout = TimeSpan.FromSeconds(3);
+    private static readonly TimeSpan LedDetectTimeout = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan ButtonTestTimeout = TimeSpan.FromSeconds(15);
+
+    private readonly TestOrchestrator _testOrchestrator;
+    private readonly IG6TAdapter _g6tAdapter;
+    private readonly ICameraPreviewAppService _cameraPreview;
+    private readonly ILogger<SmokeDeviceTestService> _logger;
+
+    public SmokeDeviceTestService(
+        TestOrchestrator testOrchestrator,
+        IG6TAdapter g6tAdapter,
+        ICameraPreviewAppService cameraPreview,
+        ILogger<SmokeDeviceTestService> logger)
+    {
+        _testOrchestrator = testOrchestrator;
+        _g6tAdapter = g6tAdapter;
+        _cameraPreview = cameraPreview;
+        _logger = logger;
+    }
+
+    public bool IsConnected => _g6tAdapter.IsConnected;
+
+    public void Connect(string g6tComPort)
+    {
+        _g6tAdapter.Connect(g6tComPort, G6tBaudRate);
+    }
+
+    public void Disconnect()
+    {
+        _g6tAdapter.Disconnect();
+    }
+
+    public async Task<IReadOnlyList<TestStepResult>> RunStartSequenceAsync(
+        string g6tComPort,
+        Rectangle roi1,
+        IProgress<string>? progress = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(g6tComPort))
+        {
+            throw new ArgumentException("Chưa chọn G6T COM.", nameof(g6tComPort));
+        }
+
+        if (!_g6tAdapter.IsConnected)
+        {
+            _g6tAdapter.Connect(g6tComPort, G6tBaudRate);
+            progress?.Report($"[STEP] Kết nối G6T COM: {g6tComPort}");
+        }
+
+        if (!_cameraPreview.IsRunning)
+        {
+            _cameraPreview.StartPreview();
+            progress?.Report("[STEP] Bật camera preview để detect ROI1");
+        }
+
+        var results = new List<TestStepResult>();
+
+        // Step 1: Set Calib Pin OFF (0x03 0x00)
+        progress?.Report("[STEP] Set Calib Pin OFF: gửi frame tới G6T, chờ ACK 3s");
+        var calibResult = await ExecuteCommandStepAsync(
+            stepName: "Set Calib Pin",
+            timeout: AckTimeout,
+            commandFunc: token => _testOrchestrator.SetCalibPinAsync(false, token),
+            expectedCommandId: G6TCommandId.SetCalibPin,
+            progress: progress,
+            ct: ct).ConfigureAwait(false);
+        results.Add(calibResult);
+        if (!calibResult.IsPassed)
+        {
+            return results;
+        }
+
+        // Step 2: Power ON (0x01 0x01)
+        progress?.Report("[STEP] Cấp nguồn: gửi frame tới G6T, chờ ACK 3s");
+        var powerResult = await ExecuteCommandStepAsync(
+            stepName: "Cấp nguồn",
+            timeout: AckTimeout,
+            commandFunc: token => _testOrchestrator.PowerOnAsync(token),
+            expectedCommandId: G6TCommandId.PowerControl,
+            progress: progress,
+            ct: ct).ConfigureAwait(false);
+        results.Add(powerResult);
+        if (!powerResult.IsPassed)
+        {
+            return results;
+        }
+
+        progress?.Report("[STEP] LED ROI Detect: chờ detect đủ màu đỏ + xanh");
+        progress?.Report("[ROI1][RESET]");
+        var ledDetectResult = await DetectLedColorsAsync(roi1, LedDetectTimeout, ct, progress).ConfigureAwait(false);
+        results.Add(ledDetectResult);
+
+        var ledTestPassed = powerResult.IsPassed && calibResult.IsPassed && ledDetectResult.IsPassed;
+        results.Add(new TestStepResult
+        {
+            StepName = "LED Test",
+            IsPassed = ledTestPassed,
+            Message = ledTestPassed ? "PASS LED Test" : "FAIL LED Test",
+        });
+
+        if (!ledTestPassed)
+        {
+            progress?.Report("[ACK][FAIL] LED Test - dừng flow vì chưa đạt điều kiện.");
+            return results;
+        }
+
+        progress?.Report("[STEP] Button Test: gửi frame tới G6T, chờ ACK 15s");
+        var buttonTestResult = await ExecuteCommandStepAsync(
+            stepName: "Button Test",
+            timeout: ButtonTestTimeout,
+            commandFunc: token => _testOrchestrator.TestButtonBuzzerAsync(token),
+            expectedCommandId: G6TCommandId.TestButton,
+            progress: progress,
+            ct: ct).ConfigureAwait(false);
+        results.Add(buttonTestResult);
+
+        if (!buttonTestResult.IsPassed)
+        {
+            return results;
+        }
+
+        return results;
+    }
+
+    public Task SendResetAsync(IProgress<string>? progress = null, CancellationToken ct = default)
+    {
+        // Fire-and-forget from UI: ensure reset executed after UI showed final result
+        return SendResetSequenceAsync(new List<TestStepResult>(), progress, ct); // Keep signature internal
+    }
+
+    private async Task SendResetSequenceAsync(
+        List<TestStepResult> results,
+        IProgress<string>? progress,
+        CancellationToken ct)
+    {
+        // Send PowerOff first then SetCalibPin OFF as requested
+        progress?.Report("[STEP] RESET: gửi lệnh Cấp nguồn OFF, chờ ACK 3s");
+        var powerOffResult = await ExecuteCommandStepAsync(
+            stepName: "Reset PowerOff",
+            timeout: AckTimeout,
+            commandFunc: token => _testOrchestrator.PowerOffAsync(token),
+            expectedCommandId: G6TCommandId.PowerControl,
+            progress: progress,
+            ct: ct).ConfigureAwait(false);
+        results.Add(powerOffResult);
+
+        progress?.Report("[STEP] RESET: gửi lệnh Set Calib Pin OFF, chờ ACK 3s");
+        var calibOffResult = await ExecuteCommandStepAsync(
+            stepName: "Reset SetCalibPinOff",
+            timeout: AckTimeout,
+            commandFunc: token => _testOrchestrator.SetCalibPinAsync(false, token),
+            expectedCommandId: G6TCommandId.SetCalibPin,
+            progress: progress,
+            ct: ct).ConfigureAwait(false);
+        results.Add(calibOffResult);
+    }
+
+    private async Task<TestStepResult> ExecuteCommandStepAsync(
+        string stepName,
+        TimeSpan timeout,
+        Func<CancellationToken, Task<G6TResponse>> commandFunc,
+        G6TCommandId expectedCommandId,
+        IProgress<string>? progress,
+        CancellationToken ct)
+    {
+        try
+        {
+            // Report real-time sending + waiting status to UI
+            var portName = (_g6tAdapter as dynamic)?.ConnectedComPort as string ?? "UNKNOWN";
+            progress?.Report($"[SENDING] {stepName} -> {portName}");
+            progress?.Report($"[WAITING] {stepName} - chờ ACK {timeout.TotalSeconds:0.#}s");
+
+            // Do not cancel the commandFunc from here based on step timeout.
+            // Adapter implements per-frame timeout and retry and will throw TimeoutException with TX/RX info.
+            var response = await commandFunc(ct).ConfigureAwait(false);
+            var passed = response.IsSuccess && response.CommandId == expectedCommandId;
+            var ackStatus = passed ? "PASS" : "FAIL";
+            var message =
+                $"[PORT][{response.ComPort}] IsOpen={response.IsOpen}{Environment.NewLine}" +
+                $"[TX][{response.ComPort}] {ToHex(response.TxFrame)}{Environment.NewLine}" +
+                $"[RX][{response.ComPort}] {ToHex(response.RxFrame)}{Environment.NewLine}" +
+                $"[ACK][{ackStatus}] {stepName} - Command={response.CommandId}, Status={response.Status}";
+
+            _logger.LogInformation("{Message}", message);
+            progress?.Report(message);
+            return new TestStepResult
+            {
+                StepName = stepName,
+                IsPassed = passed,
+                Message = message,
+            };
+        }
+        catch (OperationCanceledException)
+        {
+            var message = $"[ACK][FAIL] {stepName} - canceled";
+            _logger.LogWarning("{Message}", message);
+            progress?.Report(message);
+            return new TestStepResult
+            {
+                StepName = stepName,
+                IsPassed = false,
+                Message = message,
+            };
+        }
+        catch (TimeoutException ex)
+        {
+            var message = BuildInvalidFrameLog(stepName, ex.Message).Replace("[ACK][FAIL]", "[ACK][FAIL]");
+            _logger.LogWarning("{Message}", message);
+            progress?.Report(message);
+            return new TestStepResult
+            {
+                StepName = stepName,
+                IsPassed = false,
+                Message = message,
+            };
+        }
+        catch (InvalidDataException ex)
+        {
+            var message = BuildInvalidFrameLog(stepName, ex.Message);
+            _logger.LogWarning("{Message}", message);
+            progress?.Report(message);
+            return new TestStepResult
+            {
+                StepName = stepName,
+                IsPassed = false,
+                Message = message,
+            };
+        }
+
+    }
+
+    private static string ToHex(byte[] data)
+    {
+        if (data is null || data.Length == 0)
+        {
+            return "<empty>";
+        }
+
+        return string.Join(" ", data.Select(x => x.ToString("X2")));
+    }
+
+    private static string BuildInvalidFrameLog(string stepName, string rawError)
+    {
+        var parts = rawError.Split(" | ", StringSplitOptions.RemoveEmptyEntries);
+
+        var tx = parts.FirstOrDefault(x => x.TrimStart().StartsWith("[TX]", StringComparison.OrdinalIgnoreCase));
+        var rx = parts.FirstOrDefault(x => x.TrimStart().StartsWith("[RX]", StringComparison.OrdinalIgnoreCase));
+        var portState = parts.FirstOrDefault(x => x.TrimStart().StartsWith("[PORT]", StringComparison.OrdinalIgnoreCase));
+
+        var reasonParts = parts.Where(x =>
+            !x.TrimStart().StartsWith("[TX]", StringComparison.OrdinalIgnoreCase) &&
+            !x.TrimStart().StartsWith("[RX]", StringComparison.OrdinalIgnoreCase) &&
+            !x.TrimStart().StartsWith("[PORT]", StringComparison.OrdinalIgnoreCase));
+
+        var reason = string.Join(" | ", reasonParts);
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            reason = "Frame không hợp lệ.";
+        }
+
+        var lines = new List<string>();
+        if (!string.IsNullOrWhiteSpace(tx))
+        {
+            lines.Add(tx.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(portState))
+        {
+            lines.Add(portState.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(rx))
+        {
+            lines.Add(rx.Trim());
+        }
+
+        lines.Add($"[ACK][FAIL] {stepName} - {reason.Trim()}");
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    private async Task<TestStepResult> DetectLedColorsAsync(
+        Rectangle roi1,
+        TimeSpan timeout,
+        CancellationToken ct,
+        IProgress<string>? progress)
+    {
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(timeout);
+
+        var redDetected = false;
+        var greenDetected = false;
+
+        while (!timeoutCts.IsCancellationRequested)
+        {
+            using var frame = await _cameraPreview.CaptureFrameAsync().ConfigureAwait(false);
+            var boundedRoi = Rectangle.Intersect(new Rectangle(Point.Empty, frame.Size), roi1);
+            if (boundedRoi.Width <= 0 || boundedRoi.Height <= 0)
+            {
+                return new TestStepResult
+                {
+                    StepName = "LED ROI Detect",
+                    IsPassed = false,
+                    Message = "ROI1 nằm ngoài khung ảnh.",
+                };
+            }
+
+            AnalyzeColors(frame, boundedRoi, ref redDetected, ref greenDetected);
+            if (redDetected && greenDetected)
+            {
+                var passMessage = "LED ROI Detect: phát hiện đủ màu đỏ và xanh.";
+                _logger.LogInformation("{Message}", passMessage);
+                progress?.Report("[ROI1][PASS]");
+                progress?.Report($"[ACK][PASS] LED ROI Detect - {passMessage}");
+                return new TestStepResult
+                {
+                    StepName = "LED ROI Detect",
+                    IsPassed = true,
+                    Message = $"[ACK][PASS] LED ROI Detect - {passMessage}",
+                };
+            }
+
+            try
+            {
+                await Task.Delay(100, timeoutCts.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+        }
+
+        var failMessage = $"[ACK][FAIL] LED ROI Detect - không thấy đủ đỏ + xanh trong {timeout.TotalSeconds:0.#}s.";
+        progress?.Report(failMessage);
+        return new TestStepResult
+        {
+            StepName = "LED ROI Detect",
+            IsPassed = false,
+            Message = failMessage,
+        };
+    }
+
+    private static void AnalyzeColors(Bitmap frame, Rectangle roi, ref bool redDetected, ref bool greenDetected)
+    {
+        const int sampleStep = 4;
+
+        for (var y = roi.Top; y < roi.Bottom; y += sampleStep)
+        {
+            for (var x = roi.Left; x < roi.Right; x += sampleStep)
+            {
+                var color = frame.GetPixel(x, y);
+
+                if (!redDetected && color.R > 180 && color.G < 120 && color.B < 120)
+                {
+                    redDetected = true;
+                }
+
+                if (!greenDetected && color.G > 150 && color.R < 150 && color.B < 150)
+                {
+                    greenDetected = true;
+                }
+
+                if (redDetected && greenDetected)
+                {
+                    return;
+                }
+            }
+        }
+    }
+}

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using HardwareTestApp.src.Application.Interfaces;
 using HardwareTestApp.src.Application.Services;
@@ -10,27 +13,117 @@ namespace HardwareTestApp.src.Presentation.Forms
     public partial class Mainform : Form
     {
         private readonly ICameraPreviewAppService _cameraPreviewService;
+        private readonly IComPortProvider _comPortProvider;
+        private readonly ISmokeDeviceTestService _smokeDeviceTestService;
         private CameraPreviewControl _cameraPreview;
         private readonly ITestCaseProvider _testCaseProvider = new TestCaseProvider();
+        private readonly Dictionary<string, Label> _testStatusLabels = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Panel> _testStatusLeds = new(StringComparer.OrdinalIgnoreCase);
         private string _currentDeviceType = "smock";
+        private bool _isRunningTest;
+        private bool _powerAckPassed;
 
-        public Mainform(ICameraPreviewAppService cameraPreviewService)
+        public Mainform(
+            ICameraPreviewAppService cameraPreviewService,
+            IComPortProvider comPortProvider,
+            ISmokeDeviceTestService smokeDeviceTestService)
         {
             InitializeComponent();
 
             _cameraPreviewService = cameraPreviewService;
+            _comPortProvider = comPortProvider;
+            _smokeDeviceTestService = smokeDeviceTestService;
 
             _cameraPreview = new CameraPreviewControl(_cameraPreviewService);
             _cameraPreview.Dock = DockStyle.Fill;
+            _cameraPreview.SetRoi1(new Rectangle(540, 220, 200, 200));
             pnlCamera.Controls.Add(_cameraPreview);
 
             Shown += Mainform_Shown;
         }
 
-        // ================= START BUTTON =================
-        private void btnStart_Click(object sender, EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e)
         {
+            txtLog.Clear();
+        }
 
+        // ================= START BUTTON =================
+        private async void btnStart_Click(object sender, EventArgs e)
+        {
+            if (_isRunningTest)
+            {
+                return;
+            }
+
+            if (!_currentDeviceType.Equals("smock", StringComparison.OrdinalIgnoreCase))
+            {
+                AppendLog("Chỉ hỗ trợ flow START cho đầu báo khói (Smock).");
+                return;
+            }
+
+            if (cbG6tCom.SelectedItem is not string g6tComPort || string.IsNullOrWhiteSpace(g6tComPort))
+            {
+                AppendLog("Vui lòng chọn G6T COM trước khi chạy test.");
+                return;
+            }
+
+            if (cbDiCom.SelectedItem is not string detectorComPort || string.IsNullOrWhiteSpace(detectorComPort))
+            {
+                AppendLog("Vui lòng chọn DT COM trước khi chạy test.");
+                return;
+            }
+
+            try
+            {
+                _isRunningTest = true;
+                btnStart.Enabled = false;
+                _cameraPreview.SetRoi1Detected(false);
+                // reset test result indicators to 'in progress' (gray)
+                SetTestRunning("LED Test");
+                SetTestRunning("Button Test");
+                // reset ACK trackers
+                _powerAckPassed = false;
+
+                AppendLog("=== START TEST: SMOCK ===");
+                var roi1 = _cameraPreview.GetRoi1SourceRect();
+                var progress = new Progress<string>(HandleProgressLog);
+                var stepResults = await _smokeDeviceTestService.RunStartSequenceAsync(g6tComPort, detectorComPort, roi1, progress).ConfigureAwait(true);
+
+                var allPassed = stepResults.All(step => step.IsPassed);
+                if (!allPassed)
+                {
+                    var firstFailedStep = stepResults.FirstOrDefault(step => !step.IsPassed);
+                    if (firstFailedStep is not null)
+                    {
+                        AppendLog($"[RESULT][FAIL] Bước lỗi: {firstFailedStep.StepName} - {ExtractFailReason(firstFailedStep.Message)}");
+                    }
+                }
+
+                AppendLog(allPassed ? "=== TEST FLOW HOÀN TẤT ===" : "=== TEST FLOW DỪNG DO FAIL ===");
+                // After UI shows final result, explicitly call Reset sequence to ensure TX occurs after result
+                try
+                {
+                    await Task.Delay(200).ConfigureAwait(true); // give UI moment to render
+                    await _smokeDeviceTestService.SendResetAsync(g6tComPort, new Progress<string>(AppendLog));
+                }
+                catch (Exception ex)
+                {
+                    AppendLog($"[ERROR] Gửi reset thất bại: {ex.Message}");
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            finally
+            {
+                _isRunningTest = false;
+                btnStart.Enabled = true;
+            }
         }
 
         private void StartCameraPreview()
@@ -119,12 +212,47 @@ namespace HardwareTestApp.src.Presentation.Forms
         private void ShowTestCasesForDevice(string deviceType)
         {
             grpTest.Controls.Clear();
+            _testStatusLabels.Clear();
+            _testStatusLeds.Clear();
+
             var testCases = _testCaseProvider.GetTestCasesForDevice(deviceType);
             int index = 0;
             foreach (var test in testCases)
             {
-                var led = new Panel();
-                AddTestRow(test.Name, index++, led);
+                var y = 25 + index * 28;
+
+                var nameLabel = new Label
+                {
+                    Text = test.Name,
+                    Location = new Point(20, y),
+                    AutoSize = true,
+                };
+
+                var led = new Panel
+                {
+                    BackColor = Color.Gray,
+                    Size = new Size(15, 15),
+                    Location = new Point(250, y),
+                    Name = $"led_{index}",
+                };
+
+                var statusLabel = new Label
+                {
+                    Text = "PENDING",
+                    ForeColor = Color.DimGray,
+                    Location = new Point(280, y - 2),
+                    AutoSize = true,
+                    Name = $"lblStatus_{index}",
+                };
+
+                grpTest.Controls.Add(nameLabel);
+                grpTest.Controls.Add(led);
+                grpTest.Controls.Add(statusLabel);
+
+                _testStatusLeds[test.Name] = led;
+                _testStatusLabels[test.Name] = statusLabel;
+
+                index++;
             }
         }
 
@@ -148,7 +276,30 @@ namespace HardwareTestApp.src.Presentation.Forms
 
         private void Mainform_Load(object sender, EventArgs e)
         {
+            LoadComPorts();
             ShowTestCasesForDevice(_currentDeviceType);
+            UpdateConnectButtonText();
+            UpdateDetectorConnectButtonText();
+        }
+
+        private void LoadComPorts()
+        {
+            var ports = _comPortProvider.GetAvailableComPorts();
+
+            comboBox1.Items.Clear();
+            cbDiCom.Items.Clear();
+            cbG6tCom.Items.Clear();
+
+            foreach (var port in ports)
+            {
+                comboBox1.Items.Add(port); // QR COM
+                cbDiCom.Items.Add(port);   // DT COM
+                cbG6tCom.Items.Add(port);  // G6T COM
+            }
+
+            if (comboBox1.Items.Count > 0) comboBox1.SelectedIndex = 0;
+            if (cbDiCom.Items.Count > 0) cbDiCom.SelectedIndex = 0;
+            if (cbG6tCom.Items.Count > 0) cbG6tCom.SelectedIndex = 0;
         }
 
         private void grpTest_Enter(object sender, EventArgs e)
@@ -159,6 +310,256 @@ namespace HardwareTestApp.src.Presentation.Forms
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButton4_CheckedChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButton5_CheckedChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlCamera_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void AppendLog(string message)
+        {
+            var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            foreach (var line in lines)
+            {
+                txtLog.AppendText($"{DateTime.Now:HH:mm:ss} {line}{Environment.NewLine}");
+            }
+
+            txtLog.ScrollToCaret();
+        }
+
+        private void HandleProgressLog(string message)
+        {
+            if (message.Equals("[ROI1][RESET]", StringComparison.OrdinalIgnoreCase))
+            {
+                _cameraPreview.SetRoi1Detected(false);
+                return;
+            }
+
+            if (message.Equals("[ROI1][PASS]", StringComparison.OrdinalIgnoreCase))
+            {
+                _cameraPreview.SetRoi1Detected(true);
+                return;
+            }
+
+            // Update test result indicators based on realtime progress messages
+            if (message.StartsWith("[SENDING]", StringComparison.OrdinalIgnoreCase) ||
+                message.StartsWith("[WAITING]", StringComparison.OrdinalIgnoreCase))
+            {
+                // format: [SENDING] <StepName> -> <Port>
+                var parts = message.Split(' ');
+                if (parts.Length >= 2)
+                {
+                    var stepName = parts[1].Trim();
+                    if (stepName.Equals("LED", StringComparison.OrdinalIgnoreCase) || message.Contains("LED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        SetTestRunning("LED Test");
+                    }
+
+                    if (stepName.Equals("Button", StringComparison.OrdinalIgnoreCase) || message.Contains("Button", StringComparison.OrdinalIgnoreCase))
+                    {
+                        SetTestRunning("Button Test");
+                    }
+                }
+            }
+
+            // Track ACK status for prerequisite: Power
+            if (message.Contains("[ACK][PASS]", StringComparison.OrdinalIgnoreCase))
+            {
+                if (message.Contains("Cấp nguồn", StringComparison.OrdinalIgnoreCase) || message.Contains("PowerControl", StringComparison.OrdinalIgnoreCase))
+                {
+                    _powerAckPassed = true;
+                }
+            }
+
+            if (message.Contains("[ACK][FAIL]", StringComparison.OrdinalIgnoreCase))
+            {
+                if (message.Contains("Cấp nguồn", StringComparison.OrdinalIgnoreCase) || message.Contains("PowerControl", StringComparison.OrdinalIgnoreCase))
+                {
+                    _powerAckPassed = false;
+                }
+            }
+
+            // LED Test result: only change indicator if Power ACK is successful
+            if ((message.Contains("[ROI1][PASS]", StringComparison.OrdinalIgnoreCase) || (message.Contains("LED ROI Detect", StringComparison.OrdinalIgnoreCase) && message.Contains("[ACK][PASS]", StringComparison.OrdinalIgnoreCase)))
+                && _powerAckPassed)
+            {
+                SetTestPassed("LED Test");
+            }
+
+            if ((message.Contains("[ACK][FAIL] LED", StringComparison.OrdinalIgnoreCase) || (message.Contains("LED ROI Detect", StringComparison.OrdinalIgnoreCase) && message.Contains("[ACK][FAIL]", StringComparison.OrdinalIgnoreCase)))
+                && _powerAckPassed)
+            {
+                SetTestFailed("LED Test");
+            }
+
+            if (message.Contains("[ACK][PASS] Button", StringComparison.OrdinalIgnoreCase) || message.Contains("Button Test", StringComparison.OrdinalIgnoreCase) && message.Contains("[ACK][PASS]"))
+            {
+                SetTestPassed("Button Test");
+            }
+
+            if (message.Contains("[ACK][FAIL] Button", StringComparison.OrdinalIgnoreCase) || message.Contains("Button Test", StringComparison.OrdinalIgnoreCase) && message.Contains("[ACK][FAIL]"))
+            {
+                SetTestFailed("Button Test");
+            }
+
+            AppendLog(message);
+        }
+
+        private void UpdateConnectButtonText()
+        {
+            button2.Text = _smokeDeviceTestService.IsConnected ? "Disconnect" : "Connect";
+        }
+
+        private void UpdateDetectorConnectButtonText()
+        {
+            button3.Text = _smokeDeviceTestService.IsDetectorConnected ? "DT Disconnect" : "DT Connect";
+        }
+
+        private static string ExtractFailReason(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return "Không có thông tin chi tiết.";
+            }
+
+            var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var ackFailLine = lines.FirstOrDefault(line => line.Contains("[ACK][FAIL]", StringComparison.OrdinalIgnoreCase));
+            return ackFailLine ?? lines[^1];
+        }
+
+        private void SetTestRunning(string testName)
+        {
+            if (_testStatusLeds.TryGetValue(testName, out var led))
+            {
+                led.BackColor = Color.Gray;
+            }
+
+            if (_testStatusLabels.TryGetValue(testName, out var status))
+            {
+                status.Text = "RUNNING";
+                status.ForeColor = Color.DimGray;
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (cbDiCom.SelectedItem is not string detectorComPort || string.IsNullOrWhiteSpace(detectorComPort))
+            {
+                AppendLog("Vui lòng chọn DT COM trước khi connect.");
+                return;
+            }
+
+            try
+            {
+                if (_smokeDeviceTestService.IsDetectorConnected)
+                {
+                    _smokeDeviceTestService.DisconnectDetector();
+                    AppendLog($"Disconnect DT COM: {detectorComPort}");
+                }
+                else
+                {
+                    _smokeDeviceTestService.ConnectDetector(detectorComPort);
+                    AppendLog($"Connect DT COM: {detectorComPort} @ 9600");
+                }
+
+                UpdateDetectorConnectButtonText();
+            }
+            catch (ArgumentException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+        }
+
+        private void SetTestPassed(string testName)
+        {
+            if (_testStatusLeds.TryGetValue(testName, out var led))
+            {
+                led.BackColor = Color.Lime;
+            }
+
+            if (_testStatusLabels.TryGetValue(testName, out var status))
+            {
+                status.Text = "PASS";
+                status.ForeColor = Color.Green;
+            }
+        }
+
+        private void SetTestFailed(string testName)
+        {
+            if (_testStatusLeds.TryGetValue(testName, out var led))
+            {
+                led.BackColor = Color.Red;
+            }
+
+            if (_testStatusLabels.TryGetValue(testName, out var status))
+            {
+                status.Text = "FAIL";
+                status.ForeColor = Color.Red;
+            }
+        }
+
+        private void txtSerial_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            if (cbG6tCom.SelectedItem is not string g6tComPort || string.IsNullOrWhiteSpace(g6tComPort))
+            {
+                AppendLog("Vui lòng chọn G6T COM trước khi connect.");
+                return;
+            }
+
+            try
+            {
+                if (_smokeDeviceTestService.IsConnected)
+                {
+                    _smokeDeviceTestService.Disconnect();
+                    AppendLog($"Disconnect G6T COM: {g6tComPort}");
+                }
+                else
+                {
+                    _smokeDeviceTestService.Connect(g6tComPort);
+                    AppendLog($"Connect G6T COM: {g6tComPort}");
+                    await _smokeDeviceTestService.PrepareOnConnectAsync(g6tComPort, new Progress<string>(HandleProgressLog));
+                }
+
+                UpdateConnectButtonText();
+            }
+            catch (ArgumentException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
         }
     }
 }
