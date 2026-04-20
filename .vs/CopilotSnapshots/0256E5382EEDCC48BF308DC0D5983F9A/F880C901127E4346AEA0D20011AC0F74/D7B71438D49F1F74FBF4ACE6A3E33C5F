@@ -1,0 +1,87 @@
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+using HardwareTestApp.Domain.Interfaces;
+using HardwareTestApp.Domain.Models;
+using HardwareTestApp.Infrastructure.Camera;
+using HardwareTestApp.Presentation.Controls;
+
+namespace HardwareTestApp.src.Presentation.Forms
+{
+    public partial class Mainform : Form
+    {
+        // ── inject hoặc khởi tạo thẳng ở đây ──
+        private readonly ICameraService _cameraService;
+        private CameraPreviewControl _cameraPreview;
+
+        public Mainform()
+        {
+            InitializeComponent();
+
+            // Khởi tạo service (sau này có DI thì truyền qua constructor)
+            _cameraService = new OpenCvCameraAdapter();
+
+            // Gắn CameraPreviewControl vào pnlCamera đã có sẵn
+            _cameraPreview = new CameraPreviewControl(_cameraService);
+            _cameraPreview.Dock = DockStyle.Fill;
+            pnlCamera.Controls.Add(_cameraPreview);
+        }
+
+        // ================= START BUTTON =================
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            var config = new CameraConfig
+            {
+                DeviceIndex = 0,
+                Width = 1280,
+                Height = 720,
+                TargetFps = 30
+            };
+
+            _cameraPreview.StartPreview(config);
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;   // nếu có btnStop
+        }
+
+        // ================= STOP (nếu có btnStop) =================
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            _cameraPreview.StopPreview();
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
+        }
+
+        // ================= LOG =================
+        private void txtLog_TextChanged(object sender, EventArgs e) { }
+
+        private void lblStatus_Click(object sender, EventArgs e) { }
+
+        private void lblSerial_Click(object sender, EventArgs e) { }
+
+        private void cbDiCom_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void cbQrCom_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void label1_Click(object sender, EventArgs e) { }
+
+        private void label3_Click(object sender, EventArgs e) { }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e) { }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e) { }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e) { }
+
+        // pnlCamera_Paint không cần xử lý gì —
+        // CameraPreviewControl tự vẽ bên trong
+        private void pnlCamera_Paint(object sender, PaintEventArgs e) { }
+
+        // ================= CLEANUP =================
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            _cameraPreview?.StopPreview();
+            (_cameraService as IDisposable)?.Dispose();
+            base.OnFormClosing(e);
+        }
+    }
+}

@@ -1,0 +1,316 @@
+﻿namespace HardwareTestApp.src.Presentation.Forms
+{
+    partial class Mainform
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        // LEFT
+        private Panel pnlCamera;
+        private Button btnStart;
+        private ComboBox cbDiCom;
+        private ComboBox cbG6tCom;
+
+        private Label lblSerial;
+        private TextBox txtSerial;
+
+        private GroupBox grpTest;
+
+        private Panel led_0;
+        private Panel led_1;
+        private Panel led_2;
+        private Panel led_3;
+        private Panel led_4;
+
+        private RichTextBox txtLog;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            pnlCamera = new Panel();
+            btnStart = new Button();
+            cbDiCom = new ComboBox();
+            cbG6tCom = new ComboBox();
+            lblSerial = new Label();
+            txtSerial = new TextBox();
+            grpTest = new GroupBox();
+            led_0 = new Panel();
+            led_1 = new Panel();
+            led_2 = new Panel();
+            led_3 = new Panel();
+            led_4 = new Panel();
+            txtLog = new RichTextBox();
+            pnlStatus = new Panel();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            radioButton2 = new RadioButton();
+            radioButton3 = new RadioButton();
+            radioButton4 = new RadioButton();
+            radioButton5 = new RadioButton();
+            comboBox1 = new ComboBox();
+            btnStop = new Button();
+            SuspendLayout();
+            // 
+            // pnlCamera
+            // 
+            pnlCamera.BorderStyle = BorderStyle.FixedSingle;
+            pnlCamera.Location = new Point(14, 12);
+            pnlCamera.Name = "pnlCamera";
+            pnlCamera.Size = new Size(600, 408);
+            pnlCamera.TabIndex = 0;
+            //pnlCamera.Paint += pnlCamera_Paint;
+            // 
+            // btnStart
+            // 
+            btnStart.Location = new Point(189, 506);
+            btnStart.Name = "btnStart";
+            btnStart.Size = new Size(257, 88);
+            btnStart.TabIndex = 2;
+            btnStart.Text = "Start";
+            btnStart.Click += btnStart_Click;
+            // 
+            // cbDiCom
+            // 
+            cbDiCom.Location = new Point(834, 18);
+            cbDiCom.Name = "cbDiCom";
+            cbDiCom.Size = new Size(100, 33);
+            cbDiCom.TabIndex = 5;
+            cbDiCom.SelectedIndexChanged += cbDiCom_SelectedIndexChanged;
+            // 
+            // cbG6tCom
+            // 
+            cbG6tCom.Location = new Point(1031, 18);
+            cbG6tCom.Name = "cbG6tCom";
+            cbG6tCom.Size = new Size(100, 33);
+            cbG6tCom.TabIndex = 7;
+            cbG6tCom.SelectedIndexChanged += cbG6tCom_SelectedIndexChanged;
+            // 
+            // lblSerial
+            // 
+            lblSerial.Location = new Point(626, 69);
+            lblSerial.Name = "lblSerial";
+            lblSerial.Size = new Size(100, 23);
+            lblSerial.TabIndex = 9;
+            lblSerial.Text = "Serial:";
+            lblSerial.Click += lblSerial_Click;
+            // 
+            // txtSerial
+            // 
+            txtSerial.Location = new Point(716, 69);
+            txtSerial.Name = "txtSerial";
+            txtSerial.Size = new Size(510, 31);
+            txtSerial.TabIndex = 10;
+            // 
+            // grpTest
+            // 
+            grpTest.Location = new Point(626, 181);
+            grpTest.Name = "grpTest";
+            grpTest.Size = new Size(600, 239);
+            grpTest.TabIndex = 11;
+            grpTest.TabStop = false;
+            grpTest.Text = "Test Results";
+            grpTest.Enter += grpTest_Enter;
+            // 
+            // led_0
+            // 
+            led_0.Location = new Point(0, 0);
+            led_0.Name = "led_0";
+            led_0.Size = new Size(200, 100);
+            led_0.TabIndex = 0;
+            // 
+            // led_1
+            // 
+            led_1.Location = new Point(0, 0);
+            led_1.Name = "led_1";
+            led_1.Size = new Size(200, 100);
+            led_1.TabIndex = 0;
+            // 
+            // led_2
+            // 
+            led_2.Location = new Point(0, 0);
+            led_2.Name = "led_2";
+            led_2.Size = new Size(200, 100);
+            led_2.TabIndex = 0;
+            // 
+            // led_3
+            // 
+            led_3.Location = new Point(0, 0);
+            led_3.Name = "led_3";
+            led_3.Size = new Size(200, 100);
+            led_3.TabIndex = 0;
+            // 
+            // led_4
+            // 
+            led_4.Location = new Point(0, 0);
+            led_4.Name = "led_4";
+            led_4.Size = new Size(200, 100);
+            led_4.TabIndex = 0;
+            // 
+            // txtLog
+            // 
+            txtLog.Location = new Point(626, 426);
+            txtLog.Name = "txtLog";
+            txtLog.Size = new Size(613, 191);
+            txtLog.TabIndex = 12;
+            txtLog.Text = "Log";
+            txtLog.TextChanged += txtLog_TextChanged;
+            // 
+            // pnlStatus
+            // 
+            pnlStatus.BackColor = Color.Gray;
+            pnlStatus.Location = new Point(14, 426);
+            pnlStatus.Name = "pnlStatus";
+            pnlStatus.Size = new Size(600, 68);
+            pnlStatus.TabIndex = 1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(745, 26);
+            label1.Name = "label1";
+            label1.Size = new Size(83, 25);
+            label1.TabIndex = 13;
+            label1.Text = "QR COM";
+            label1.Click += label1_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(940, 26);
+            label2.Name = "label2";
+            label2.Size = new Size(79, 25);
+            label2.TabIndex = 14;
+            label2.Text = "DT COM";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(1137, 26);
+            label3.Name = "label3";
+            label3.Size = new Size(89, 25);
+            label3.TabIndex = 15;
+            label3.Text = "G6T COM";
+            label3.Click += label3_Click;
+            // 
+            // radioButton2
+            // 
+            radioButton2.AutoSize = true;
+            radioButton2.Location = new Point(626, 133);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(91, 29);
+            radioButton2.TabIndex = 17;
+            radioButton2.Text = "Smock";
+            radioButton2.UseVisualStyleBackColor = true;
+            radioButton2.CheckedChanged += radioButton2_CheckedChanged;
+            // 
+            // radioButton3
+            // 
+            radioButton3.AutoSize = true;
+            radioButton3.Location = new Point(778, 133);
+            radioButton3.Name = "radioButton3";
+            radioButton3.Size = new Size(83, 29);
+            radioButton3.TabIndex = 18;
+            radioButton3.Text = "Heate";
+            radioButton3.UseVisualStyleBackColor = true;
+            radioButton3.CheckedChanged += radioButton3_CheckedChanged;
+            // 
+            // radioButton4
+            // 
+            radioButton4.AutoSize = true;
+            radioButton4.Location = new Point(934, 133);
+            radioButton4.Name = "radioButton4";
+            radioButton4.Size = new Size(70, 29);
+            radioButton4.TabIndex = 19;
+            radioButton4.Text = "bale";
+            radioButton4.UseVisualStyleBackColor = true;
+            // 
+            // radioButton5
+            // 
+            radioButton5.AutoSize = true;
+            radioButton5.Location = new Point(1097, 133);
+            radioButton5.Name = "radioButton5";
+            radioButton5.Size = new Size(90, 29);
+            radioButton5.TabIndex = 17;
+            radioButton5.Text = "Button";
+            radioButton5.UseVisualStyleBackColor = true;
+            // 
+            // comboBox1
+            // 
+            comboBox1.Location = new Point(639, 18);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(100, 33);
+            comboBox1.TabIndex = 20;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
+            // btnStop
+            // 
+            btnStop.Location = new Point(0, 0);
+            btnStop.Name = "btnStop";
+            btnStop.Size = new Size(75, 23);
+            btnStop.TabIndex = 21;
+            // 
+            // Mainform
+            // 
+            ClientSize = new Size(1239, 628);
+            Controls.Add(comboBox1);
+            Controls.Add(radioButton5);
+            Controls.Add(radioButton4);
+            Controls.Add(radioButton3);
+            Controls.Add(radioButton2);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(pnlCamera);
+            Controls.Add(pnlStatus);
+            Controls.Add(btnStart);
+            Controls.Add(cbDiCom);
+            Controls.Add(cbG6tCom);
+            Controls.Add(lblSerial);
+            Controls.Add(txtSerial);
+            Controls.Add(grpTest);
+            Controls.Add(txtLog);
+            Controls.Add(btnStop);
+            Name = "Mainform";
+            Text = "FCT G6T";
+            Load += Mainform_Load;
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        // helper (Designer vẫn OK)
+        private void AddTestRow(string text, int index, Panel led)
+        {
+            Label lbl = new Label();
+            lbl.Text = text;
+            lbl.Location = new Point(10, 25 + index * 25);
+            lbl.AutoSize = true;
+
+            led.BackColor = Color.Gray;
+            led.Size = new Size(15, 15);
+            led.Location = new Point(250, 25 + index * 25);
+            led.Name = "led_" + index;
+
+            this.grpTest.Controls.Add(lbl);
+            this.grpTest.Controls.Add(led);
+        }
+
+        private Panel pnlStatus;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private RadioButton radioButton2;
+        private RadioButton radioButton3;
+        private RadioButton radioButton4;
+        private RadioButton radioButton5;
+        private ComboBox comboBox1;
+        private Button btnStop;
+    }
+}

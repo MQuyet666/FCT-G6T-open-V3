@@ -1,0 +1,113 @@
+﻿using System;
+using System.Windows.Forms;
+using HardwareTestApp.src.Application.Interfaces;
+using HardwareTestApp.src.Presentation.Controls;
+
+namespace HardwareTestApp.src.Presentation.Forms
+{
+    public partial class Mainform : Form
+    {
+        private readonly ICameraPreviewAppService _cameraPreviewService;
+        private CameraPreviewControl _cameraPreview;
+
+        public Mainform(ICameraPreviewAppService cameraPreviewService)
+        {
+            InitializeComponent();
+
+            _cameraPreviewService = cameraPreviewService;
+
+            _cameraPreview = new CameraPreviewControl(_cameraPreviewService);
+            _cameraPreview.Dock = DockStyle.Fill;
+            pnlCamera.Controls.Add(_cameraPreview);
+
+            Shown += Mainform_Shown;
+        }
+
+        // ================= START BUTTON =================
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void StartCameraPreview()
+        {
+            if (_cameraPreviewService.IsRunning) return;
+
+            _cameraPreview.StartPreview();
+            //btnStart.Enabled = false;
+            //btnStop.Enabled = true;   // nếu có btnStop
+        }
+
+        // ================= STOP (nếu có btnStop) =================
+        //private void btnStop_Click(object sender, EventArgs e)
+        //{
+        //    _cameraPreview.StopPreview();
+        //    btnStart.Enabled = true;
+        //    btnStop.Enabled = false;
+        //}
+
+        private void Mainform_Shown(object sender, EventArgs e)
+        {
+            if (_cameraPreview is not null)
+            {
+                _cameraPreview.BringToFront();
+            }
+
+            if (!_cameraPreviewService.IsRunning)
+            {
+                StartCameraPreview();
+            }
+        }
+
+        // ================= LOG =================
+        private void txtLog_TextChanged(object sender, EventArgs e) { }
+
+        private void lblStatus_Click(object sender, EventArgs e) { }
+
+        private void lblSerial_Click(object sender, EventArgs e) { }
+
+        private void cbDiCom_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void cbQrCom_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void label1_Click(object sender, EventArgs e) { }
+
+        private void label3_Click(object sender, EventArgs e) { }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e) { }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e) { }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e) { }
+
+        private void pnlCamera_Paint(object sender, PaintEventArgs e) { }
+
+        // ================= CLEANUP =================
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            _cameraPreview?.StopPreview();
+            (_cameraPreviewService as IDisposable)?.Dispose();
+            base.OnFormClosing(e);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbG6tCom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Mainform_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void grpTest_Enter(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

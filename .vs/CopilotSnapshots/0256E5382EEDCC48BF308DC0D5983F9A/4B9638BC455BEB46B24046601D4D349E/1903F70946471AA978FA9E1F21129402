@@ -1,0 +1,20 @@
+﻿namespace HardwareTestApp.src.Domain.Interfaces;
+
+using HardwareTestApp.src.Domain.Models;
+
+// Domain/Interfaces/ICameraService.cs
+public interface ICameraService
+{
+    event EventHandler<FrameReadyEventArgs> FrameReady;
+    void StartPreview(CameraConfig config);
+    void StopPreview();
+    Task<Bitmap> CaptureFrameAsync();
+    bool IsRunning { get; }
+}
+
+// Domain/Models/FrameReadyEventArgs.cs
+public class FrameReadyEventArgs : EventArgs
+{
+    public Bitmap Frame { get; init; }
+    public DateTime Timestamp { get; init; }
+}

@@ -1,0 +1,78 @@
+﻿using System.IO;
+using HardwareTestApp.src.Domain.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+using OpenCvSharp;
+
+namespace HardwareTestApp.src.Infrastructure.Camera;
+
+// Infrastructure/Camera/OpenCvCameraAdapter.cs
+public class OpenCvCameraAdapter : ICameraService, IDisposable
+{
+    public event EventHandler<FrameReadyEventArgs> FrameReady;
+
+    private VideoCapture _capture;
+    private CancellationTokenSource _cts;
+    private Task _captureTask;
+    public bool IsRunning { get; private set; }
+
+    public void StartPreview(CameraConfig config)
+    {
+        if (IsRunning) return;
+
+        _capture = new VideoCapture(config.DeviceIndex);
+        _capture.Set(VideoCaptureProperties.FrameWidth, config.Width);
+        _capture.Set(VideoCaptureProperties.FrameHeight, config.Height);
+        _capture.Set(VideoCaptureProperties.Fps, config.TargetFps);
+
+        _cts = new CancellationTokenSource();
+        IsRunning = true;
+
+        // Chạy loop trên background thread
+        _captureTask = Task.Run(() => CaptureLoop(_cts.Token));
+    }
+
+    private async Task CaptureLoop(CancellationToken ct)
+    {
+        using var mat = new Mat();
+        while (!ct.IsCancellationRequested)
+        {
+            if (!_capture.Read(mat) || mat.Empty()) continue;
+
+            // Convert Mat → Bitmap rồi raise event
+            var bitmap = ConvertMatToBitmap(mat);
+            FrameReady?.Invoke(this, new FrameReadyEventArgs
+            {
+                Frame = bitmap,
+                Timestamp = DateTime.Now
+            });
+
+            // Giới hạn ~30fps
+            await Task.Delay(33, ct).ConfigureAwait(false);
+        }
+    }
+
+    public void StopPreview()
+    {
+        _cts?.Cancel();
+        _captureTask?.Wait(2000);
+        _capture?.Dispose();
+        IsRunning = false;
+    }
+
+    public async Task<Bitmap> CaptureFrameAsync()
+    {
+        using var mat = new Mat();
+        await Task.Run(() => _capture.Read(mat));
+        return ConvertMatToBitmap(mat);
+    }
+
+    private static Bitmap ConvertMatToBitmap(Mat mat)
+    {
+        Cv2.ImEncode(".bmp", mat, out var imageBytes);
+        using var ms = new MemoryStream(imageBytes);
+        using var temp = new Bitmap(ms);
+        return new Bitmap(temp);
+    }
+
+    public void Dispose() => StopPreview();
+}

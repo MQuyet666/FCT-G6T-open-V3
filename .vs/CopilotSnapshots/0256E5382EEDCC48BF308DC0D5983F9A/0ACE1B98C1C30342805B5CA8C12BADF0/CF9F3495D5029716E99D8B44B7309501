@@ -1,0 +1,13 @@
+﻿namespace HardwareTestApp.src.Domain.Models;
+
+public enum G6tCommandCode : byte
+{
+    Power = 0x01,
+    TestButtonAndBuzzer = 0x02,
+    SetCalibPin = 0x03,
+    SetWdi = 0x04,
+    TestButton2Relay1 = 0x05,
+    TestButton3Relay2 = 0x06,
+    TriggerEmergencyButton = 0x07,
+    ControlRelayOutput = 0x08,
+}

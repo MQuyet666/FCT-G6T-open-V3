@@ -1,0 +1,120 @@
+﻿using HardwareTestApp.src.Application.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+
+namespace HardwareTestApp.src.Application.Services;
+
+public class G6tFrameCodec : IG6tFrameCodec
+{
+    private const byte Header1 = 0x1F;
+    private const byte Header2 = 0x2F;
+    private const byte Header3 = 0x3F;
+    private const byte Header4 = 0xFF;
+    private const byte RequestDirection = 0x00;
+
+    public byte[] BuildCommandFrame(G6tCommandCode commandCode, params byte[] data)
+    {
+        var payload = data ?? Array.Empty<byte>();
+        var frameWithoutBcc = new byte[6 + payload.Length];
+
+        frameWithoutBcc[0] = Header1;
+        frameWithoutBcc[1] = Header2;
+        frameWithoutBcc[2] = Header3;
+        frameWithoutBcc[3] = Header4;
+        frameWithoutBcc[4] = RequestDirection;
+        frameWithoutBcc[5] = (byte)commandCode;
+
+        if (payload.Length > 0)
+        {
+            Buffer.BlockCopy(payload, 0, frameWithoutBcc, 6, payload.Length);
+        }
+
+        var bcc = CalculateBcc(frameWithoutBcc);
+        var frame = new byte[frameWithoutBcc.Length + 1];
+        Buffer.BlockCopy(frameWithoutBcc, 0, frame, 0, frameWithoutBcc.Length);
+        frame[^1] = bcc;
+
+        return frame;
+    }
+
+    public byte[] BuildPowerFrame(bool powerOn)
+    {
+        return BuildCommandFrame(G6tCommandCode.Power, powerOn ? (byte)0x01 : (byte)0x00);
+    }
+
+    public byte[] BuildSetCalibPinFrame(bool set)
+    {
+        return BuildCommandFrame(G6tCommandCode.SetCalibPin, set ? (byte)0x01 : (byte)0x00);
+    }
+
+    public byte[] BuildSetWdiFrame(bool set)
+    {
+        return BuildCommandFrame(G6tCommandCode.SetWdi, set ? (byte)0x01 : (byte)0x00);
+    }
+
+    public byte[] BuildRelayOutputFrame(byte relayId, bool active)
+    {
+        if (relayId is < 1 or > 5)
+        {
+            throw new ArgumentOutOfRangeException(nameof(relayId), "RelayId hợp lệ trong khoảng 1..5.");
+        }
+
+        return BuildCommandFrame(
+            G6tCommandCode.ControlRelayOutput,
+            relayId,
+            active ? (byte)0x01 : (byte)0x00);
+    }
+
+    public bool TryParseFrame(byte[] rawFrame, out G6tFrame? frame, out string? errorMessage)
+    {
+        frame = null;
+        errorMessage = null;
+
+        if (rawFrame is null || rawFrame.Length < 7)
+        {
+            errorMessage = "Frame không hợp lệ: độ dài tối thiểu là 7 byte.";
+            return false;
+        }
+
+        if (rawFrame[0] != Header1 || rawFrame[1] != Header2 || rawFrame[2] != Header3 || rawFrame[3] != Header4)
+        {
+            errorMessage = "Frame không hợp lệ: sai header (1F 2F 3F FF).";
+            return false;
+        }
+
+        var expectedBcc = CalculateBcc(rawFrame.AsSpan(0, rawFrame.Length - 1));
+        var receivedBcc = rawFrame[^1];
+        if (expectedBcc != receivedBcc)
+        {
+            errorMessage = $"Frame BCC không hợp lệ. Expected=0x{expectedBcc:X2}, Received=0x{receivedBcc:X2}.";
+            return false;
+        }
+
+        var dataLength = rawFrame.Length - 7;
+        var data = dataLength > 0 ? rawFrame[6..^1] : Array.Empty<byte>();
+
+        frame = new G6tFrame
+        {
+            Header1 = rawFrame[0],
+            Header2 = rawFrame[1],
+            Header3 = rawFrame[2],
+            Header4 = rawFrame[3],
+            Direction = rawFrame[4],
+            CommandCode = (G6tCommandCode)rawFrame[5],
+            Data = data,
+            Bcc = receivedBcc,
+        };
+
+        return true;
+    }
+
+    public byte CalculateBcc(ReadOnlySpan<byte> rawFrameWithoutBcc)
+    {
+        byte bcc = 0;
+        for (var i = 1; i < rawFrameWithoutBcc.Length; i++)
+        {
+            bcc ^= rawFrameWithoutBcc[i];
+        }
+
+        return bcc;
+    }
+}

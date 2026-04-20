@@ -1,0 +1,113 @@
+﻿using System.IO;
+using HardwareTestApp.src.Domain.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+using OpenCvSharp;
+
+namespace HardwareTestApp.src.Infrastructure.Camera;
+
+// Infrastructure/Camera/OpenCvCameraAdapter.cs
+public class OpenCvCameraAdapter : ICameraService, IDisposable
+{
+    public event EventHandler<FrameReadyEventArgs> FrameReady;
+
+    private VideoCapture? _capture;
+    private CancellationTokenSource? _cts;
+    public bool IsRunning { get; private set; }
+
+    public void StartPreview(CameraConfig config)
+    {
+        if (IsRunning) return;
+
+        _capture?.Dispose();
+        _capture = new VideoCapture(config.DeviceIndex, VideoCaptureAPIs.DSHOW);
+        if (!_capture.IsOpened())
+        {
+            _capture.Dispose();
+            _capture = null;
+            throw new InvalidOperationException($"Không thể mở camera với DeviceIndex={config.DeviceIndex}.");
+        }
+
+        _capture.Set(VideoCaptureProperties.FrameWidth, config.Width);
+        _capture.Set(VideoCaptureProperties.FrameHeight, config.Height);
+        _capture.Set(VideoCaptureProperties.Fps, config.TargetFps);
+
+        _cts = new CancellationTokenSource();
+        IsRunning = true;
+
+        // Chạy loop trên background thread
+        _ = Task.Run(() => CaptureLoop(_cts.Token));
+    }
+
+    private async Task CaptureLoop(CancellationToken ct)
+    {
+        using var mat = new Mat();
+        while (!ct.IsCancellationRequested)
+        {
+            try
+            {
+                if (_capture is null || !_capture.Read(mat) || mat.Empty())
+                {
+                    continue;
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                break;
+            }
+
+            // Convert Mat → Bitmap rồi raise event
+            var bitmap = ConvertMatToBitmap(mat);
+            FrameReady?.Invoke(this, new FrameReadyEventArgs
+            {
+                Frame = bitmap,
+                Timestamp = DateTime.Now
+            });
+
+            // Giới hạn ~30fps
+            try
+            {
+                await Task.Delay(33, ct).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+        }
+    }
+
+    public void StopPreview()
+    {
+        var cts = _cts;
+
+        _cts = null;
+
+        cts?.Cancel();
+
+        cts?.Dispose();
+        _capture?.Dispose();
+        _capture = null;
+        IsRunning = false;
+    }
+
+    public async Task<Bitmap> CaptureFrameAsync()
+    {
+        if (_capture is null || !_capture.IsOpened())
+        {
+            throw new InvalidOperationException("Camera chưa được khởi động.");
+        }
+
+        using var mat = new Mat();
+        await Task.Run(() => _capture.Read(mat)).ConfigureAwait(false);
+        return ConvertMatToBitmap(mat);
+    }
+
+    private static Bitmap ConvertMatToBitmap(Mat mat)
+    {
+        Cv2.ImEncode(".bmp", mat, out var imageBytes);
+        using var ms = new MemoryStream(imageBytes);
+        using var temp = new Bitmap(ms);
+        return new Bitmap(temp);
+    }
+
+    public void Dispose() => StopPreview();
+}

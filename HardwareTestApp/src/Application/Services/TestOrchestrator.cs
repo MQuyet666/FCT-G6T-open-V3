@@ -1,0 +1,105 @@
+using HardwareTestApp.src.Domain.Interfaces;
+using HardwareTestApp.src.Domain.Models;
+using Microsoft.Extensions.Logging;
+
+namespace HardwareTestApp.src.Application.Services;
+
+public class TestOrchestrator
+{
+    private readonly IG6TAdapter _g6t;
+    private readonly ILogger<TestOrchestrator> _logger;
+
+    public TestOrchestrator(IG6TAdapter g6t, ILogger<TestOrchestrator> logger)
+    {
+        _g6t = g6t;
+        _logger = logger;
+    }
+
+    public Task<G6TResponse> PowerOnAsync(CancellationToken ct = default)
+    {
+        _logger.LogInformation("Send PowerOn command to G6T.");
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.PowerControl,
+            Data = new byte[] { 0x01 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> PowerOffAsync(CancellationToken ct = default)
+    {
+        _logger.LogInformation("Send PowerOff command to G6T.");
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.PowerControl,
+            Data = new byte[] { 0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> TestButtonBuzzerAsync(CancellationToken ct = default)
+    {
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.TestButton,
+            Data = new byte[] { 0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> SetCalibPinAsync(bool set, CancellationToken ct = default)
+    {
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.SetCalibPin,
+            Data = new[] { set ? (byte)0x01 : (byte)0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> SetWdiAsync(bool set, CancellationToken ct = default)
+    {
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.CloseWdi,
+            Data = new[] { set ? (byte)0x01 : (byte)0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> TestButton2Relay1Async(CancellationToken ct = default)
+    {
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.TestButton2,
+            Data = new byte[] { 0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> TestButton3Relay2Async(CancellationToken ct = default)
+    {
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.TestButton3,
+            Data = new byte[] { 0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> TriggerEmergencyAsync(CancellationToken ct = default)
+    {
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.EmergencyButton,
+            Data = new byte[] { 0x00 },
+        }, ct);
+    }
+
+    public Task<G6TResponse> SetRelayAsync(byte relayId, bool active, CancellationToken ct = default)
+    {
+        if (relayId < 1 || relayId > 5)
+        {
+            throw new ArgumentOutOfRangeException(nameof(relayId), "Relay id phải từ 1 đến 5");
+        }
+
+        return _g6t.SendCommandAsync(new G6TCommand
+        {
+            CommandId = G6TCommandId.RelayOutput,
+            Data = new[] { relayId, active ? (byte)0x01 : (byte)0x00 },
+        }, ct);
+    }
+}

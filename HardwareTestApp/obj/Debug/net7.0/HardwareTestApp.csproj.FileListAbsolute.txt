@@ -1,0 +1,4 @@
+E:\Work\C#\New folder\.vs\HardwareTestApp\HardwareTestApp\obj\Debug\net7.0\HardwareTestApp.GeneratedMSBuildEditorConfig.editorconfig
+E:\Work\C#\New folder\.vs\HardwareTestApp\HardwareTestApp\obj\Debug\net7.0\HardwareTestApp.AssemblyInfoInputs.cache
+E:\Work\C#\New folder\.vs\HardwareTestApp\HardwareTestApp\obj\Debug\net7.0\HardwareTestApp.AssemblyInfo.cs
+E:\Work\C#\New folder\.vs\HardwareTestApp\HardwareTestApp\obj\Debug\net7.0\HardwareTestApp.csproj.CoreCompileInputs.cache

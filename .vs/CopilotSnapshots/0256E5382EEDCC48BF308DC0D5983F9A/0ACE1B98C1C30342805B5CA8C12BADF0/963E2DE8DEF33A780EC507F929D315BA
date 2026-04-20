@@ -1,0 +1,17 @@
+﻿namespace HardwareTestApp.src.Domain.Models;
+
+public class G6tFrame
+{
+    public byte Header1 { get; init; }
+    public byte Header2 { get; init; }
+    public byte Header3 { get; init; }
+    public byte Header4 { get; init; }
+    public byte Direction { get; init; }
+    public G6tCommandCode CommandCode { get; init; }
+    public byte[] Data { get; init; } = Array.Empty<byte>();
+    public byte Bcc { get; init; }
+
+    public bool IsResponse => Direction == 0x01;
+
+    public bool IsSuccessResponse => IsResponse && Data.Length > 0 && Data[0] == (byte)G6tStatusCode.Success;
+}

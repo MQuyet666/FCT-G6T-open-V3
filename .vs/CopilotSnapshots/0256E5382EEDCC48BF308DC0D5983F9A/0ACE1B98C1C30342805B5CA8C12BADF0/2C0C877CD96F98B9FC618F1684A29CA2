@@ -1,0 +1,7 @@
+﻿namespace HardwareTestApp.src.Domain.Models;
+
+public enum G6tStatusCode : byte
+{
+    Success = 0x06,
+    Failed = 0x15,
+}

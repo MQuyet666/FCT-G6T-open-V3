@@ -1,0 +1,14 @@
+﻿using HardwareTestApp.src.Domain.Models;
+
+namespace HardwareTestApp.src.Application.Interfaces;
+
+public interface IG6tFrameCodec
+{
+    byte[] BuildCommandFrame(G6tCommandCode commandCode, params byte[] data);
+    byte[] BuildPowerFrame(bool powerOn);
+    byte[] BuildSetCalibPinFrame(bool set);
+    byte[] BuildSetWdiFrame(bool set);
+    byte[] BuildRelayOutputFrame(byte relayId, bool active);
+    bool TryParseFrame(byte[] rawFrame, out G6tFrame? frame, out string? errorMessage);
+    byte CalculateBcc(ReadOnlySpan<byte> rawFrameWithoutBcc);
+}

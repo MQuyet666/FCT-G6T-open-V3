@@ -1,0 +1,15 @@
+﻿using System;
+using System.Windows.Forms;
+
+namespace HardwareTestApp.src.Presentation.Forms
+{
+    public class Mainform : Form
+    {
+        public Mainform()
+        {
+            this.Text = "Mainform";
+            this.Width = 800;
+            this.Height = 600;
+        }
+    }
+}

@@ -1,0 +1,68 @@
+﻿// Presentation/Controls/CameraPreviewControl.cs
+using HardwareTestApp.Domain.Models;
+
+namespace HardwareTestApp.src.Presentation.Controls;
+
+public partial class CameraPreviewControl : UserControl
+{
+    private readonly ICameraService _camera;
+    private Bitmap _previousFrame;
+    private PictureBox pictureBox; // Thêm khai báo cho pictureBox
+
+    // Inject interface — không new trực tiếp adapter
+    public CameraPreviewControl(ICameraService camera)
+    {
+        InitializeComponent();
+        _camera = camera;
+    }
+
+    private void InitializeComponent()
+    {
+        pictureBox = new PictureBox();
+        pictureBox.Dock = DockStyle.Fill;
+        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+        Controls.Add(pictureBox);
+    }
+
+    public void StartPreview(CameraConfig config)
+    {
+        _camera.FrameReady += OnFrameReady;   // đăng ký event
+        _camera.StartPreview(config);
+    }
+
+    public void StopPreview()
+    {
+        _camera.FrameReady -= OnFrameReady;   // hủy đăng ký trước
+        _camera.StopPreview();
+    }
+
+    // ⚠️ Event này fire từ background thread → bắt buộc Invoke
+    private void OnFrameReady(object sender, FrameReadyEventArgs e)
+    {
+        if (pictureBox.InvokeRequired)
+        {
+            pictureBox.BeginInvoke(() => UpdateFrame(e.Frame));
+        }
+        else
+        {
+            UpdateFrame(e.Frame);
+        }
+    }
+
+    private void UpdateFrame(Bitmap newFrame)
+    {
+        var old = pictureBox.Image;
+        pictureBox.Image = newFrame;   // gán frame mới
+
+        // ⚠️ Dispose frame cũ — nếu không sẽ memory leak
+        _previousFrame?.Dispose();
+        _previousFrame = newFrame;
+    }
+
+    // Khi form đóng → dọn dẹp
+    protected override void OnHandleDestroyed(EventArgs e)
+    {
+        StopPreview();
+        base.OnHandleDestroyed(e);
+    }
+}
