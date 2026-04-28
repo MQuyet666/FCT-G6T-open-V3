@@ -1,6 +1,6 @@
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Domain.Interfaces;
+namespace FCT.G6T.Domain.Interfaces;
 
 public interface IDetectorAdapter : IDisposable
 {
@@ -10,4 +10,6 @@ public interface IDetectorAdapter : IDisposable
     void Disconnect();
     Task<DetectorResponse> ReadTemperatureAsync(CancellationToken ct = default);
     Task<DetectorResponse> ReadSmokeAsync(CancellationToken ct = default);
+    Task<DetectorResponse> ReadLoraAsync(CancellationToken ct = default);
 }
+

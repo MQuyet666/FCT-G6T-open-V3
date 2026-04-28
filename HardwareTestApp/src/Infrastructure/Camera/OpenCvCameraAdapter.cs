@@ -1,18 +1,28 @@
-﻿using System.IO;
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
+using System.Collections.Concurrent;
+using System.IO;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
 using OpenCvSharp;
 
-namespace HardwareTestApp.src.Infrastructure.Camera;
+namespace FCT.G6T.Infrastructure.Camera;
 
 // Infrastructure/Camera/OpenCvCameraAdapter.cs
 public class OpenCvCameraAdapter : ICameraService, IDisposable
 {
-    public event EventHandler<FrameReadyEventArgs> FrameReady;
+    public event EventHandler<FrameReadyEventArgs>? FrameReady;
 
     private VideoCapture? _capture;
     private CancellationTokenSource? _cts;
+    private readonly ConcurrentQueue<Bitmap> _frameBuffer = new();
+    private readonly int _frameDelayMs;
+    private readonly int _frameBufferSize;
     public bool IsRunning { get; private set; }
+
+    public OpenCvCameraAdapter(int frameDelayMs, int frameBufferSize)
+    {
+        _frameDelayMs = frameDelayMs;
+        _frameBufferSize = Math.Max(1, frameBufferSize);
+    }
 
     public void StartPreview(CameraConfig config)
     {
@@ -24,7 +34,7 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
         {
             _capture.Dispose();
             _capture = null;
-            throw new InvalidOperationException($"Không thể mở camera với DeviceIndex={config.DeviceIndex}.");
+            throw new InvalidOperationException($"Kh�ng th? m? camera v?i DeviceIndex={config.DeviceIndex}.");
         }
 
         _capture.Set(VideoCaptureProperties.FrameWidth, config.Width);
@@ -34,7 +44,7 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
         _cts = new CancellationTokenSource();
         IsRunning = true;
 
-        // Chạy loop trên background thread
+        // Ch?y loop tr�n background thread
         _ = Task.Run(() => CaptureLoop(_cts.Token));
     }
 
@@ -55,23 +65,44 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
                 break;
             }
 
-            // Convert Mat → Bitmap rồi raise event
+            // Convert Mat ? Bitmap r?i raise event
             var bitmap = ConvertMatToBitmap(mat);
-            FrameReady?.Invoke(this, new FrameReadyEventArgs
-            {
-                Frame = bitmap,
-                Timestamp = DateTime.Now
-            });
+            EnqueueFrame(bitmap);
 
-            // Giới hạn ~30fps
+            // Gi?i h?n ~30fps
             try
             {
-                await Task.Delay(33, ct).ConfigureAwait(false);
+                await Task.Delay(_frameDelayMs, ct).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
                 break;
             }
+        }
+    }
+
+    private void EnqueueFrame(Bitmap frame)
+    {
+        _frameBuffer.Enqueue(frame);
+        while (_frameBuffer.Count > _frameBufferSize && _frameBuffer.TryDequeue(out var overflow))
+        {
+            overflow.Dispose();
+        }
+
+        Bitmap? latest = null;
+        while (_frameBuffer.TryDequeue(out var current))
+        {
+            latest?.Dispose();
+            latest = current;
+        }
+
+        if (latest is not null)
+        {
+            FrameReady?.Invoke(this, new FrameReadyEventArgs
+            {
+                Frame = latest,
+                Timestamp = DateTime.Now
+            });
         }
     }
 
@@ -86,6 +117,10 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
         cts?.Dispose();
         _capture?.Dispose();
         _capture = null;
+        while (_frameBuffer.TryDequeue(out var frame))
+        {
+            frame.Dispose();
+        }
         IsRunning = false;
     }
 
@@ -93,7 +128,7 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
     {
         if (_capture is null || !_capture.IsOpened())
         {
-            throw new InvalidOperationException("Camera chưa được khởi động.");
+            throw new InvalidOperationException("Camera chua du?c kh?i d?ng.");
         }
 
         using var mat = new Mat();

@@ -1,7 +1,7 @@
 using System.IO.Ports;
-using HardwareTestApp.src.Application.Interfaces;
+using FCT.G6T.Application.Interfaces;
 
-namespace HardwareTestApp.src.Infrastructure.Serial;
+namespace FCT.G6T.Infrastructure.Serial;
 
 public class ComPortProvider : IComPortProvider
 {
@@ -12,3 +12,4 @@ public class ComPortProvider : IComPortProvider
             .ToArray();
     }
 }
+

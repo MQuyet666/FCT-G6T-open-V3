@@ -1,4 +1,4 @@
-namespace HardwareTestApp.src.Domain.Models;
+namespace FCT.G6T.Domain.Models;
 
 public class G6TResponse
 {
@@ -10,3 +10,4 @@ public class G6TResponse
     public byte[] RxFrame { get; init; } = Array.Empty<byte>();
     public bool IsSuccess => Status == G6TStatus.Success;
 }
+

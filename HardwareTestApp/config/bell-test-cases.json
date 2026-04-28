@@ -1,0 +1,27 @@
+[
+  {
+    "id": "TC_BELL_01",
+    "name": "Lora Test",
+    "deviceType": "BELL",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Read LoRa value",
+        "command": "READ_LORA",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 1
+      }
+    ],
+    "teardown": [
+      {
+        "order": 1,
+        "description": "Reset LoRa state",
+        "command": "LORA_RESET",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      }
+    ]
+  }
+]

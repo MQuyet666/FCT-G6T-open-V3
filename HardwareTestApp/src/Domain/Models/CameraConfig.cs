@@ -1,4 +1,4 @@
-namespace HardwareTestApp.src.Domain.Models;
+namespace FCT.G6T.Domain.Models;
 
 public class CameraConfig
 {

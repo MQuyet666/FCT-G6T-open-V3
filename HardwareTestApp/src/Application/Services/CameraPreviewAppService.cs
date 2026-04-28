@@ -1,15 +1,15 @@
-using HardwareTestApp.src.Application.Interfaces;
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Application.Interfaces;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Application.Services;
+namespace FCT.G6T.Application.Services;
 
 public class CameraPreviewAppService : ICameraPreviewAppService, IDisposable
 {
     private readonly ICameraService _cameraService;
     private readonly CameraConfig _cameraConfig;
 
-    public event EventHandler<FrameReadyEventArgs> FrameReady;
+    public event EventHandler<FrameReadyEventArgs>? FrameReady;
 
     public bool IsRunning => _cameraService.IsRunning;
 
@@ -36,7 +36,7 @@ public class CameraPreviewAppService : ICameraPreviewAppService, IDisposable
         return _cameraService.CaptureFrameAsync();
     }
 
-    private void OnFrameReady(object sender, FrameReadyEventArgs e)
+    private void OnFrameReady(object? sender, FrameReadyEventArgs e)
     {
         FrameReady?.Invoke(this, e);
     }
@@ -47,3 +47,4 @@ public class CameraPreviewAppService : ICameraPreviewAppService, IDisposable
         (_cameraService as IDisposable)?.Dispose();
     }
 }
+

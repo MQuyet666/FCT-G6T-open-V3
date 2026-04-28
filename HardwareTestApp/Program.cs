@@ -2,47 +2,103 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
-using HardwareTestApp.src.Application.Interfaces;
-using HardwareTestApp.src.Application.Services;
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
-using HardwareTestApp.src.HAL;
-using HardwareTestApp.src.Infrastructure.Camera;
-using HardwareTestApp.src.Infrastructure.Serial;
-using Microsoft.Extensions.Logging.Abstractions;
+using FCT.G6T.Application.Interfaces;
+using FCT.G6T.Application.Services;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
+using FCT.G6T.HAL;
+using FCT.G6T.Infrastructure.Camera;
+using FCT.G6T.Infrastructure.Configuration;
+using FCT.G6T.Infrastructure.Logging;
+using FCT.G6T.Infrastructure.Serial;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
-namespace HardwareTestApp
+namespace FCT.G6T
 {
     internal static class Program
     {
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            System.Windows.Forms.Application.EnableVisualStyles();
+            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
-            var cameraConfig = LoadCameraConfig();
-            var cameraService = new SdkCameraAdapter();
-            var cameraPreviewAppService = new CameraPreviewAppService(cameraService, cameraConfig);
-            IComPortProvider comPortProvider = new ComPortProvider();
-            ISerialPortWrapper g6tSerialPortWrapper = new SerialPortWrapper();
-            ISerialPortWrapper detectorSerialPortWrapper = new SerialPortWrapper();
-            IG6TAdapter g6tAdapter = new G6TAdapter(g6tSerialPortWrapper, NullLogger<G6TAdapter>.Instance);
-            IDetectorAdapter detectorAdapter = new DetectorAdapter(detectorSerialPortWrapper, NullLogger<DetectorAdapter>.Instance);
-            var testOrchestrator = new TestOrchestrator(g6tAdapter, NullLogger<TestOrchestrator>.Instance);
-            ISmokeDeviceTestService smokeDeviceTestService = new SmokeDeviceTestService(
-                testOrchestrator,
-                g6tAdapter,
-                detectorAdapter,
-                cameraPreviewAppService,
-                NullLogger<SmokeDeviceTestService>.Instance);
+            var baseDirectory = AppContext.BaseDirectory;
+            var configuration = BuildConfiguration(baseDirectory);
 
-            Application.Run(new src.Presentation.Forms.Mainform(cameraPreviewAppService, comPortProvider, smokeDeviceTestService));
+            var serialSettings = configuration.GetSection("Serial").Get<SerialSettings>() ?? new SerialSettings();
+            var testTimeouts = configuration.GetSection("TestTimeouts").Get<TestTimeoutSettings>() ?? new TestTimeoutSettings();
+            var cameraRuntime = configuration.GetSection("CameraRuntime").Get<CameraRuntimeSettings>() ?? new CameraRuntimeSettings();
+            var loggingSettings = configuration.GetSection("Logging").Get<LoggingSettings>() ?? new LoggingSettings();
+
+            var cameraConfig = LoadCameraConfig(baseDirectory);
+            var services = new ServiceCollection();
+
+            services.AddLogging(builder =>
+            {
+                builder.SetMinimumLevel(LogLevel.Information);
+                var logDirectory = Path.Combine(baseDirectory, loggingSettings.Directory);
+                builder.AddProvider(new FileLoggerProvider(logDirectory, loggingSettings.FilePrefix, loggingSettings.RetentionDays));
+            });
+
+            services.AddSingleton(cameraConfig);
+            services.AddSingleton<IComPortProvider, ComPortProvider>();
+            services.AddSingleton<ICameraService>(_ =>
+                new SdkCameraAdapter(TimeSpan.FromSeconds(cameraRuntime.CameraRetryIntervalSeconds), cameraRuntime.FrameBufferSize));
+            services.AddSingleton<ICameraPreviewAppService, CameraPreviewAppService>();
+
+            services.AddTransient<ISerialPortWrapper>(_ =>
+                new SerialPortWrapper(serialSettings.ReadTimeoutMs, serialSettings.WriteTimeoutMs));
+            services.AddSingleton<IG6TAdapter>(sp =>
+                new G6TAdapter(
+                    sp.GetRequiredService<ISerialPortWrapper>(),
+                    sp.GetRequiredService<ILogger<G6TAdapter>>(),
+                    TimeSpan.FromSeconds(serialSettings.FrameAckTimeoutSeconds),
+                    serialSettings.FrameRetryCount));
+            services.AddSingleton<IDetectorAdapter>(sp =>
+                new DetectorAdapter(
+                    sp.GetRequiredService<ISerialPortWrapper>(),
+                    sp.GetRequiredService<ILogger<DetectorAdapter>>(),
+                    TimeSpan.FromSeconds(serialSettings.DetectorAckTimeoutSeconds),
+                    serialSettings.DetectorRetryCount));
+            services.AddSingleton<TestOrchestrator>();
+            services.AddSingleton<ISmokeDeviceTestService>(sp =>
+                new SmokeDeviceTestService(
+                    sp.GetRequiredService<TestOrchestrator>(),
+                    sp.GetRequiredService<IG6TAdapter>(),
+                    sp.GetRequiredService<IDetectorAdapter>(),
+                    sp.GetRequiredService<ICameraPreviewAppService>(),
+                    sp.GetRequiredService<ILogger<SmokeDeviceTestService>>(),
+                    serialSettings.G6tBaudRate,
+                    serialSettings.DetectorBaudRate,
+                    TimeSpan.FromSeconds(testTimeouts.CommandAckTimeoutSeconds),
+                    TimeSpan.FromSeconds(serialSettings.DetectorAckTimeoutSeconds),
+                    TimeSpan.FromSeconds(testTimeouts.LedDetectTimeoutSeconds),
+                    TimeSpan.FromSeconds(testTimeouts.ButtonTestTimeoutSeconds),
+                    TimeSpan.FromMilliseconds(testTimeouts.LedDetectPollDelayMs)));
+
+            services.AddSingleton<ITestCaseProvider>(_ =>
+                new JsonTestCaseProvider(Path.Combine(baseDirectory, "config")));
+            services.AddSingleton<Presentation.Forms.Mainform>();
+
+            using var serviceProvider = services.BuildServiceProvider();
+            var mainForm = serviceProvider.GetRequiredService<Presentation.Forms.Mainform>();
+            System.Windows.Forms.Application.Run(mainForm);
         }
 
-        private static CameraConfig LoadCameraConfig()
+        private static IConfiguration BuildConfiguration(string baseDirectory)
         {
-            var configPath = Path.Combine(AppContext.BaseDirectory, "config", "camera.json");
+            return new ConfigurationBuilder()
+                .SetBasePath(baseDirectory)
+                .AddJsonFile(Path.Combine("config", "appsettings.json"), optional: false, reloadOnChange: false)
+                .Build();
+        }
+
+        private static CameraConfig LoadCameraConfig(string baseDirectory)
+        {
+            var configPath = Path.Combine(baseDirectory, "config", "camera.json");
             if (!File.Exists(configPath))
             {
                 throw new FileNotFoundException($"Không tìm thấy file cấu hình camera: {configPath}");
@@ -59,3 +115,4 @@ namespace HardwareTestApp
         }
     }
 }
+

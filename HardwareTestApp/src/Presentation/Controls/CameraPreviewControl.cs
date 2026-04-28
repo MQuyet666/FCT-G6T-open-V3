@@ -1,22 +1,22 @@
-﻿// Presentation/Controls/CameraPreviewControl.cs
+// Presentation/Controls/CameraPreviewControl.cs
 using System.Collections.Concurrent;
-using HardwareTestApp.src.Application.Interfaces;
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Application.Interfaces;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Presentation.Controls;
+namespace FCT.G6T.Presentation.Controls;
 
 public partial class CameraPreviewControl : UserControl
 {
     private readonly ICameraPreviewAppService _camera;
     private readonly ConcurrentQueue<Bitmap> _frameBuffer = new();
     private Bitmap? _previousFrame;
-    private PictureBox pictureBox;
+    private PictureBox pictureBox = null!;
     private Size _latestFrameSize;
     private Rectangle _roi1SourceRect;
     private Color _roi1Color = Color.Red;
     private bool _roi1Customized;
 
-    // Inject interface — không new trực tiếp adapter
+    // Inject interface � kh�ng new tr?c ti?p adapter
     public CameraPreviewControl(ICameraPreviewAppService camera)
     {
         InitializeComponent();
@@ -37,7 +37,7 @@ public partial class CameraPreviewControl : UserControl
     {
         if (sourceRect.Width <= 0 || sourceRect.Height <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(sourceRect), "ROI1 phải có kích thước > 0.");
+            throw new ArgumentOutOfRangeException(nameof(sourceRect), "ROI1 ph?i c� k�ch thu?c > 0.");
         }
 
         _roi1SourceRect = sourceRect;
@@ -58,18 +58,18 @@ public partial class CameraPreviewControl : UserControl
 
     public void StartPreview()
     {
-        _camera.FrameReady += OnFrameReady;   // đăng ký event
+        _camera.FrameReady += OnFrameReady;   // dang k� event
         _camera.StartPreview();
     }
 
     public void StopPreview()
     {
-        _camera.FrameReady -= OnFrameReady;   // hủy đăng ký trước
+        _camera.FrameReady -= OnFrameReady;   // h?y dang k� tru?c
         _camera.StopPreview();
     }
 
-    // ⚠️ Event này fire từ background thread → bắt buộc Invoke
-    private void OnFrameReady(object sender, FrameReadyEventArgs e)
+    // ?? Event n�y fire t? background thread ? b?t bu?c Invoke
+    private void OnFrameReady(object? sender, FrameReadyEventArgs e)
     {
         _frameBuffer.Enqueue(e.Frame);
         while (_frameBuffer.Count > 3 && _frameBuffer.TryDequeue(out var overflowFrame))
@@ -112,10 +112,10 @@ public partial class CameraPreviewControl : UserControl
 
         _roi1Color = IsLedDetectedInRoi(newFrame, _roi1SourceRect) ? Color.Lime : Color.Red;
 
-        pictureBox.Image = newFrame;   // gán frame mới
+        pictureBox.Image = newFrame;   // g�n frame m?i
         pictureBox.Invalidate();
 
-        // ⚠️ Dispose frame cũ — nếu không sẽ memory leak
+        // ?? Dispose frame cu � n?u kh�ng s? memory leak
         _previousFrame?.Dispose();
         _previousFrame = newFrame;
     }
@@ -223,7 +223,7 @@ public partial class CameraPreviewControl : UserControl
         return new Rectangle(roiX, roiY, roiWidth, roiHeight);
     }
 
-    // Khi form đóng → dọn dẹp
+    // Khi form d�ng ? d?n d?p
     protected override void OnHandleDestroyed(EventArgs e)
     {
         StopPreview();

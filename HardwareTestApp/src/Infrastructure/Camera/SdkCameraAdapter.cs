@@ -1,66 +1,100 @@
+using System.Collections.Concurrent;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using DVPCameraType;
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Infrastructure.Camera;
+namespace FCT.G6T.Infrastructure.Camera;
 
 public class SdkCameraAdapter : ICameraService, IDisposable
 {
+    private readonly TimeSpan _cameraRetryInterval;
+    private readonly int _frameBufferSize;
+
     public event EventHandler<FrameReadyEventArgs>? FrameReady;
 
     private readonly object _sync = new();
+    private readonly ConcurrentQueue<Bitmap> _frameBuffer = new();
     private DVPCamera.dvpStreamCallback? _streamCallback;
+    private CancellationTokenSource? _startPreviewCts;
+    private Task? _startPreviewTask;
 
     private uint _handle;
     private Bitmap? _latestFrame;
 
     public bool IsRunning { get; private set; }
 
+    public SdkCameraAdapter(TimeSpan cameraRetryInterval, int frameBufferSize)
+    {
+        _cameraRetryInterval = cameraRetryInterval;
+        _frameBufferSize = Math.Max(1, frameBufferSize);
+    }
+
     public void StartPreview(CameraConfig config)
     {
-        if (IsRunning)
+        if (IsRunning || (_startPreviewTask is not null && !_startPreviewTask.IsCompleted))
         {
             return;
         }
 
-        uint cameraCount = 0;
-        var refreshStatus = DVPCamera.dvpRefresh(ref cameraCount);
-        EnsureOk(refreshStatus, "Không thể refresh danh sách camera SDK.");
+        _startPreviewCts = new CancellationTokenSource();
+        _startPreviewTask = Task.Run(() => WaitForCameraAndStartAsync(config, _startPreviewCts.Token));
+    }
 
-        if (cameraCount == 0)
+    private async Task WaitForCameraAndStartAsync(CameraConfig config, CancellationToken ct)
+    {
+        try
         {
-            throw new InvalidOperationException("Không tìm thấy camera SDK.");
-        }
+            uint cameraCount = 0;
 
-        if (config.DeviceIndex < 0 || config.DeviceIndex >= cameraCount)
+            while (!ct.IsCancellationRequested)
+            {
+                var refreshStatus = DVPCamera.dvpRefresh(ref cameraCount);
+                EnsureOk(refreshStatus, "Không thể refresh danh sách camera SDK.");
+
+                if (cameraCount == 0)
+                {
+                    await Task.Delay(_cameraRetryInterval, ct).ConfigureAwait(false);
+                    continue;
+                }
+
+                if (config.DeviceIndex < 0 || config.DeviceIndex >= cameraCount)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(config.DeviceIndex), $"DeviceIndex hợp lệ từ 0..{cameraCount - 1}.");
+                }
+
+                ct.ThrowIfCancellationRequested();
+
+                var openStatus = DVPCamera.dvpOpen((uint)config.DeviceIndex, dvpOpenMode.OPEN_NORMAL, ref _handle);
+                EnsureOk(openStatus, $"Không thể mở camera SDK với DeviceIndex={config.DeviceIndex}.");
+
+                var targetFormatStatus = DVPCamera.dvpSetTargetFormat(_handle, dvpStreamFormat.S_BGR24);
+                EnsureOk(targetFormatStatus, "Không thể set target format BGR24.");
+
+                _streamCallback = OnStreamArrived;
+                var registerStatus = DVPCamera.dvpRegisterStreamCallback(_handle, _streamCallback, dvpStreamEvent.STREAM_EVENT_PROCESSED, IntPtr.Zero);
+                EnsureOk(registerStatus, "Không thể đăng ký callback frame camera.");
+
+                var startStatus = DVPCamera.dvpStart(_handle);
+                EnsureOk(startStatus, "Không thể start luồng camera SDK.");
+
+                IsRunning = true;
+                return;
+            }
+        }
+        catch (OperationCanceledException)
         {
-            throw new ArgumentOutOfRangeException(nameof(config.DeviceIndex), $"DeviceIndex hợp lệ từ 0..{cameraCount - 1}.");
         }
-
-        var openStatus = DVPCamera.dvpOpen((uint)config.DeviceIndex, dvpOpenMode.OPEN_NORMAL, ref _handle);
-        EnsureOk(openStatus, $"Không thể mở camera SDK với DeviceIndex={config.DeviceIndex}.");
-
-        var targetFormatStatus = DVPCamera.dvpSetTargetFormat(_handle, dvpStreamFormat.S_BGR24);
-        EnsureOk(targetFormatStatus, "Không thể set target format BGR24.");
-
-        _streamCallback = OnStreamArrived;
-        var registerStatus = DVPCamera.dvpRegisterStreamCallback(_handle, _streamCallback, dvpStreamEvent.STREAM_EVENT_PROCESSED, IntPtr.Zero);
-        EnsureOk(registerStatus, "Không thể đăng ký callback frame camera.");
-
-        var startStatus = DVPCamera.dvpStart(_handle);
-        EnsureOk(startStatus, "Không thể start luồng camera SDK.");
-
-        IsRunning = true;
     }
 
     public void StopPreview()
     {
-        if (!IsRunning)
-        {
-            return;
-        }
+        var startPreviewCts = _startPreviewCts;
+        _startPreviewCts = null;
+        startPreviewCts?.Cancel();
+        startPreviewCts?.Dispose();
+        _startPreviewTask = null;
 
         if (_handle != 0)
         {
@@ -78,6 +112,11 @@ public class SdkCameraAdapter : ICameraService, IDisposable
         {
             _latestFrame?.Dispose();
             _latestFrame = null;
+        }
+
+        while (_frameBuffer.TryDequeue(out var frame))
+        {
+            frame.Dispose();
         }
 
         _streamCallback = null;
@@ -111,19 +150,42 @@ public class SdkCameraAdapter : ICameraService, IDisposable
 
         var bitmap = ConvertBgr24ToBitmap(sourceBuffer, sourceFrame.iWidth, sourceFrame.iHeight);
 
+        EnqueueFrame(bitmap);
+
+        return 1;
+    }
+
+    private void EnqueueFrame(Bitmap frame)
+    {
+        _frameBuffer.Enqueue(frame);
+        while (_frameBuffer.Count > _frameBufferSize && _frameBuffer.TryDequeue(out var overflow))
+        {
+            overflow.Dispose();
+        }
+
+        Bitmap? latest = null;
+        while (_frameBuffer.TryDequeue(out var current))
+        {
+            latest?.Dispose();
+            latest = current;
+        }
+
+        if (latest is null)
+        {
+            return;
+        }
+
         lock (_sync)
         {
             _latestFrame?.Dispose();
-            _latestFrame = new Bitmap(bitmap);
+            _latestFrame = new Bitmap(latest);
         }
 
         FrameReady?.Invoke(this, new FrameReadyEventArgs
         {
-            Frame = bitmap,
+            Frame = latest,
             Timestamp = DateTime.Now,
         });
-
-        return 1;
     }
 
     private static Bitmap ConvertBgr24ToBitmap(IntPtr sourceBuffer, int width, int height)
@@ -164,3 +226,4 @@ public class SdkCameraAdapter : ICameraService, IDisposable
         StopPreview();
     }
 }
+

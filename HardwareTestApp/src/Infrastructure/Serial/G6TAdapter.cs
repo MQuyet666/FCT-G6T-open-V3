@@ -1,16 +1,16 @@
 using System.IO;
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
-using HardwareTestApp.src.HAL;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
+using FCT.G6T.HAL;
 using Microsoft.Extensions.Logging;
 
-namespace HardwareTestApp.src.Infrastructure.Serial;
+namespace FCT.G6T.Infrastructure.Serial;
 
 public class G6TAdapter : IG6TAdapter
 {
     private const int DefaultG6tBaudRate = 9600;
-    private const int FrameRetryCount = 1;
-    private static readonly TimeSpan FrameAckTimeout = TimeSpan.FromSeconds(3);
+    private readonly int _frameRetryCount;
+    private readonly TimeSpan _frameAckTimeout;
     private static readonly byte[] FrameHeader = { 0x1F, 0x2F, 0x3F, 0xFF };
     private const byte DirSend = 0x00;
     private const byte DirReceive = 0x01;
@@ -22,10 +22,12 @@ public class G6TAdapter : IG6TAdapter
     public bool IsConnected => _port.IsOpen;
     public string ConnectedComPort => _connectedComPort;
 
-    public G6TAdapter(ISerialPortWrapper port, ILogger<G6TAdapter> logger)
+    public G6TAdapter(ISerialPortWrapper port, ILogger<G6TAdapter> logger, TimeSpan frameAckTimeout, int frameRetryCount)
     {
         _port = port;
         _logger = logger;
+        _frameAckTimeout = frameAckTimeout;
+        _frameRetryCount = Math.Max(0, frameRetryCount);
     }
 
     public void Connect(string comPort, int baudRate)
@@ -57,13 +59,35 @@ public class G6TAdapter : IG6TAdapter
         _connectedComPort = string.Empty;
     }
 
+    private static readonly byte[] UART_ON_DATA = { 0x05, 0x01 };
+    private static readonly byte[] UART_OFF_DATA = { 0x05, 0x00 };
+
+    public Task<G6TResponse> UartOnAsync(CancellationToken ct = default)
+    {
+        var command = new G6TCommand
+        {
+            CommandId = G6TCommandId.RelayOutput,
+            Data = UART_ON_DATA
+        };
+        return SendCommandAsync(command, ct);
+    }
+
+    public Task<G6TResponse> UartOffAsync(CancellationToken ct = default)
+    {
+        var command = new G6TCommand
+        {
+            CommandId = G6TCommandId.RelayOutput,
+            Data = UART_OFF_DATA
+        };
+        return SendCommandAsync(command, ct);
+    }
     public async Task<G6TResponse> SendCommandAsync(G6TCommand command, CancellationToken ct = default)
     {
         var frame = BuildFrame(command);
         var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
 
         Exception? lastException = null;
-        for (var attempt = 1; attempt <= FrameRetryCount + 1; attempt++)
+        for (var attempt = 1; attempt <= _frameRetryCount + 1; attempt++)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -72,7 +96,7 @@ public class G6TAdapter : IG6TAdapter
             await _port.WriteAsync(frame, CancellationToken.None).ConfigureAwait(false);
 
             using var attemptCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            attemptCts.CancelAfter(FrameAckTimeout);
+            attemptCts.CancelAfter(_frameAckTimeout);
 
             while (!attemptCts.IsCancellationRequested)
             {
@@ -125,6 +149,7 @@ public class G6TAdapter : IG6TAdapter
         body.AddRange(FrameHeader);
         body.Add(DirSend);
         body.Add((byte)command.CommandId);
+        // For RelayOutput command, include length/data as provided in command.Data
         body.AddRange(command.Data);
 
         var bcc = CalcBcc(body.ToArray());
@@ -191,3 +216,4 @@ public class G6TAdapter : IG6TAdapter
         _port.Dispose();
     }
 }
+

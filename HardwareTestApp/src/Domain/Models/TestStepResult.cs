@@ -1,4 +1,4 @@
-namespace HardwareTestApp.src.Domain.Models;
+namespace FCT.G6T.Domain.Models;
 
 public class TestStepResult
 {
@@ -6,3 +6,4 @@ public class TestStepResult
     public bool IsPassed { get; init; }
     public string Message { get; init; } = string.Empty;
 }
+

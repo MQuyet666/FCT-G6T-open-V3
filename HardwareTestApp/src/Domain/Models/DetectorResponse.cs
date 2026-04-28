@@ -1,4 +1,4 @@
-namespace HardwareTestApp.src.Domain.Models;
+namespace FCT.G6T.Domain.Models;
 
 public class DetectorResponse
 {
@@ -8,3 +8,4 @@ public class DetectorResponse
     public string Payload { get; init; } = string.Empty;
     public string Value { get; init; } = string.Empty;
 }
+

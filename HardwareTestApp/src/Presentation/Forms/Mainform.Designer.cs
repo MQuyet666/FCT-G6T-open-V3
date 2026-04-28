@@ -1,4 +1,4 @@
-﻿namespace HardwareTestApp.src.Presentation.Forms
+namespace FCT.G6T.Presentation.Forms
 {
     partial class Mainform
     {
@@ -95,7 +95,7 @@
             // 
             // cbG6tCom
             // 
-            cbG6tCom.Location = new Point(845, 18);
+            cbG6tCom.Location = new Point(904, 19);
             cbG6tCom.Name = "cbG6tCom";
             cbG6tCom.Size = new Size(99, 28);
             cbG6tCom.TabIndex = 7;
@@ -253,10 +253,12 @@
             // radioButton2
             // 
             radioButton2.AutoSize = true;
+            radioButton2.Checked = true;
             radioButton2.Location = new Point(20, 36);
             radioButton2.Name = "radioButton2";
             radioButton2.Size = new Size(74, 24);
             radioButton2.TabIndex = 17;
+            radioButton2.TabStop = true;
             radioButton2.Text = "Smock";
             radioButton2.UseVisualStyleBackColor = true;
             radioButton2.CheckedChanged += radioButton2_CheckedChanged;
@@ -264,12 +266,10 @@
             // radioButton3
             // 
             radioButton3.AutoSize = true;
-            radioButton3.Checked = true;
             radioButton3.Location = new Point(119, 36);
             radioButton3.Name = "radioButton3";
             radioButton3.Size = new Size(70, 24);
             radioButton3.TabIndex = 18;
-            radioButton3.TabStop = true;
             radioButton3.Text = "Heate";
             radioButton3.UseVisualStyleBackColor = true;
             radioButton3.CheckedChanged += radioButton3_CheckedChanged;
@@ -327,9 +327,9 @@
             // 
             // button1
             // 
-            button1.Location = new Point(745, 16);
+            button1.Location = new Point(745, 19);
             button1.Name = "button1";
-            button1.Size = new Size(94, 29);
+            button1.Size = new Size(122, 26);
             button1.TabIndex = 22;
             button1.Text = "QR Connect";
             button1.UseVisualStyleBackColor = true;
@@ -337,11 +337,11 @@
             // 
             // button2
             // 
-            button2.Location = new Point(950, 16);
+            button2.Location = new Point(1009, 18);
             button2.Name = "button2";
-            button2.Size = new Size(94, 29);
+            button2.Size = new Size(122, 28);
             button2.TabIndex = 23;
-            button2.Text = "Connect";
+            button2.Text = "G6T Connect";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
@@ -349,7 +349,7 @@
             // 
             button3.Location = new Point(744, 52);
             button3.Name = "button3";
-            button3.Size = new Size(94, 29);
+            button3.Size = new Size(123, 29);
             button3.TabIndex = 24;
             button3.Text = "DT Connect";
             button3.UseVisualStyleBackColor = true;
@@ -357,7 +357,7 @@
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(1050, 16);
+            btnClear.Location = new Point(1145, 588);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(94, 29);
             btnClear.TabIndex = 25;
@@ -395,7 +395,7 @@
             PerformLayout();
         }
 
-        // helper (Designer vẫn OK)
+        // helper (Designer v?n OK)
         private void AddTestRow(string text, int index, Panel led)
         {
             Label lbl = new Label();

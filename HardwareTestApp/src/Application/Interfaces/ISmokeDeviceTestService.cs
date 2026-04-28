@@ -1,6 +1,6 @@
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Application.Interfaces;
+namespace FCT.G6T.Application.Interfaces;
 
 public interface ISmokeDeviceTestService
 {
@@ -19,3 +19,4 @@ public interface ISmokeDeviceTestService
     Task SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default);
     Task PrepareOnConnectAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default);
 }
+

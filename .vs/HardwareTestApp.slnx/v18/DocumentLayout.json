@@ -3,32 +3,80 @@
   "WorkspaceRootPath": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\infrastructure\\camera\\sdkcameraadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\infrastructure\\camera\\sdkcameraadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tcommandid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tcommandid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\infrastructure\\serial\\g6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\infrastructure\\serial\\g6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\hardwaretestapp\\src\\presentation\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\presentation\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\presentation\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\presentation\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\presentation\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\presentation\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\presentation\\forms\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\presentation\\forms\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\services\\smokedevicetestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\services\\smokedevicetestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\hal\\serialportwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\hal\\serialportwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\infrastructure\\serial\\g6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\infrastructure\\serial\\g6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\hardwaretestapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\hardwaretestapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\rule.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\rule.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\hal\\iserialportwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\hal\\iserialportwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\interfaces\\idetectoradapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\interfaces\\idetectoradapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\interfaces\\icameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\interfaces\\icameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\interfaces\\ig6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\interfaces\\ig6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\services\\testorchestrator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\services\\testorchestrator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\teststepresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\teststepresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\infrastructure\\camera\\sdkcameraadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\infrastructure\\camera\\sdkcameraadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\services\\smokedevicetestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\services\\smokedevicetestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tpowerstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -39,28 +87,12 @@
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tcalibpinstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\interfaces\\ismokedevicetestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\interfaces\\ismokedevicetestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\services\\testorchestrator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\services\\testorchestrator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\testcase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\testcase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\presentation\\forms\\mainform.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\presentation\\forms\\mainform.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\services\\testcaseprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\services\\testcaseprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\application\\interfaces\\itestcaseprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -87,28 +119,12 @@
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\application\\interfaces\\icamerapreviewappservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\config\\camera.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\config\\camera.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\cameraconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\cameraconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\rule.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\rule.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\.github\\copilot-instructions.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
@@ -123,32 +139,12 @@
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\framereadyeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\interfaces\\icameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\interfaces\\icameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\hardwaretestapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\hardwaretestapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tcommandid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tcommandid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\g6tresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\g6tresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\interfaces\\ig6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\interfaces\\ig6tadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\hal\\iserialportwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\hal\\iserialportwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1433102665\\IG6tFrameCodec.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -168,86 +164,30 @@
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\infrastructure\\serial\\comportprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\teststepresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\teststepresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\models\\detectorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\models\\detectorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\domain\\interfaces\\idetectoradapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\domain\\interfaces\\idetectoradapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|d:\\new folder\\fct-g6t-open\\v3\\fct-g6t-open-v3\\hardwaretestapp\\src\\infrastructure\\serial\\detectoradapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D0CEDBA4-F425-5CD6-FC5B-48F33534355E}|HardwareTestApp\\HardwareTestApp.csproj|solutionrelative:hardwaretestapp\\src\\infrastructure\\serial\\detectoradapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\config\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:config\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 0,
+      "Orientation": 1,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 1149,
-          "SelectedChildIndex": 5,
+          "DockedHeight": 464,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 45,
-              "Title": "DetectorAdapter.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T09:06:20.615Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 44,
-              "Title": "IDetectorAdapter.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T09:06:17.095Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
-              "Title": "DetectorResponse.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T09:06:03.823Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "SmokeDeviceTestService.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T02:34:50.586Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "Mainform.cs [Design]",
               "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
               "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
@@ -259,483 +199,158 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "SdkCameraAdapter.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
-              "ViewState": "AgIAAIkAAAAAAAAAAAAqwJ0AAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T02:01:01.011Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Mainform.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
-              "ViewState": "AgIAAA8BAAAAAAAAAAA9wCIAAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T02:24:59.68Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Mainform.Designer.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
-              "ViewState": "AgIAAFMBAAAAAAAAAAAAwIIAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T02:44:10.539Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "ISmokeDeviceTestService.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T02:34:50.412Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "G6TAdapter.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAWwD4AAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:53.42Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "SerialPortWrapper.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAQwMwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:53.529Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "G6TPowerState.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T04:30:05.093Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "G6TCalibPinState.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T04:30:05.008Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "TestOrchestrator.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAuwDUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:53.681Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "G6TCommand.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:28.416Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "TestCase.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T03:48:12.697Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "IComPortProvider.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T01:36:04.736Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "ComPortProvider.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T01:36:04.845Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "TestStepResult.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-20T02:34:50.514Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Mainform.resx",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.resx",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.resx",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.resx",
-              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.resx",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2026-04-20T01:27:25.035Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "IG6tFrameCodec.cs",
-              "DocumentMoniker": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1433102665\\IG6tFrameCodec.cs",
-              "ToolTip": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1433102665\\IG6tFrameCodec.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:42:01.757Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 38,
-              "Title": "G6tFrame.cs",
-              "DocumentMoniker": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1723715449\\G6tFrame.cs",
-              "ToolTip": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1723715449\\G6tFrame.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:42:01.85Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "G6tFrameCodec.cs",
-              "DocumentMoniker": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\-629198507\\G6tFrameCodec.cs",
-              "ToolTip": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\-629198507\\G6tFrameCodec.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:42:02.06Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "ISerialPortWrapper.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAIBIwAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:53.779Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "G6TStatus.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:28.06Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "G6TCommandId.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:28.167Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "G6TResponse.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAABQwAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:28.321Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "IG6TAdapter.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAIBIwAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T05:41:28.51Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "TestCaseProvider.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\TestCaseProvider.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\TestCaseProvider.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\TestCaseProvider.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\TestCaseProvider.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T03:48:33.381Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ITestCaseProvider.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T03:48:20.702Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "CameraPreviewControl.cs [Design]",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs [Design]",
-              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T03:40:57.476Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "CameraPreviewControl.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "ViewState": "AgIAAG8AAAAAAAAAAIBJwAcAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T04:38:48.166Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "OpenCvCameraAdapter.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T04:38:00.455Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "CameraPreviewControl.cs [Design]",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
-              "ToolTip": "E:\\Work\\C#\\New folder\\.vs\\HardwareTestApp\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T16:38:08.343Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "ICameraPreviewAppService.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAgAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T16:33:55.055Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "camera.json",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\config\\camera.json",
-              "RelativeDocumentMoniker": "HardwareTestApp\\config\\camera.json",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\config\\camera.json",
-              "RelativeToolTip": "HardwareTestApp\\config\\camera.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-18T16:35:34.641Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Program.cs",
               "RelativeDocumentMoniker": "HardwareTestApp\\Program.cs",
               "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Program.cs",
               "RelativeToolTip": "HardwareTestApp\\Program.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAABBwCgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADIAAAAAAAAAAAAAAHUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-18T02:26:12.339Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "README.md",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\README.md",
-              "RelativeDocumentMoniker": "HardwareTestApp\\README.md",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\README.md",
-              "RelativeToolTip": "HardwareTestApp\\README.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-04-19T02:11:12.282Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "CameraConfig.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T16:09:33.073Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "README.md [Preview]",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\README.md",
-              "RelativeDocumentMoniker": "HardwareTestApp\\README.md",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\README.md [Preview]",
-              "RelativeToolTip": "HardwareTestApp\\README.md [Preview]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-04-19T02:11:16.647Z",
-              "EditorCaption": " [Preview]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 9,
               "Title": "Rule.md",
               "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Rule.md",
               "RelativeDocumentMoniker": "HardwareTestApp\\Rule.md",
               "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Rule.md",
               "RelativeToolTip": "HardwareTestApp\\Rule.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
               "WhenOpened": "2026-04-18T16:31:36.269Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "CameraPreviewAppService.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAFAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "Mainform.Designer.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.Designer.cs",
+              "ViewState": "AgIAAAoBAAAAAAAAAAAAwBMBAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T16:34:02.735Z"
+              "WhenOpened": "2026-04-18T02:44:10.539Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "FrameReadyEventArgs.cs",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
-              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
-              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "G6TAdapter.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Serial\\G6TAdapter.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwAkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T16:33:47.567Z"
+              "WhenOpened": "2026-04-19T05:41:53.42Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "copilot-instructions.md",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\.github\\copilot-instructions.md",
-              "RelativeDocumentMoniker": ".github\\copilot-instructions.md",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\.github\\copilot-instructions.md",
-              "RelativeToolTip": ".github\\copilot-instructions.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAQAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "G6TCommandId.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TCommandId.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:28.167Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "README.md",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\README.md",
+              "RelativeDocumentMoniker": "HardwareTestApp\\README.md",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\README.md",
+              "RelativeToolTip": "HardwareTestApp\\README.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAH8DAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-04-18T16:32:29.528Z"
+              "WhenOpened": "2026-04-19T02:11:12.282Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 5,
+              "Title": "Mainform.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Forms\\Mainform.cs",
+              "ViewState": "AgIAADQCAAAAAAAAAAAUwEICAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T02:24:59.68Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "HardwareTestApp.csproj",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\HardwareTestApp.csproj",
+              "RelativeDocumentMoniker": "HardwareTestApp\\HardwareTestApp.csproj",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\HardwareTestApp.csproj",
+              "RelativeToolTip": "HardwareTestApp\\HardwareTestApp.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAhwD0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-18T02:20:49.083Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SerialPortWrapper.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAuwHIAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:53.529Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "TestOrchestrator.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\TestOrchestrator.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAkwDUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:53.681Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\config\\appsettings.json",
+              "RelativeDocumentMoniker": "config\\appsettings.json",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\config\\appsettings.json",
+              "RelativeToolTip": "config\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-28T03:00:43.301Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ISerialPortWrapper.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\HAL\\ISerialPortWrapper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:53.779Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "ICameraService.cs",
               "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\ICameraService.cs",
               "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Interfaces\\ICameraService.cs",
@@ -747,21 +362,374 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IDetectorAdapter.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Interfaces\\IDetectorAdapter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-21T06:51:17.905Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IG6TAdapter.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Interfaces\\IG6TAdapter.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:28.51Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "G6TCommand.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:28.416Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "TestStepResult.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\TestStepResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T02:34:50.514Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SdkCameraAdapter.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Camera\\SdkCameraAdapter.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAgwE8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T02:01:01.011Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "DetectorAdapter.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Serial\\DetectorAdapter.cs",
+              "ViewState": "AgIAAIgAAAAAAAAAAIBJwOUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T09:06:20.615Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "SmokeDeviceTestService.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\SmokeDeviceTestService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAD4v8cBAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T02:34:50.586Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "ISmokeDeviceTestService.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\ISmokeDeviceTestService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T02:34:50.412Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "DetectorResponse.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\DetectorResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T09:06:03.823Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "G6TPowerState.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TPowerState.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T04:30:05.093Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "G6TCalibPinState.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TCalibPinState.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T04:30:05.008Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "TestCase.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\TestCase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T03:48:12.697Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "IComPortProvider.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\IComPortProvider.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T01:36:04.736Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "ComPortProvider.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Serial\\ComPortProvider.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T01:36:04.845Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "IG6tFrameCodec.cs",
+              "DocumentMoniker": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1433102665\\IG6tFrameCodec.cs",
+              "ToolTip": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1433102665\\IG6tFrameCodec.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:42:01.757Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "G6tFrame.cs",
+              "DocumentMoniker": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1723715449\\G6tFrame.cs",
+              "ToolTip": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1723715449\\G6tFrame.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:42:01.85Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "G6tFrameCodec.cs",
+              "DocumentMoniker": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\-629198507\\G6tFrameCodec.cs",
+              "ToolTip": "C:\\Users\\Quyet\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\-629198507\\G6tFrameCodec.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:42:02.06Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "G6TStatus.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:28.06Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "G6TResponse.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\G6TResponse.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAABQwAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T05:41:28.321Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ITestCaseProvider.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\ITestCaseProvider.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T03:48:20.702Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "CameraPreviewControl.cs [Design]",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs [Design]",
+              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-19T03:40:57.476Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "CameraPreviewControl.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "ViewState": "AgIAAG8AAAAAAAAAAIBJwAcAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T04:38:48.166Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "OpenCvCameraAdapter.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Infrastructure\\Camera\\OpenCvCameraAdapter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T04:38:00.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "CameraPreviewControl.cs [Design]",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs",
+              "ToolTip": "E:\\Work\\C#\\New folder\\.vs\\HardwareTestApp\\HardwareTestApp\\src\\Presentation\\Controls\\CameraPreviewControl.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T16:38:08.343Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "ICameraPreviewAppService.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Interfaces\\ICameraPreviewAppService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T16:33:55.055Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "camera.json",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\config\\camera.json",
+              "RelativeDocumentMoniker": "HardwareTestApp\\config\\camera.json",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\config\\camera.json",
+              "RelativeToolTip": "HardwareTestApp\\config\\camera.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-18T16:35:34.641Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "CameraConfig.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\CameraConfig.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T16:09:33.073Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "CameraPreviewAppService.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Application\\Services\\CameraPreviewAppService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T16:34:02.735Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "FrameReadyEventArgs.cs",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
+              "RelativeDocumentMoniker": "HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
+              "RelativeToolTip": "HardwareTestApp\\src\\Domain\\Models\\FrameReadyEventArgs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T16:33:47.567Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 31,
-              "Title": "HardwareTestApp.csproj",
-              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\HardwareTestApp.csproj",
-              "RelativeDocumentMoniker": "HardwareTestApp\\HardwareTestApp.csproj",
-              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\HardwareTestApp.csproj",
-              "RelativeToolTip": "HardwareTestApp\\HardwareTestApp.csproj",
-              "ViewState": "AgIAABgAAAAAAAAAAABBwCkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-04-18T02:20:49.083Z",
-              "EditorCaption": ""
+              "Title": "copilot-instructions.md",
+              "DocumentMoniker": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\.github\\copilot-instructions.md",
+              "RelativeDocumentMoniker": ".github\\copilot-instructions.md",
+              "ToolTip": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\.github\\copilot-instructions.md",
+              "RelativeToolTip": ".github\\copilot-instructions.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAQAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-04-18T16:32:29.528Z"
             }
           ]
         },
         {
-          "DockedWidth": 523,
+          "DockedHeight": 96,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:7:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 306,
           "SelectedChildIndex": -1,
           "Children": [
             {

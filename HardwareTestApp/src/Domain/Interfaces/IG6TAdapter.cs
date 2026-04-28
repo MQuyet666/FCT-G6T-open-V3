@@ -1,6 +1,6 @@
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Domain.Interfaces;
+namespace FCT.G6T.Domain.Interfaces;
 
 public interface IG6TAdapter : IDisposable
 {
@@ -10,3 +10,4 @@ public interface IG6TAdapter : IDisposable
     bool IsConnected { get; }
     string ConnectedComPort { get; }
 }
+

@@ -1,8 +1,8 @@
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
 using Microsoft.Extensions.Logging;
 
-namespace HardwareTestApp.src.Application.Services;
+namespace FCT.G6T.Application.Services;
 
 public class TestOrchestrator
 {
@@ -104,3 +104,4 @@ public class TestOrchestrator
         }, ct);
     }
 }
+

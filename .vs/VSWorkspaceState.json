@@ -1,6 +1,17 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\HardwareTestApp",
+    "\\HardwareTestApp\\src",
+    "\\HardwareTestApp\\src\\Application",
+    "\\HardwareTestApp\\src\\Application\\Interfaces",
+    "\\HardwareTestApp\\src\\Domain",
+    "\\HardwareTestApp\\src\\Domain\\Interfaces",
+    "\\HardwareTestApp\\src\\Domain\\Models",
+    "\\HardwareTestApp\\src\\HAL",
+    "\\HardwareTestApp\\src\\Infrastructure",
+    "\\HardwareTestApp\\src\\Infrastructure\\Serial"
   ],
+  "SelectedNode": "\\HardwareTestApp\\src\\HAL\\SerialPortWrapper.cs",
   "PreviewInSolutionExplorer": false
 }

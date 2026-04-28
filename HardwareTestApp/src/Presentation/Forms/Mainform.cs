@@ -1,38 +1,40 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using HardwareTestApp.src.Application.Interfaces;
-using HardwareTestApp.src.Application.Services;
-using HardwareTestApp.src.Domain.Models;
-using HardwareTestApp.src.Presentation.Controls;
+using FCT.G6T.Application.Interfaces;
+using FCT.G6T.Presentation.Controls;
 
-namespace HardwareTestApp.src.Presentation.Forms
+namespace FCT.G6T.Presentation.Forms
 {
     public partial class Mainform : Form
     {
         private readonly ICameraPreviewAppService _cameraPreviewService;
         private readonly IComPortProvider _comPortProvider;
         private readonly ISmokeDeviceTestService _smokeDeviceTestService;
+        private readonly ITestCaseProvider _testCaseProvider;
         private CameraPreviewControl _cameraPreview;
-        private readonly ITestCaseProvider _testCaseProvider = new TestCaseProvider();
         private readonly Dictionary<string, Label> _testStatusLabels = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Panel> _testStatusLeds = new(StringComparer.OrdinalIgnoreCase);
-        private string _currentDeviceType = "smock";
+        private string _currentDeviceType = "smoke";
         private bool _isRunningTest;
         private bool _powerAckPassed;
+        private bool _isQrConnected;
+        private CancellationTokenSource? _testCts;
 
         public Mainform(
             ICameraPreviewAppService cameraPreviewService,
             IComPortProvider comPortProvider,
-            ISmokeDeviceTestService smokeDeviceTestService)
+            ISmokeDeviceTestService smokeDeviceTestService,
+            ITestCaseProvider testCaseProvider)
         {
             InitializeComponent();
 
             _cameraPreviewService = cameraPreviewService;
             _comPortProvider = comPortProvider;
             _smokeDeviceTestService = smokeDeviceTestService;
+            _testCaseProvider = testCaseProvider;
 
             _cameraPreview = new CameraPreviewControl(_cameraPreviewService);
             _cameraPreview.Dock = DockStyle.Fill;
@@ -50,44 +52,49 @@ namespace HardwareTestApp.src.Presentation.Forms
         // ================= START BUTTON =================
         private async void btnStart_Click(object sender, EventArgs e)
         {
-            if (_isRunningTest)
-            {
-                return;
-            }
-
-            if (!_currentDeviceType.Equals("smock", StringComparison.OrdinalIgnoreCase))
-            {
-                AppendLog("Chỉ hỗ trợ flow START cho đầu báo khói (Smock).");
-                return;
-            }
-
-            if (cbG6tCom.SelectedItem is not string g6tComPort || string.IsNullOrWhiteSpace(g6tComPort))
-            {
-                AppendLog("Vui lòng chọn G6T COM trước khi chạy test.");
-                return;
-            }
-
-            if (cbDiCom.SelectedItem is not string detectorComPort || string.IsNullOrWhiteSpace(detectorComPort))
-            {
-                AppendLog("Vui lòng chọn DT COM trước khi chạy test.");
-                return;
-            }
-
             try
             {
+                if (_isRunningTest)
+                {
+                    return;
+                }
+
+                if (!_currentDeviceType.Equals("smoke", StringComparison.OrdinalIgnoreCase))
+                {
+                    AppendLog("Chi ho tro flow START cho dau bao khoi (Smoke).");
+                    return;
+                }
+
+                if (cbG6tCom.SelectedItem is not string g6tComPort || string.IsNullOrWhiteSpace(g6tComPort))
+                {
+                    AppendLog("Vui long chon G6T COM truoc khi chay test.");
+                    return;
+                }
+
+                if (cbDiCom.SelectedItem is not string detectorComPort || string.IsNullOrWhiteSpace(detectorComPort))
+                {
+                    AppendLog("Vui long chon DT COM truoc khi chay test.");
+                    return;
+                }
+
                 _isRunningTest = true;
                 btnStart.Enabled = false;
+                _testCts?.Cancel();
+                _testCts?.Dispose();
+                _testCts = new CancellationTokenSource();
+                var ct = _testCts.Token;
                 _cameraPreview.SetRoi1Detected(false);
                 // reset test result indicators to 'in progress' (gray)
                 SetTestRunning("LED Test");
                 SetTestRunning("Button Test");
+                SetTestRunning("Lora Test");
                 // reset ACK trackers
                 _powerAckPassed = false;
 
-                AppendLog("=== START TEST: SMOCK ===");
+                AppendLog("=== START TEST: SMOKE ===");
                 var roi1 = _cameraPreview.GetRoi1SourceRect();
                 var progress = new Progress<string>(HandleProgressLog);
-                var stepResults = await _smokeDeviceTestService.RunStartSequenceAsync(g6tComPort, detectorComPort, roi1, progress).ConfigureAwait(true);
+                var stepResults = await _smokeDeviceTestService.RunStartSequenceAsync(g6tComPort, detectorComPort, roi1, progress, ct).ConfigureAwait(true);
 
                 var allPassed = stepResults.All(step => step.IsPassed);
                 if (!allPassed)
@@ -95,20 +102,32 @@ namespace HardwareTestApp.src.Presentation.Forms
                     var firstFailedStep = stepResults.FirstOrDefault(step => !step.IsPassed);
                     if (firstFailedStep is not null)
                     {
-                        AppendLog($"[RESULT][FAIL] Bước lỗi: {firstFailedStep.StepName} - {ExtractFailReason(firstFailedStep.Message)}");
+                        AppendLog($"[RESULT][FAIL] Buoc loi: {firstFailedStep.StepName} - {ExtractFailReason(firstFailedStep.Message)}");
                     }
                 }
 
-                AppendLog(allPassed ? "=== TEST FLOW HOÀN TẤT ===" : "=== TEST FLOW DỪNG DO FAIL ===");
+                AppendLog(allPassed ? "=== TEST FLOW HOAN TAT ===" : "=== TEST FLOW DUNG DO FAIL ===");
                 // After UI shows final result, explicitly call Reset sequence to ensure TX occurs after result
                 try
                 {
                     await Task.Delay(200).ConfigureAwait(true); // give UI moment to render
-                    await _smokeDeviceTestService.SendResetAsync(g6tComPort, new Progress<string>(AppendLog));
+                    await _smokeDeviceTestService.SendResetAsync(g6tComPort, new Progress<string>(AppendLog), ct).ConfigureAwait(true);
                 }
-                catch (Exception ex)
+                catch (TimeoutException ex)
                 {
-                    AppendLog($"[ERROR] Gửi reset thất bại: {ex.Message}");
+                    AppendLog($"[ERROR] Gui reset that bai: {ex.Message}");
+                }
+                catch (InvalidOperationException ex)
+                {
+                    AppendLog($"[ERROR] Gui reset that bai: {ex.Message}");
+                }
+                catch (InvalidDataException ex)
+                {
+                    AppendLog($"[ERROR] Gui reset that bai: {ex.Message}");
+                }
+                catch (OperationCanceledException)
+                {
+                    AppendLog("[INFO] Test bi huy.");
                 }
             }
             catch (ArgumentException ex)
@@ -119,10 +138,16 @@ namespace HardwareTestApp.src.Presentation.Forms
             {
                 AppendLog($"[ERROR] {ex.Message}");
             }
+            catch (OperationCanceledException)
+            {
+                AppendLog("[INFO] Test bi huy.");
+            }
             finally
             {
                 _isRunningTest = false;
                 btnStart.Enabled = true;
+                _testCts?.Dispose();
+                _testCts = null;
             }
         }
 
@@ -132,10 +157,10 @@ namespace HardwareTestApp.src.Presentation.Forms
 
             _cameraPreview.StartPreview();
             //btnStart.Enabled = false;
-            //btnStop.Enabled = true;   // nếu có btnStop
+            //btnStop.Enabled = true;   // n?u c� btnStop
         }
 
-        // ================= STOP (nếu có btnStop) =================
+        // ================= STOP (n?u c� btnStop) =================
         //private void btnStop_Click(object sender, EventArgs e)
         //{
         //    _cameraPreview.StopPreview();
@@ -143,7 +168,7 @@ namespace HardwareTestApp.src.Presentation.Forms
         //    btnStop.Enabled = false;
         //}
 
-        private void Mainform_Shown(object sender, EventArgs e)
+        private void Mainform_Shown(object? sender, EventArgs e)
         {
             if (_cameraPreview is not null)
             {
@@ -177,7 +202,7 @@ namespace HardwareTestApp.src.Presentation.Forms
         {
             if (radioButton2.Checked)
             {
-                _currentDeviceType = "smock";
+                _currentDeviceType = "smoke";
                 ShowTestCasesForDevice(_currentDeviceType);
             }
         }
@@ -186,7 +211,7 @@ namespace HardwareTestApp.src.Presentation.Forms
         {
             if (radioButton3.Checked)
             {
-                _currentDeviceType = "heate";
+                _currentDeviceType = "heat";
                 ShowTestCasesForDevice(_currentDeviceType);
             }
         }
@@ -195,7 +220,7 @@ namespace HardwareTestApp.src.Presentation.Forms
         {
             if (radioButton4.Checked)
             {
-                _currentDeviceType = "bale";
+                _currentDeviceType = "bell";
                 ShowTestCasesForDevice(_currentDeviceType);
             }
         }
@@ -259,6 +284,9 @@ namespace HardwareTestApp.src.Presentation.Forms
         // ================= CLEANUP =================
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            _testCts?.Cancel();
+            _testCts?.Dispose();
+            _testCts = null;
             _cameraPreview?.StopPreview();
             (_cameraPreviewService as IDisposable)?.Dispose();
             base.OnFormClosing(e);
@@ -280,6 +308,7 @@ namespace HardwareTestApp.src.Presentation.Forms
             ShowTestCasesForDevice(_currentDeviceType);
             UpdateConnectButtonText();
             UpdateDetectorConnectButtonText();
+            UpdateQrConnectButtonText();
         }
 
         private void LoadComPorts()
@@ -362,18 +391,27 @@ namespace HardwareTestApp.src.Presentation.Forms
                 message.StartsWith("[WAITING]", StringComparison.OrdinalIgnoreCase))
             {
                 // format: [SENDING] <StepName> -> <Port>
-                var parts = message.Split(' ');
-                if (parts.Length >= 2)
+                // extract full step name between the bracket and '->' to support multi-word names
+                var idx = message.IndexOf(']');
+                if (idx >= 0 && idx + 1 < message.Length)
                 {
-                    var stepName = parts[1].Trim();
-                    if (stepName.Equals("LED", StringComparison.OrdinalIgnoreCase) || message.Contains("LED", StringComparison.OrdinalIgnoreCase))
+                    var after = message[(idx + 1)..].Trim();
+                    var arrowIdx = after.IndexOf("->", StringComparison.Ordinal);
+                    var stepNameFull = arrowIdx >= 0 ? after.Substring(0, arrowIdx).Trim() : after;
+
+                    if (stepNameFull.IndexOf("LED", StringComparison.OrdinalIgnoreCase) >= 0 || message.Contains("LED", StringComparison.OrdinalIgnoreCase))
                     {
                         SetTestRunning("LED Test");
                     }
 
-                    if (stepName.Equals("Button", StringComparison.OrdinalIgnoreCase) || message.Contains("Button", StringComparison.OrdinalIgnoreCase))
+                    if (stepNameFull.IndexOf("Button", StringComparison.OrdinalIgnoreCase) >= 0 || message.Contains("Button", StringComparison.OrdinalIgnoreCase))
                     {
                         SetTestRunning("Button Test");
+                    }
+
+                    if (stepNameFull.IndexOf("Lora", StringComparison.OrdinalIgnoreCase) >= 0 || message.Contains("Lora", StringComparison.OrdinalIgnoreCase))
+                    {
+                        SetTestRunning("Lora Test");
                     }
                 }
             }
@@ -381,7 +419,7 @@ namespace HardwareTestApp.src.Presentation.Forms
             // Track ACK status for prerequisite: Power
             if (message.Contains("[ACK][PASS]", StringComparison.OrdinalIgnoreCase))
             {
-                if (message.Contains("Cấp nguồn", StringComparison.OrdinalIgnoreCase) || message.Contains("PowerControl", StringComparison.OrdinalIgnoreCase))
+                if (message.Contains("C?p ngu?n", StringComparison.OrdinalIgnoreCase) || message.Contains("PowerControl", StringComparison.OrdinalIgnoreCase))
                 {
                     _powerAckPassed = true;
                 }
@@ -389,7 +427,7 @@ namespace HardwareTestApp.src.Presentation.Forms
 
             if (message.Contains("[ACK][FAIL]", StringComparison.OrdinalIgnoreCase))
             {
-                if (message.Contains("Cấp nguồn", StringComparison.OrdinalIgnoreCase) || message.Contains("PowerControl", StringComparison.OrdinalIgnoreCase))
+                if (message.Contains("C?p ngu?n", StringComparison.OrdinalIgnoreCase) || message.Contains("PowerControl", StringComparison.OrdinalIgnoreCase))
                 {
                     _powerAckPassed = false;
                 }
@@ -418,24 +456,37 @@ namespace HardwareTestApp.src.Presentation.Forms
                 SetTestFailed("Button Test");
             }
 
+            if (message.Contains("[ACK][PASS] Lora", StringComparison.OrdinalIgnoreCase) || message.Contains("Lora Test", StringComparison.OrdinalIgnoreCase) && message.Contains("[ACK][PASS]"))
+            {
+                SetTestPassed("Lora Test");
+            }
+
+            if (message.Contains("[ACK][FAIL] Lora", StringComparison.OrdinalIgnoreCase) || message.Contains("Lora Test", StringComparison.OrdinalIgnoreCase) && message.Contains("[ACK][FAIL]"))
+            {
+                SetTestFailed("Lora Test");
+            }
+
             AppendLog(message);
         }
 
         private void UpdateConnectButtonText()
         {
-            button2.Text = _smokeDeviceTestService.IsConnected ? "Disconnect" : "Connect";
+            button2.Text = _smokeDeviceTestService.IsConnected ? "G6T Disconnect" : "G6T Connect";
         }
 
         private void UpdateDetectorConnectButtonText()
         {
             button3.Text = _smokeDeviceTestService.IsDetectorConnected ? "DT Disconnect" : "DT Connect";
         }
-
+        private void UpdateQrConnectButtonText()
+        {
+            button1.Text = _isQrConnected ? "QR Disconnect" : "QR Connect";
+        }
         private static string ExtractFailReason(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
-                return "Không có thông tin chi tiết.";
+                return "Kh�ng c� th�ng tin chi ti?t.";
             }
 
             var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
@@ -461,7 +512,7 @@ namespace HardwareTestApp.src.Presentation.Forms
         {
             if (cbDiCom.SelectedItem is not string detectorComPort || string.IsNullOrWhiteSpace(detectorComPort))
             {
-                AppendLog("Vui lòng chọn DT COM trước khi connect.");
+                AppendLog("Vui l�ng ch?n DT COM tru?c khi connect.");
                 return;
             }
 
@@ -525,19 +576,36 @@ namespace HardwareTestApp.src.Presentation.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (comboBox1.SelectedItem is not string qrComPort || string.IsNullOrWhiteSpace(qrComPort))
+            {
+                AppendLog("Vui lòng chọn QR COM trước khi connect.");
+                return;
+            }
 
+            if (_isQrConnected)
+            {
+                _isQrConnected = false;
+                AppendLog($"Disconnect QR COM: {qrComPort}");
+            }
+            else
+            {
+                _isQrConnected = true;
+                AppendLog($"Connect QR COM: {qrComPort}");
+            }
+
+            UpdateQrConnectButtonText();
         }
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            if (cbG6tCom.SelectedItem is not string g6tComPort || string.IsNullOrWhiteSpace(g6tComPort))
-            {
-                AppendLog("Vui lòng chọn G6T COM trước khi connect.");
-                return;
-            }
-
             try
             {
+                if (cbG6tCom.SelectedItem is not string g6tComPort || string.IsNullOrWhiteSpace(g6tComPort))
+                {
+                    AppendLog("Vui long chon G6T COM truoc khi connect.");
+                    return;
+                }
+
                 if (_smokeDeviceTestService.IsConnected)
                 {
                     _smokeDeviceTestService.Disconnect();
@@ -547,7 +615,8 @@ namespace HardwareTestApp.src.Presentation.Forms
                 {
                     _smokeDeviceTestService.Connect(g6tComPort);
                     AppendLog($"Connect G6T COM: {g6tComPort}");
-                    await _smokeDeviceTestService.PrepareOnConnectAsync(g6tComPort, new Progress<string>(HandleProgressLog));
+                    using var connectCts = new CancellationTokenSource();
+                    await _smokeDeviceTestService.PrepareOnConnectAsync(g6tComPort, new Progress<string>(HandleProgressLog), connectCts.Token).ConfigureAwait(true);
                 }
 
                 UpdateConnectButtonText();
@@ -559,6 +628,10 @@ namespace HardwareTestApp.src.Presentation.Forms
             catch (InvalidOperationException ex)
             {
                 AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (OperationCanceledException)
+            {
+                AppendLog("[INFO] Connect bi huy.");
             }
         }
     }

@@ -1,17 +1,17 @@
 using System.IO;
 using System.Text;
-using HardwareTestApp.src.Domain.Interfaces;
-using HardwareTestApp.src.Domain.Models;
-using HardwareTestApp.src.HAL;
+using FCT.G6T.Domain.Interfaces;
+using FCT.G6T.Domain.Models;
+using FCT.G6T.HAL;
 using Microsoft.Extensions.Logging;
 
-namespace HardwareTestApp.src.Infrastructure.Serial;
+namespace FCT.G6T.Infrastructure.Serial;
 
 public class DetectorAdapter : IDetectorAdapter
 {
     private const int DefaultBaudRate = 9600;
-    private const int RetryCount = 1;
-    private static readonly TimeSpan AckTimeout = TimeSpan.FromSeconds(3);
+    private readonly int _retryCount;
+    private readonly TimeSpan _ackTimeout;
 
     private const byte Soh = 0x01;
     private const byte Stx = 0x02;
@@ -21,10 +21,12 @@ public class DetectorAdapter : IDetectorAdapter
     private readonly ILogger<DetectorAdapter> _logger;
     private string _connectedComPort = string.Empty;
 
-    public DetectorAdapter(ISerialPortWrapper port, ILogger<DetectorAdapter> logger)
+    public DetectorAdapter(ISerialPortWrapper port, ILogger<DetectorAdapter> logger, TimeSpan ackTimeout, int retryCount)
     {
         _port = port;
         _logger = logger;
+        _ackTimeout = ackTimeout;
+        _retryCount = Math.Max(0, retryCount);
     }
 
     public bool IsConnected => _port.IsOpen;
@@ -58,14 +60,28 @@ public class DetectorAdapter : IDetectorAdapter
         _connectedComPort = string.Empty;
     }
 
-    public Task<DetectorResponse> ReadTemperatureAsync(CancellationToken ct = default)
+
+    // Theo Rule.md: PascalCase cho method, UPPER_SNAKE_CASE cho constant
+    private const string ReadTemperatureValuePayload = "1.0.3()";
+    private const string ReadTemperatureValuePrefix = "1.0.3(";
+    private const string ReadSmokeValuePayload = "1.0.5()";
+    private const string ReadSmokeValuePrefix = "1.0.5(";
+    private const string ReadLoraRssiPayload = "1.0.H()";
+    private const string ReadLoraRssiPrefix = "1.0.H(";
+
+    public Task<DetectorResponse> ReadTemperatureValueAsync(CancellationToken ct = default)
     {
-        return SendReadCommandAsync("1.0.3()", "1.0.3(", ct);
+        return SendReadCommandAsync(ReadTemperatureValuePayload, ReadTemperatureValuePrefix, ct);
     }
 
-    public Task<DetectorResponse> ReadSmokeAsync(CancellationToken ct = default)
+    public Task<DetectorResponse> ReadSmokeValueAsync(CancellationToken ct = default)
     {
-        return SendReadCommandAsync("1.0.5()", "1.0.5(", ct);
+        return SendReadCommandAsync(ReadSmokeValuePayload, ReadSmokeValuePrefix, ct);
+    }
+
+    public Task<DetectorResponse> ReadLoraRssiAsync(CancellationToken ct = default)
+    {
+        return SendReadCommandAsync(ReadLoraRssiPayload, ReadLoraRssiPrefix, ct);
     }
 
     private async Task<DetectorResponse> SendReadCommandAsync(string payload, string expectedPrefix, CancellationToken ct)
@@ -74,14 +90,14 @@ public class DetectorAdapter : IDetectorAdapter
         var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
         Exception? lastError = null;
 
-        for (var attempt = 1; attempt <= RetryCount + 1; attempt++)
+        for (var attempt = 1; attempt <= _retryCount + 1; attempt++)
         {
             await _port.WriteAsync(tx, CancellationToken.None).ConfigureAwait(false);
 
             byte[] rx;
             using (var attemptCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
             {
-                attemptCts.CancelAfter(AckTimeout);
+                attemptCts.CancelAfter(_ackTimeout);
                 rx = await _port.ReadVariableFrameAsync(Stx, Etx, attemptCts.Token).ConfigureAwait(false);
             }
 
@@ -100,7 +116,7 @@ public class DetectorAdapter : IDetectorAdapter
             catch (InvalidDataException ex)
             {
                 lastError = new InvalidDataException($"{ex.Message} | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] {ToHex(rx)}", ex);
-                if (attempt <= RetryCount)
+                if (attempt <= _retryCount)
                 {
                     continue;
                 }
@@ -110,6 +126,26 @@ public class DetectorAdapter : IDetectorAdapter
         }
 
         throw lastError ?? new TimeoutException($"Detector timeout | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] <empty>");
+    }
+
+    private static string FormatDetectorValue(string value)
+    {
+        if (string.IsNullOrEmpty(value)) return "<empty>";
+        // represent SOH as <SOH>
+        var sb = new System.Text.StringBuilder();
+        foreach (var ch in value)
+        {
+            if (ch == (char)1)
+            {
+                sb.Append("<SOH>");
+            }
+            else
+            {
+                sb.Append(ch);
+            }
+        }
+
+        return sb.ToString();
     }
 
     private static byte[] BuildRequest(string payload)
@@ -202,3 +238,4 @@ public class DetectorAdapter : IDetectorAdapter
         _port.Dispose();
     }
 }
+

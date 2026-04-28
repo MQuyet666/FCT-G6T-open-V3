@@ -1,4 +1,4 @@
-namespace HardwareTestApp.src.HAL;
+namespace FCT.G6T.HAL;
 
 public interface ISerialPortWrapper : IDisposable
 {
@@ -9,3 +9,4 @@ public interface ISerialPortWrapper : IDisposable
     Task<byte[]> ReadFrameAsync(CancellationToken ct = default);
     Task<byte[]> ReadVariableFrameAsync(byte startByte, byte endByte, CancellationToken ct = default);
 }
+
