@@ -1,6 +1,7 @@
-namespace HardwareTestApp.src.Application.Interfaces;
+namespace FCT.G6T.Application.Interfaces;
 
 public interface IComPortProvider
 {
     IReadOnlyList<string> GetAvailableComPorts();
 }
+

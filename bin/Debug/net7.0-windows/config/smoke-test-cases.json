@@ -1,0 +1,102 @@
+[
+    {
+        "id": "TC_SMOKE_01",
+        "name": "LED Test",
+        "deviceType": "SMOKE",
+        "steps": [
+            {
+                "order": 1,
+                "description": "Enable power and wait for LED",
+                "command": "POWER_ON",
+                "expectedLed": "RED",
+                "timeout": 5000,
+                "maxRetry": 0
+            }
+        ],
+        "teardown": [
+            {
+                "order": 1,
+                "description": "Reset power",
+                "command": "POWER_OFF",
+                "expectedLed": "",
+                "timeout": 3000,
+                "maxRetry": 0
+            }
+        ]
+    },
+    {
+        "id": "TC_SMOKE_02",
+        "name": "Button Test",
+        "deviceType": "SMOKE",
+        "steps": [
+            {
+                "order": 1,
+                "description": "Trigger button test",
+                "command": "BTN_TEST",
+                "expectedLed": "",
+                "timeout": 15000,
+                "maxRetry": 1
+            }
+        ],
+        "teardown": [
+            {
+                "order": 1,
+                "description": "Reset button test",
+                "command": "BTN_RESET",
+                "expectedLed": "",
+                "timeout": 3000,
+                "maxRetry": 0
+            }
+        ]
+    },
+    {
+        "id": "TC_SMOKE_03",
+        "name": "Lora Test",
+        "deviceType": "SMOKE",
+        "steps": [
+            {
+                "order": 1,
+                "description": "Read LoRa value",
+                "command": "READ_LORA",
+                "expectedLed": "",
+                "timeout": 3000,
+                "maxRetry": 1
+            }
+        ],
+        "teardown": [
+            {
+                "order": 1,
+                "description": "Reset LoRa state",
+                "command": "LORA_RESET",
+                "expectedLed": "",
+                "timeout": 3000,
+                "maxRetry": 0
+            }
+        ]
+    },
+    {
+        "id": "TC_SMOKE_04",
+        "name": "Read Value Test",
+        "deviceType": "SMOKE",
+        "steps": [
+            {
+                "order": 1,
+                "description": "Read smoke value",
+                "command": "READ_SMOKE",
+                "expectedLed": "",
+                "timeout": 3000,
+                "maxRetry": 1
+            }
+        ],
+        "teardown": [
+            {
+                "order": 1,
+                "description": "Reset detector",
+                "command": "DETECTOR_RESET",
+                "expectedLed": "",
+                "timeout": 3000,
+                "maxRetry": 0
+            }
+        ]
+    }
+]

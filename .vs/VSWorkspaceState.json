@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.github",
+    "\\src",
+    "\\src\\Application",
+    "\\src\\Application\\Interfaces",
+    "\\src\\Application\\Services",
+    "\\src\\HAL",
+    "\\src\\HAL\\skills",
+    "\\src\\Infrastructure\\Logging",
+    "\\src\\Infrastructure\\Serial"
+  ],
+  "SelectedNode": "\\.github\\copilot-instructions.md",
+  "PreviewInSolutionExplorer": false
+}

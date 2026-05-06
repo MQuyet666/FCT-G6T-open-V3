@@ -1,4 +1,4 @@
-﻿namespace HardwareTestApp.src.Presentation.Forms
+namespace FCT.G6T.Presentation.Forms
 {
     partial class Mainform
     {
@@ -53,9 +53,6 @@
             led_4 = new Panel();
             txtLog = new RichTextBox();
             pnlStatus = new Panel();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
             radioButton2 = new RadioButton();
             radioButton3 = new RadioButton();
             radioButton4 = new RadioButton();
@@ -63,6 +60,10 @@
             comboBox1 = new ComboBox();
             btnStop = new Button();
             groupBox1 = new GroupBox();
+            button1 = new Button();
+            button2 = new Button();
+            button3 = new Button();
+            btnClear = new Button();
             grpTest.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -86,23 +87,23 @@
             // 
             // cbDiCom
             // 
-            cbDiCom.Location = new Point(834, 18);
+            cbDiCom.Location = new Point(639, 52);
             cbDiCom.Name = "cbDiCom";
-            cbDiCom.Size = new Size(100, 28);
+            cbDiCom.Size = new Size(99, 28);
             cbDiCom.TabIndex = 5;
             cbDiCom.SelectedIndexChanged += cbDiCom_SelectedIndexChanged;
             // 
             // cbG6tCom
             // 
-            cbG6tCom.Location = new Point(1031, 18);
+            cbG6tCom.Location = new Point(904, 19);
             cbG6tCom.Name = "cbG6tCom";
-            cbG6tCom.Size = new Size(100, 28);
+            cbG6tCom.Size = new Size(99, 28);
             cbG6tCom.TabIndex = 7;
             cbG6tCom.SelectedIndexChanged += cbG6tCom_SelectedIndexChanged;
             // 
             // lblSerial
             // 
-            lblSerial.Location = new Point(626, 69);
+            lblSerial.Location = new Point(626, 114);
             lblSerial.Name = "lblSerial";
             lblSerial.Size = new Size(100, 23);
             lblSerial.TabIndex = 9;
@@ -111,10 +112,11 @@
             // 
             // txtSerial
             // 
-            txtSerial.Location = new Point(716, 69);
+            txtSerial.Location = new Point(717, 111);
             txtSerial.Name = "txtSerial";
             txtSerial.Size = new Size(510, 27);
             txtSerial.TabIndex = 10;
+            txtSerial.TextChanged += txtSerial_TextChanged;
             // 
             // grpTest
             // 
@@ -248,63 +250,34 @@
             pnlStatus.Size = new Size(600, 68);
             pnlStatus.TabIndex = 1;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(745, 26);
-            label1.Name = "label1";
-            label1.Size = new Size(66, 20);
-            label1.TabIndex = 13;
-            label1.Text = "QR COM";
-            label1.Click += label1_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(940, 26);
-            label2.Name = "label2";
-            label2.Size = new Size(64, 20);
-            label2.TabIndex = 14;
-            label2.Text = "DT COM";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(1137, 26);
-            label3.Name = "label3";
-            label3.Size = new Size(72, 20);
-            label3.TabIndex = 15;
-            label3.Text = "G6T COM";
-            label3.Click += label3_Click;
-            // 
             // radioButton2
             // 
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(17, 46);
+            radioButton2.Checked = true;
+            radioButton2.Location = new Point(20, 36);
             radioButton2.Name = "radioButton2";
             radioButton2.Size = new Size(74, 24);
             radioButton2.TabIndex = 17;
-            radioButton2.Text = "Smock";
+            radioButton2.TabStop = true;
+            radioButton2.Text = "Smoke";
             radioButton2.UseVisualStyleBackColor = true;
             radioButton2.CheckedChanged += radioButton2_CheckedChanged;
             // 
             // radioButton3
             // 
             radioButton3.AutoSize = true;
-            radioButton3.Checked = true;
-            radioButton3.Location = new Point(114, 46);
+            radioButton3.Location = new Point(119, 36);
             radioButton3.Name = "radioButton3";
             radioButton3.Size = new Size(70, 24);
             radioButton3.TabIndex = 18;
-            radioButton3.TabStop = true;
-            radioButton3.Text = "Heate";
+            radioButton3.Text = "Heat";
             radioButton3.UseVisualStyleBackColor = true;
             radioButton3.CheckedChanged += radioButton3_CheckedChanged;
             // 
             // radioButton4
             // 
             radioButton4.AutoSize = true;
-            radioButton4.Location = new Point(203, 46);
+            radioButton4.Location = new Point(216, 36);
             radioButton4.Name = "radioButton4";
             radioButton4.Size = new Size(92, 24);
             radioButton4.TabIndex = 19;
@@ -315,7 +288,7 @@
             // radioButton5
             // 
             radioButton5.AutoSize = true;
-            radioButton5.Location = new Point(279, 46);
+            radioButton5.Location = new Point(340, 36);
             radioButton5.Name = "radioButton5";
             radioButton5.Size = new Size(74, 24);
             radioButton5.TabIndex = 17;
@@ -344,22 +317,63 @@
             groupBox1.Controls.Add(radioButton5);
             groupBox1.Controls.Add(radioButton3);
             groupBox1.Controls.Add(radioButton4);
-            groupBox1.Location = new Point(626, 123);
+            groupBox1.Location = new Point(626, 144);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(600, 104);
+            groupBox1.Size = new Size(600, 83);
             groupBox1.TabIndex = 12;
             groupBox1.TabStop = false;
             groupBox1.Text = "Choose device";
             groupBox1.Enter += groupBox1_Enter;
             // 
+            // button1
+            // 
+            button1.Location = new Point(745, 19);
+            button1.Name = "button1";
+            button1.Size = new Size(122, 26);
+            button1.TabIndex = 22;
+            button1.Text = "QR Connect";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(1009, 18);
+            button2.Name = "button2";
+            button2.Size = new Size(122, 28);
+            button2.TabIndex = 23;
+            button2.Text = "G6T Connect";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // button3
+            // 
+            button3.Location = new Point(744, 52);
+            button3.Name = "button3";
+            button3.Size = new Size(123, 29);
+            button3.TabIndex = 24;
+            button3.Text = "DT Connect";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // btnClear
+            // 
+            btnClear.Location = new Point(1145, 588);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(94, 29);
+            btnClear.TabIndex = 25;
+            btnClear.Text = "Clear Log";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
+            // 
             // Mainform
             // 
             ClientSize = new Size(1239, 628);
+            Controls.Add(button3);
+            Controls.Add(button2);
+            Controls.Add(btnClear);
+            Controls.Add(button1);
             Controls.Add(groupBox1);
             Controls.Add(comboBox1);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
             Controls.Add(pnlCamera);
             Controls.Add(pnlStatus);
             Controls.Add(btnStart);
@@ -381,7 +395,7 @@
             PerformLayout();
         }
 
-        // helper (Designer vẫn OK)
+        // helper (Designer v?n OK)
         private void AddTestRow(string text, int index, Panel led)
         {
             Label lbl = new Label();
@@ -406,9 +420,6 @@
         private Panel ledLoraTest;
         private Panel ledReadValueTest;
         private Panel pnlStatus;
-        private Label label1;
-        private Label label2;
-        private Label label3;
         private RadioButton radioButton2;
         private RadioButton radioButton3;
         private RadioButton radioButton4;
@@ -417,5 +428,9 @@
         private Button btnStop;
         private GroupBox groupBox1;
         private Panel panel1;
+        private Button button1;
+        private Button button2;
+        private Button button3;
+        private Button btnClear;
     }
 }

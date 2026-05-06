@@ -1,6 +1,6 @@
-﻿using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Domain.Interfaces;
+namespace FCT.G6T.Domain.Interfaces;
 
 public interface ICameraService
 {
@@ -10,3 +10,4 @@ public interface ICameraService
     Task<Bitmap> CaptureFrameAsync();
     bool IsRunning { get; }
 }
+

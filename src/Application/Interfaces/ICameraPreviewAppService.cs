@@ -1,6 +1,6 @@
-using HardwareTestApp.src.Domain.Models;
+using FCT.G6T.Domain.Models;
 
-namespace HardwareTestApp.src.Application.Interfaces;
+namespace FCT.G6T.Application.Interfaces;
 
 public interface ICameraPreviewAppService
 {
@@ -10,3 +10,4 @@ public interface ICameraPreviewAppService
     void StopPreview();
     Task<Bitmap> CaptureFrameAsync();
 }
+

@@ -1,4 +1,4 @@
-namespace HardwareTestApp.src.Domain.Models;
+namespace FCT.G6T.Domain.Models;
 
 public enum G6TCommandId : byte
 {
@@ -11,3 +11,4 @@ public enum G6TCommandId : byte
     EmergencyButton = 0x07,
     RelayOutput = 0x08,
 }
+

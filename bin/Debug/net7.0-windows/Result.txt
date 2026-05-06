@@ -1,0 +1,160 @@
+﻿Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-05 14:25:59
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-05 14:26:25
+Result: FAIL
+Error: Button Test failed. ([ACK][FAIL] Button Test - Command=TestButton, Status=Failed)
+Log: Button Test -> COM6: 1F 2F 3F FF 00 02 00 ED
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:02:50
+Result: FAIL
+Error: LED Test failed. ([ACK][FAIL] LED Test - ACK G6T=PASS, LED ROI=FAIL)
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:03:19
+Result: FAIL
+Error: LED Test failed. ([ACK][FAIL] LED Test - ACK G6T=PASS, LED ROI=FAIL)
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:03:30
+Result: FAIL
+Error: LED Test failed. ([ACK][FAIL] LED Test - ACK G6T=PASS, LED ROI=FAIL)
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:03:51
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:04:03
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:04:11
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:04:25
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:04:41
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:04:57
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:05:12
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo nhiệt
+DateTime: 2026-05-06 11:26:43
+Result: FAIL
+Error: Lora Test failed. ([ACK][FAIL] Lora Test - BCC không khớp — expected 0xBA, got 0x00)
+Log: Lora Test -> COM11: 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo nhiệt
+DateTime: 2026-05-06 11:27:04
+Result: FAIL
+Error: Lora Test failed. ([ACK][FAIL] Lora Test - BCC không khớp — expected 0xA3, got 0x00)
+Log: Lora Test -> COM11: 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:27:19
+Result: FAIL
+Error: Lora Test failed. ([ACK][FAIL] Lora Test - BCC không khớp — expected 0xE1, got 0x00)
+Log: Lora Test -> COM11: 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:27:42
+Result: FAIL
+Error: Read Value Test failed. ([ACK][FAIL] Read Value Test - Payload không đúng định dạng mong đợi: 1.0.H())
+Log: Read Value Test -> COM11: 01 52 31 02 31 2E 30 2E 35 28 29 03 57
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:27:57
+Result: FAIL
+Error: Read Value Test failed. ([ACK][FAIL] Read Value Test - Payload không đúng định dạng mong đợi: 1.0.H())
+Log: Read Value Test -> COM11: 01 52 31 02 31 2E 30 2E 35 28 29 03 57
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:28:08
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:28:21
+Result: FAIL
+Error: Lora Test failed. ([ACK][FAIL] Lora Test - Payload không đúng định dạng mong đợi: 1.0.5(113))
+Log: Lora Test -> COM11: 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:28:43
+Result: FAIL
+Error: Lora Test failed. ([ACK][FAIL] Lora Test - Payload không đúng định dạng mong đợi: 1.0.5(110))
+Log: Lora Test -> COM11: 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:28:58
+Result: FAIL
+Error: Read Value Test failed. ([ACK][FAIL] Read Value Test - Payload không đúng định dạng mong đợi: 1.0.H())
+Log: Read Value Test -> COM11: 01 52 31 02 31 2E 30 2E 35 28 29 03 57
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:29:19
+Result: FAIL
+Error: Lora Test failed. ([ACK][FAIL] Lora Test - Payload không đúng định dạng mong đợi: 1.0.5(112))
+Log: Lora Test -> COM11: 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:29:42
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:30:00
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo khói
+DateTime: 2026-05-06 11:30:20
+Result: PASS
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo nhiệt
+DateTime: 2026-05-06 11:30:41
+Result: FAIL
+Error: Read Value Test failed. ([ACK][FAIL] Read Value Test - Đọc dữ liệu từ cổng COM11 timeout.)
+//*******************************END TEST**********************************//
+Serial: N/A
+Station: Đầu báo nhiệt
+DateTime: 2026-05-06 11:31:12
+Result: FAIL
+Error: Read Value Test failed. ([ACK][FAIL] Read Value Test - Đọc dữ liệu từ cổng COM11 timeout.)
+//*******************************END TEST**********************************//
