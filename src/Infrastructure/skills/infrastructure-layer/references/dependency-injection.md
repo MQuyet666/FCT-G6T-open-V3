@@ -10,6 +10,7 @@ ICameraService -> SdkCameraAdapter
 ICameraPreviewAppService -> CameraPreviewAppService
 IG6TAdapter -> G6TAdapter
 IDetectorAdapter -> DetectorAdapter
+IQrCodeReaderAdapter -> QrCodeReaderAdapter
 ITestCaseProvider -> JsonTestCaseProvider
 ILoggerProvider -> FileLoggerProvider
 ```

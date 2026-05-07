@@ -20,15 +20,15 @@ namespace FCT.G6T.Presentation.Forms
         private readonly ISmokeDeviceTestService _smokeDeviceTestService;
         private readonly IHeatDeviceTestService _heatDeviceTestService;
         private readonly ITestCaseProvider _testCaseProvider;
-    private readonly IG6TAdapter _g6tAdapter;
-    private readonly IDetectorAdapter _detectorAdapter;
+        private readonly IG6TAdapter _g6tAdapter;
+        private readonly IDetectorAdapter _detectorAdapter;
+        private readonly IQrCodeScanService _qrCodeScanService;
         private CameraPreviewControl _cameraPreview;
         private readonly Dictionary<string, Label> _testStatusLabels = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Panel> _testStatusLeds = new(StringComparer.OrdinalIgnoreCase);
         private string _currentDeviceType = "smoke";
         private bool _isRunningTest;
         private bool _powerAckPassed;
-        private bool _isQrConnected;
         private CancellationTokenSource? _testCts;
         private readonly System.Windows.Forms.Timer _comPortRefreshTimer = new();
 
@@ -45,8 +45,9 @@ namespace FCT.G6T.Presentation.Forms
             _smokeDeviceTestService = null!;
             _heatDeviceTestService = null!;
             _testCaseProvider = null!;
-        _g6tAdapter = null!;
-        _detectorAdapter = null!;
+            _g6tAdapter = null!;
+            _detectorAdapter = null!;
+            _qrCodeScanService = null!;
             _cameraPreview = null!;
         }
 
@@ -55,9 +56,10 @@ namespace FCT.G6T.Presentation.Forms
             IComPortProvider comPortProvider,
             ISmokeDeviceTestService smokeDeviceTestService,
             IHeatDeviceTestService heatDeviceTestService,
-        ITestCaseProvider testCaseProvider,
-        IG6TAdapter g6tAdapter,
-        IDetectorAdapter detectorAdapter)
+            ITestCaseProvider testCaseProvider,
+            IG6TAdapter g6tAdapter,
+            IDetectorAdapter detectorAdapter,
+            IQrCodeScanService qrCodeScanService)
         {
             InitializeComponent();
 
@@ -66,8 +68,9 @@ namespace FCT.G6T.Presentation.Forms
             _smokeDeviceTestService = smokeDeviceTestService;
             _heatDeviceTestService = heatDeviceTestService;
             _testCaseProvider = testCaseProvider;
-        _g6tAdapter = g6tAdapter;
-        _detectorAdapter = detectorAdapter;
+            _g6tAdapter = g6tAdapter;
+            _detectorAdapter = detectorAdapter;
+            _qrCodeScanService = qrCodeScanService;
 
             _cameraPreview = new CameraPreviewControl(_cameraPreviewService);
             _cameraPreview.Dock = DockStyle.Fill;
@@ -118,6 +121,12 @@ namespace FCT.G6T.Presentation.Forms
                     return;
                 }
 
+                if (radioButton7.Checked && (comboBox1.SelectedItem is not string qrComPort || string.IsNullOrWhiteSpace(qrComPort)))
+                {
+                    AppendLog("Vui long chon QR COM truoc khi chay test.");
+                    return;
+                }
+
                 _isRunningTest = true;
                 btnStart.Enabled = false;
                 _testCts?.Cancel();
@@ -134,6 +143,11 @@ namespace FCT.G6T.Presentation.Forms
                 _powerAckPassed = false;
 
                 AppendLog($"=== START TEST: {_currentDeviceType.ToUpperInvariant()} ===");
+                if (radioButton7.Checked && comboBox1.SelectedItem is string selectedQrComPort)
+                {
+                    await ScanQrToSerialAsync(selectedQrComPort, ct).ConfigureAwait(true);
+                }
+
                 var roi1 = _cameraPreview.GetRoi1SourceRect();
                 var progress = new Progress<string>(HandleProgressLog);
                 var stepResults = await ActiveDeviceTestService.RunStartSequenceAsync(g6tComPort, detectorComPort, roi1, _currentDeviceType, progress, ct).ConfigureAwait(true);
@@ -374,19 +388,19 @@ namespace FCT.G6T.Presentation.Forms
             UpdateConnectButtonText();
             UpdateDetectorConnectButtonText();
             UpdateQrConnectButtonText();
-        _g6tAdapter.Trace += OnG6TTrace;
-        _detectorAdapter.Trace += OnDetectorTrace;
+            _g6tAdapter.Trace += OnG6TTrace;
+            _detectorAdapter.Trace += OnDetectorTrace;
         }
 
-    private void OnG6TTrace(object? sender, G6TTraceEventArgs e)
-    {
-        AppendLog(e.Message);
-    }
+        private void OnG6TTrace(object? sender, G6TTraceEventArgs e)
+        {
+            AppendLog(e.Message);
+        }
 
-    private void OnDetectorTrace(object? sender, DetectorTraceEventArgs e)
-    {
-        AppendLog(e.Message);
-    }
+        private void OnDetectorTrace(object? sender, DetectorTraceEventArgs e)
+        {
+            AppendLog(e.Message);
+        }
 
         private void LoadComPorts()
         {
@@ -479,19 +493,19 @@ namespace FCT.G6T.Presentation.Forms
 
         private void AppendLog(string message)
         {
-        if (txtLog.InvokeRequired)
-        {
-            txtLog.Invoke(() => AppendLog(message));
-            return;
-        }
+            if (txtLog.InvokeRequired)
+            {
+                txtLog.Invoke(() => AppendLog(message));
+                return;
+            }
 
-        var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-        foreach (var line in lines)
-        {
-            txtLog.AppendText($"{DateTime.Now:HH:mm:ss} {line}{Environment.NewLine}");
-        }
+            var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            foreach (var line in lines)
+            {
+                txtLog.AppendText($"{DateTime.Now:HH:mm:ss} {line}{Environment.NewLine}");
+            }
 
-        txtLog.ScrollToCaret();
+            txtLog.ScrollToCaret();
         }
 
         private void HandleProgressLog(string message)
@@ -627,7 +641,7 @@ namespace FCT.G6T.Presentation.Forms
         }
         private void UpdateQrConnectButtonText()
         {
-            button1.Text = _isQrConnected ? "QR Disconnect" : "QR Connect";
+            button1.Text = _qrCodeScanService.IsConnected ? "QR Disconnect" : "QR Connect";
         }
         private static string ExtractFailReason(string message)
         {
@@ -814,7 +828,7 @@ namespace FCT.G6T.Presentation.Forms
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             if (comboBox1.SelectedItem is not string qrComPort || string.IsNullOrWhiteSpace(qrComPort))
             {
@@ -822,18 +836,42 @@ namespace FCT.G6T.Presentation.Forms
                 return;
             }
 
-            if (_isQrConnected)
+            try
             {
-                _isQrConnected = false;
-                AppendLog($"Disconnect QR COM: {qrComPort}");
-            }
-            else
-            {
-                _isQrConnected = true;
-                AppendLog($"Connect QR COM: {qrComPort}");
-            }
+                button1.Enabled = false;
 
-            UpdateQrConnectButtonText();
+                if (_qrCodeScanService.IsConnected)
+                {
+                    await _qrCodeScanService.DisconnectAsync().ConfigureAwait(true);
+                    AppendLog($"Disconnect QR COM: {qrComPort}");
+                }
+                else
+                {
+                    await _qrCodeScanService.ConnectAsync(qrComPort).ConfigureAwait(true);
+                    AppendLog($"Connect QR COM: {qrComPort} @ 9600");
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (HardwareException ex)
+            {
+                AppendLog($"[ERROR] {ex.Message}");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                AppendLog($"[ERROR] COM {qrComPort} dang bi chiem. Hay dong ung dung khac dang su dung cong.");
+            }
+            finally
+            {
+                button1.Enabled = true;
+                UpdateQrConnectButtonText();
+            }
         }
 
         private async void button2_Click(object sender, EventArgs e)
@@ -877,6 +915,52 @@ namespace FCT.G6T.Presentation.Forms
             {
                 AppendLog("[INFO] Connect bi huy.");
             }
+        }
+
+        private async Task ScanQrToSerialAsync(string qrComPort, CancellationToken ct)
+        {
+            if (!_qrCodeScanService.IsConnected ||
+                !string.Equals(_qrCodeScanService.ConnectedComPort, qrComPort, StringComparison.OrdinalIgnoreCase))
+            {
+                await _qrCodeScanService.ConnectAsync(qrComPort, ct).ConfigureAwait(true);
+                AppendLog($"Connect QR COM: {qrComPort} @ 9600");
+            }
+
+            AppendLog("[STEP] QR: gui trigger quet, timeout 5s");
+            using var qrCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            qrCts.CancelAfter(TimeSpan.FromSeconds(5));
+
+            try
+            {
+                var qrData = await _qrCodeScanService.ScanAsync(qrCts.Token).ConfigureAwait(true);
+                txtSerial.Text = qrData.Value;
+                AppendLog($"[QR][PASS] Serial={qrData.Value}");
+            }
+            catch (TimeoutException ex)
+            {
+                AppendLog($"[QR][WARN] Khong nhan duoc data QR trong 5s: {ex.Message}");
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+            {
+                AppendLog("[QR][WARN] Khong nhan duoc data QR trong 5s.");
+            }
+
+            UpdateQrConnectButtonText();
+        }
+
+        private void radioButton8_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

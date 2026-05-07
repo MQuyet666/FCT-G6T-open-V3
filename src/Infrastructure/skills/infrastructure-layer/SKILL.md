@@ -43,7 +43,7 @@ When adding a new Infrastructure capability:
 ## Current Modules
 
 - Camera: `SdkCameraAdapter`, `OpenCvCameraAdapter`
-- Serial: `G6TAdapter`, `DetectorAdapter`, `ComPortProvider`
+- Serial: `G6TAdapter`, `DetectorAdapter`, `QrCodeReaderAdapter`, `ComPortProvider`
 - Configuration: settings classes and `JsonTestCaseProvider`
 - Logging: `FileLogger`, `FileLoggerProvider`
 

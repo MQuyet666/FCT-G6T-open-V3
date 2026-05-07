@@ -8,5 +8,6 @@ public interface ISerialPortWrapper : IDisposable
     Task SendAsync(byte[] data, CancellationToken ct = default);
     Task<byte[]> ReceiveAsync(CancellationToken ct = default);
     Task<byte[]> ReceiveAsync(byte startByte, byte endByte, CancellationToken ct = default);
+    Task<string> ReceiveLineAsync(CancellationToken ct = default);
 }
 

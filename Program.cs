@@ -63,6 +63,13 @@ namespace FCT.G6T
                     sp.GetRequiredService<ILogger<DetectorAdapter>>(),
                     TimeSpan.FromSeconds(serialSettings.DetectorAckTimeoutSeconds),
                     serialSettings.DetectorRetryCount));
+            services.AddSingleton<IQrCodeReaderAdapter>(sp =>
+                new QrCodeReaderAdapter(
+                    sp.GetRequiredService<ISerialPortWrapper>(),
+                    sp.GetRequiredService<ILogger<QrCodeReaderAdapter>>(),
+                    TimeSpan.FromSeconds(serialSettings.QrReadTimeoutSeconds),
+                    serialSettings.QrBaudRate));
+            services.AddSingleton<IQrCodeScanService, QrCodeScanService>();
             services.AddSingleton<TestOrchestrator>();
             services.AddSingleton<ISmokeDeviceTestService>(sp =>
                 new SmokeDeviceTestService(

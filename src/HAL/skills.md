@@ -6,7 +6,7 @@ description: >
   hoặc review code thuộc namespace FCT.G6T.HAL — bao gồm CaptureLoop,
   SerialWrapper, GPIO driver wrapper, hoặc bất kỳ class nào bọc trực tiếp
   driver/SDK phần cứng. Trigger khi user nhắc đến: "HAL", "CaptureLoop",
-  "SerialWrapper", "bọc driver", "wrap SDK", "camera loop", "UART raw".
+  "SerialWrapper", "bọc driver", "wrap SDK", "camera loop", "UART raw", "QR COM".
 ---
 
 # Kỹ năng HAL Layer
@@ -75,6 +75,7 @@ public sealed class CaptureLoop : IAsyncDisposable
 **Checklist nhanh:**
 - [ ] Wrap `System.IO.Ports.SerialPort` — không expose type này ra ngoài HAL
 - [ ] `OpenAsync` / `CloseAsync` / `SendAsync` / `ReceiveAsync`
+- [ ] `ReceiveLineAsync` cho thiet bi serial text nhu QR scanner, doc den CR/LF
 - [ ] Timeout qua `CancellationToken`, không dùng `SerialPort.ReadTimeout`
 - [ ] Throw `HardwareException` (custom) khi port đóng đột ngột
 - [ ] `ConfigureAwait(false)` trên mọi await

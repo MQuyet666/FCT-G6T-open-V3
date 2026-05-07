@@ -1,5 +1,6 @@
 using System.IO;
 using System.IO.Ports;
+using System.Text;
 using System.Threading;
 
 namespace FCT.G6T.HAL.Serial;
@@ -223,6 +224,56 @@ public class SerialPortWrapper : ISerialPortWrapper
         catch (TimeoutException ex)
         {
             throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout.", ex);
+        }
+        catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected", ex);
+        }
+        finally
+        {
+            _ioLock.Release();
+        }
+    }
+
+    public async Task<string> ReceiveLineAsync(CancellationToken ct = default)
+    {
+        var port = _port ?? throw new InvalidOperationException("Serial port chÆ°a Ä‘Æ°á»£c khá»Ÿi táº¡o.");
+        if (!port.IsOpen)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected");
+        }
+
+        await _ioLock.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            using var buffer = new MemoryStream();
+            while (true)
+            {
+                ct.ThrowIfCancellationRequested();
+
+                if (port.BytesToRead <= 0)
+                {
+                    await Task.Delay(5, ct).ConfigureAwait(false);
+                    continue;
+                }
+
+                var current = (byte)port.ReadByte();
+                if (current is (byte)'\r' or (byte)'\n')
+                {
+                    if (buffer.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    return Encoding.UTF8.GetString(buffer.ToArray());
+                }
+
+                buffer.WriteByte(current);
+            }
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new TimeoutException($"Äá»c dÃ²ng dá»¯ liá»‡u tá»« cá»•ng {port.PortName} timeout.", ex);
         }
         catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {

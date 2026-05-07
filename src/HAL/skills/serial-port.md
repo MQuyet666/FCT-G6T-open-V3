@@ -14,6 +14,7 @@ Namespace bat buoc: `FCT.G6T.HAL.Serial`.
 - `Task SendAsync(byte[] data, CancellationToken ct = default)`
 - `Task<byte[]> ReceiveAsync(CancellationToken ct = default)`
 - `Task<byte[]> ReceiveAsync(byte startByte, byte endByte, CancellationToken ct = default)`
+- `Task<string> ReceiveLineAsync(CancellationToken ct = default)`
 - `void Dispose()`
 
 ### Class `SerialPortWrapper`
@@ -23,11 +24,13 @@ Namespace bat buoc: `FCT.G6T.HAL.Serial`.
 - `Task SendAsync(byte[] data, CancellationToken ct = default)`
 - `Task<byte[]> ReceiveAsync(CancellationToken ct = default)`
 - `Task<byte[]> ReceiveAsync(byte startByte, byte endByte, CancellationToken ct = default)`
+- `Task<string> ReceiveLineAsync(CancellationToken ct = default)`
 - `void Dispose()`
 
 ## Rule
 - Wrap `System.IO.Ports.SerialPort`, khong expose type nay ra ngoai HAL.
 - Timeout qua `CancellationToken`, khong dung `SerialPort.ReadTimeout`.
+- QR scanner hoac thiet bi serial text doc bang `ReceiveLineAsync`, ket thuc bang CR/LF; trigger command do Infrastructure gui qua `SendAsync`.
 - Moi `await` trong HAL phai co `ConfigureAwait(false)`.
 - HAL chi throw exception; khong log truc tiep.
 - Khong import `FCT.G6T.Application` hoac `FCT.G6T.Domain`.

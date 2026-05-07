@@ -14,6 +14,7 @@ Muc dich: gom quy tac va template cho cac "tay chan" cua Infrastructure layer:
 
 - Camera adapters
 - Serial device adapters
+- QR COM reader adapters
 - Configuration providers
 - File logging providers
 - Dependency injection wiring
