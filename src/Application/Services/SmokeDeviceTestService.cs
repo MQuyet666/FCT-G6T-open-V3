@@ -348,6 +348,12 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
                 $"[TX][{response.ComPort}] {ToHex(response.TxFrame)}{Environment.NewLine}" +
                 $"[RX][{response.ComPort}] {ToHex(response.RxFrame)}{Environment.NewLine}" +
                 $"[ACK][{statusText}] {stepName} - Value={FormatDetectorValue(response.Value)}";
+            if (response.TraceLines.Count > 0)
+            {
+                message += Environment.NewLine + string.Join(
+                    Environment.NewLine,
+                    response.TraceLines.Select(line => $"[TRACE] {line}"));
+            }
 
             progress?.Report(message);
             return new TestStepResult
@@ -370,11 +376,13 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         }
     }
 
-    public Task SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default)
+    public async Task<IReadOnlyList<TestStepResult>> SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default)
     {
         // Ensure reset executed after UI showed final result (ACK wait, retry handled by adapter)
         // g6tComPort is accepted for compatibility with UI, adapter uses its connected port internally
-        return SendResetSequenceAsync(new List<TestStepResult>(), progress, ct);
+        var results = new List<TestStepResult>();
+        await SendResetSequenceAsync(results, progress, ct).ConfigureAwait(false);
+        return results;
     }
 
     public Task PrepareOnConnectAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default)
@@ -418,41 +426,43 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         IProgress<string>? progress,
         CancellationToken ct)
     {
+        var restoreAckTimeout = TimeSpan.FromSeconds(2);
+
         // Send PowerOff first then SetCalibPin OFF as requested
-        progress?.Report("[STEP] RESET: gửi lệnh Cấp nguồn OFF, chờ ACK 3s");
-        var powerOffResult = await ExecuteCommandStepAsync(
+        progress?.Report("[STEP] RESET: gửi lệnh Cấp nguồn OFF, chờ ACK 2s");
+        await ExecuteCommandStepWithRetryAsync(
             stepName: "Reset PowerOff",
-            timeout: _ackTimeout,
+            timeout: restoreAckTimeout,
             commandFunc: token => _testOrchestrator.PowerOffAsync(token),
             expectedCommandId: G6TCommandId.PowerControl,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(powerOffResult);
 
-        progress?.Report("[STEP] RESET: gửi lệnh Set Calib Pin OFF, chờ ACK 3s");
-        var calibOffResult = await ExecuteCommandStepAsync(
+        progress?.Report("[STEP] RESET: gửi lệnh Set Calib Pin OFF, chờ ACK 2s");
+        await ExecuteCommandStepWithRetryAsync(
             stepName: "Reset SetCalibPinOff",
-            timeout: _ackTimeout,
+            timeout: restoreAckTimeout,
             commandFunc: token => _testOrchestrator.SetCalibPinAsync(false, token),
             expectedCommandId: G6TCommandId.SetCalibPin,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(calibOffResult);
 
-        progress?.Report("[STEP] RESET: gửi lệnh UART OFF, chờ ACK 3s");
+        progress?.Report("[STEP] RESET: gửi lệnh UART OFF, chờ ACK 2s");
         var uartOffCommand = new G6TCommand
         {
             CommandId = G6TCommandId.RelayOutput,
             Data = new byte[] { 0x05, 0x00 },
         };
-        var uartOffResult = await ExecuteCommandStepAsync(
+        await ExecuteCommandStepWithRetryAsync(
             stepName: "Reset UartOff",
-            timeout: _ackTimeout,
+            timeout: restoreAckTimeout,
             commandFunc: token => _g6tAdapter.SendCommandAsync(uartOffCommand, token),
             expectedCommandId: G6TCommandId.RelayOutput,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(uartOffResult);
     }
 
     private async Task<TestStepResult> ExecuteCommandStepAsync(
@@ -707,7 +717,14 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
             }
         }
 
-        var failMessage = $"[ACK][FAIL] LED ROI Detect - không thấy đủ đỏ + xanh trong {timeout.TotalSeconds:0.#}s.";
+        var missingColors = (redDetected, greenDetected) switch
+        {
+            (false, false) => "Missing=Red,Green",
+            (false, true) => "Missing=Red",
+            (true, false) => "Missing=Green",
+            _ => "Missing=None",
+        };
+        var failMessage = $"[ACK][FAIL] LED ROI Detect - không thấy đủ đỏ + xanh trong {timeout.TotalSeconds:0.#}s. {missingColors}";
         progress?.Report(failMessage);
         return new TestStepResult
         {

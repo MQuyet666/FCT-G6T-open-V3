@@ -8,18 +8,14 @@ namespace FCT.G6T.HAL.Serial;
 public class SerialPortWrapper : ISerialPortWrapper
 {
     private const int ResponseLength = 8;
-    private readonly int _readTimeoutMs;
-    private readonly int _writeTimeoutMs;
 
     private SerialPort? _port;
     private readonly SemaphoreSlim _ioLock = new(1, 1);
 
     public bool IsOpen => _port?.IsOpen ?? false;
 
-    public SerialPortWrapper(int readTimeoutMs = 100, int writeTimeoutMs = 1000)
+    public SerialPortWrapper()
     {
-        _readTimeoutMs = readTimeoutMs > 0 ? readTimeoutMs : 100;
-        _writeTimeoutMs = writeTimeoutMs > 0 ? writeTimeoutMs : 1000;
     }
 
     public async Task OpenAsync(string portName, int baudRate, CancellationToken ct = default)
@@ -39,8 +35,6 @@ public class SerialPortWrapper : ISerialPortWrapper
                 Parity = Parity.None,
                 StopBits = StopBits.One,
                 Handshake = Handshake.None,
-                ReadTimeout = _readTimeoutMs,
-                WriteTimeout = _writeTimeoutMs,
             };
 
             await Task.Run(() =>
@@ -106,9 +100,9 @@ public class SerialPortWrapper : ISerialPortWrapper
             await port.BaseStream.WriteAsync(data, 0, data.Length, ct).ConfigureAwait(false);
             await port.BaseStream.FlushAsync(ct).ConfigureAwait(false);
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"Ghi dữ liệu vào cổng {port.PortName} timeout.", ex);
+            throw;
         }
         catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {
@@ -170,13 +164,9 @@ public class SerialPortWrapper : ISerialPortWrapper
                 }
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout.", ex);
-        }
-        catch (TimeoutException ex)
-        {
-            throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout.", ex);
+            throw;
         }
         catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {
@@ -217,13 +207,9 @@ public class SerialPortWrapper : ISerialPortWrapper
 
             return buffer;
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout.", ex);
-        }
-        catch (TimeoutException ex)
-        {
-            throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout.", ex);
+            throw;
         }
         catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {
@@ -237,7 +223,7 @@ public class SerialPortWrapper : ISerialPortWrapper
 
     public async Task<string> ReceiveLineAsync(CancellationToken ct = default)
     {
-        var port = _port ?? throw new InvalidOperationException("Serial port chÆ°a Ä‘Æ°á»£c khá»Ÿi táº¡o.");
+        var port = _port ?? throw new InvalidOperationException("Serial port chưa được khởi tạo.");
         if (!port.IsOpen)
         {
             throw new HardwareException($"SerialPort {port.PortName} disconnected");
@@ -271,9 +257,9 @@ public class SerialPortWrapper : ISerialPortWrapper
                 buffer.WriteByte(current);
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"Äá»c dÃ²ng dá»¯ liá»‡u tá»« cá»•ng {port.PortName} timeout.", ex);
+            throw;
         }
         catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {

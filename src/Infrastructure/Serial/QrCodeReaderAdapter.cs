@@ -9,6 +9,7 @@ public sealed class QrCodeReaderAdapter : IQrCodeReaderAdapter
 {
     private const int FallbackBaudRate = 9600;
     private static readonly byte[] TriggerScanCommand = { 0x1B, (byte)'Z', 0x0D };
+    private static readonly byte[] StopScanCommand = { 0x1B, (byte)'Y', 0x0D };
 
     private readonly ISerialPortWrapper _port;
     private readonly ILogger<QrCodeReaderAdapter> _logger;
@@ -52,11 +53,11 @@ public sealed class QrCodeReaderAdapter : IQrCodeReaderAdapter
         }
         catch (HardwareException ex) when (ex.InnerException is UnauthorizedAccessException)
         {
-            throw new InvalidOperationException($"COM {comPort} dang bi chiem. Hay dong ung dung khac dang su dung cong.", ex);
+            throw new HardwareException($"COM {comPort} dang bi chiem. Hay dong ung dung khac dang su dung cong.", ex);
         }
         catch (HardwareException ex)
         {
-            throw new InvalidOperationException($"Khong mo duoc COM QR {comPort}. {ex.Message}", ex);
+            throw new HardwareException($"Khong mo duoc COM QR {comPort}. {ex.Message}", ex);
         }
 
         _connectedComPort = comPort;
@@ -86,7 +87,6 @@ public sealed class QrCodeReaderAdapter : IQrCodeReaderAdapter
         var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
         using var readCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         readCts.CancelAfter(_readTimeout);
-
         try
         {
             var value = await _port.ReceiveLineAsync(readCts.Token).ConfigureAwait(false);
@@ -104,6 +104,11 @@ public sealed class QrCodeReaderAdapter : IQrCodeReaderAdapter
                 ReceivedAt = DateTimeOffset.Now,
             };
         }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            _logger.LogWarning("QR read timeout | [PORT][{ComPort}]", portName);
+            throw new TimeoutException($"QR read timeout | [PORT][{portName}]");
+        }
         catch (TimeoutException ex)
         {
             if (ct.IsCancellationRequested)
@@ -111,6 +116,7 @@ public sealed class QrCodeReaderAdapter : IQrCodeReaderAdapter
                 throw new OperationCanceledException(ct);
             }
 
+            _logger.LogWarning(ex, "QR read timeout | [PORT][{ComPort}]", portName);
             throw new TimeoutException($"QR read timeout | [PORT][{portName}]", ex);
         }
     }
@@ -127,6 +133,18 @@ public sealed class QrCodeReaderAdapter : IQrCodeReaderAdapter
         await _port.SendAsync(TriggerScanCommand, ct).ConfigureAwait(false);
 
         return await ReadAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task StopScanAsync(CancellationToken ct = default)
+    {
+        if (!_port.IsOpen)
+        {
+            return;
+        }
+
+        var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
+        _logger.LogInformation("QR TX [{ComPort}]: {Frame}", portName, ToHex(StopScanCommand));
+        await _port.SendAsync(StopScanCommand, ct).ConfigureAwait(false);
     }
 
     public void Dispose()

@@ -403,6 +403,7 @@ namespace FCT.G6T.Presentation.Forms
             radioButton9.TabIndex = 18;
             radioButton9.Text = "No use";
             radioButton9.UseVisualStyleBackColor = true;
+            radioButton9.CheckedChanged += radioButton7_CheckedChanged;
             // 
             // Mainform
             // 

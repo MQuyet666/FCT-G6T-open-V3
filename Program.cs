@@ -9,7 +9,6 @@ using FCT.G6T.Domain.Models;
 using FCT.G6T.HAL.Serial;
 using FCT.G6T.Infrastructure.Camera;
 using FCT.G6T.Infrastructure.Configuration;
-using FCT.G6T.Infrastructure.Logging;
 using FCT.G6T.Infrastructure.Serial;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +30,6 @@ namespace FCT.G6T
             var serialSettings = configuration.GetSection("Serial").Get<SerialSettings>() ?? new SerialSettings();
             var testTimeouts = configuration.GetSection("TestTimeouts").Get<TestTimeoutSettings>() ?? new TestTimeoutSettings();
             var cameraRuntime = configuration.GetSection("CameraRuntime").Get<CameraRuntimeSettings>() ?? new CameraRuntimeSettings();
-            var loggingSettings = configuration.GetSection("Logging").Get<LoggingSettings>() ?? new LoggingSettings();
 
             var cameraConfig = LoadCameraConfig(baseDirectory);
             var services = new ServiceCollection();
@@ -39,8 +37,6 @@ namespace FCT.G6T
             services.AddLogging(builder =>
             {
                 builder.SetMinimumLevel(LogLevel.Information);
-                var logDirectory = Path.Combine(baseDirectory, loggingSettings.Directory);
-                builder.AddProvider(new FileLoggerProvider(logDirectory, loggingSettings.FilePrefix, loggingSettings.RetentionDays));
             });
 
             services.AddSingleton(cameraConfig);
@@ -50,7 +46,7 @@ namespace FCT.G6T
             services.AddSingleton<ICameraPreviewAppService, CameraPreviewAppService>();
 
             services.AddTransient<ISerialPortWrapper>(_ =>
-                new SerialPortWrapper(serialSettings.ReadTimeoutMs, serialSettings.WriteTimeoutMs));
+                new SerialPortWrapper());
             services.AddSingleton<IG6TAdapter>(sp =>
                 new G6TAdapter(
                     sp.GetRequiredService<ISerialPortWrapper>(),

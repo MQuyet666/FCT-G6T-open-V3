@@ -17,7 +17,7 @@ public interface ISmokeDeviceTestService
         string deviceType,
         IProgress<string>? progress = null,
         CancellationToken ct = default);
-    Task SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default);
+    Task<IReadOnlyList<TestStepResult>> SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default);
     Task PrepareOnConnectAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default);
 }
 

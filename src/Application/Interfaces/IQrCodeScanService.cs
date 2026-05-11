@@ -9,4 +9,6 @@ public interface IQrCodeScanService
     Task ConnectAsync(string qrComPort, CancellationToken ct = default);
     Task DisconnectAsync(CancellationToken ct = default);
     Task<QrCodeData> ScanAsync(CancellationToken ct = default);
+    Task StopScanAsync(CancellationToken ct = default);
+    Task<QrScanResult> RunStartScanAsync(QrScanMode mode, string? qrComPort, CancellationToken ct = default);
 }

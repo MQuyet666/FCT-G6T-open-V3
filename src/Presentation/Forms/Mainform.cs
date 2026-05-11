@@ -92,6 +92,19 @@ namespace FCT.G6T.Presentation.Forms
             txtLog.Clear();
         }
 
+        private QrScanMode CurrentQrScanMode => radioButton7.Checked ? QrScanMode.Use : QrScanMode.NoUse;
+
+        private void UpdateSerialInputState()
+        {
+            var qrUse = CurrentQrScanMode == QrScanMode.Use;
+            txtSerial.ReadOnly = true;
+            txtSerial.Enabled = qrUse;
+            if (!qrUse)
+            {
+                txtSerial.Clear();
+            }
+        }
+
         // ================= START BUTTON =================
         private async void btnStart_Click(object sender, EventArgs e)
         {
@@ -133,6 +146,7 @@ namespace FCT.G6T.Presentation.Forms
                 _testCts?.Dispose();
                 _testCts = new CancellationTokenSource();
                 var ct = _testCts.Token;
+                txtSerial.Clear();
                 _cameraPreview.SetRoi1Detected(false);
                 foreach (var testName in GetCurrentDeviceTestNames())
                 {
@@ -145,7 +159,20 @@ namespace FCT.G6T.Presentation.Forms
                 AppendLog($"=== START TEST: {_currentDeviceType.ToUpperInvariant()} ===");
                 if (radioButton7.Checked && comboBox1.SelectedItem is string selectedQrComPort)
                 {
-                    await ScanQrToSerialAsync(selectedQrComPort, ct).ConfigureAwait(true);
+                    var qrPassed = await ScanQrToSerialAsync(selectedQrComPort, ct).ConfigureAwait(true);
+                    if (!qrPassed)
+                    {
+                        var qrFailResults = BuildQrFailResults();
+                        foreach (var testName in GetCurrentDeviceTestNames())
+                        {
+                            SetTestFailed(testName);
+                        }
+
+                        AppendLog("[RESULT][FAIL] QR Scan - Khong nhan duoc data QR trong 5s.");
+                        AppendLog("=== TEST FLOW DUNG DO FAIL ===");
+                        WriteDeviceLogFile(qrFailResults, Array.Empty<TestStepResult>(), allPassed: false);
+                        return;
+                    }
                 }
 
                 var roi1 = _cameraPreview.GetRoi1SourceRect();
@@ -167,13 +194,13 @@ namespace FCT.G6T.Presentation.Forms
                     }
                 }
 
-                WriteResultFile(finalStepResults, allPassed);
                 AppendLog(allPassed ? "=== TEST FLOW HOAN TAT ===" : "=== TEST FLOW DUNG DO FAIL ===");
+                IReadOnlyList<TestStepResult> restoreStepResults = Array.Empty<TestStepResult>();
                 // After UI shows final result, explicitly call Reset sequence to ensure TX occurs after result
                 try
                 {
                     await Task.Delay(200).ConfigureAwait(true); // give UI moment to render
-                    await ActiveDeviceTestService.SendResetAsync(g6tComPort, new Progress<string>(AppendLog), ct).ConfigureAwait(true);
+                    restoreStepResults = await ActiveDeviceTestService.SendResetAsync(g6tComPort, new Progress<string>(AppendLog), ct).ConfigureAwait(true);
                 }
                 catch (TimeoutException ex)
                 {
@@ -191,6 +218,8 @@ namespace FCT.G6T.Presentation.Forms
                 {
                     AppendLog("[INFO] Test bi huy.");
                 }
+
+                WriteDeviceLogFile(finalStepResults, restoreStepResults, allPassed);
             }
             catch (ArgumentException ex)
             {
@@ -385,6 +414,7 @@ namespace FCT.G6T.Presentation.Forms
         {
             LoadComPorts();
             ShowTestCasesForDevice(_currentDeviceType);
+            UpdateSerialInputState();
             UpdateConnectButtonText();
             UpdateDetectorConnectButtonText();
             UpdateQrConnectButtonText();
@@ -655,32 +685,109 @@ namespace FCT.G6T.Presentation.Forms
             return ackFailLine ?? lines[^1];
         }
 
-        private void WriteResultFile(IReadOnlyList<TestStepResult> finalStepResults, bool allPassed)
+        private void WriteDeviceLogFile(
+            IReadOnlyList<TestStepResult> finalStepResults,
+            IReadOnlyList<TestStepResult> restoreStepResults,
+            bool allPassed)
         {
             var serial = string.IsNullOrWhiteSpace(txtSerial.Text) ? "N/A" : txtSerial.Text.Trim();
-            var failedStep = finalStepResults.FirstOrDefault(step => !step.IsPassed);
-            var resultPath = Path.Combine(AppContext.BaseDirectory, "Result.txt");
+            var logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
+            Directory.CreateDirectory(logDirectory);
 
+            var resultSuffix = allPassed ? "pass" : "fail";
+            var resultPath = Path.Combine(logDirectory, $"device-{NormalizeDeviceType(_currentDeviceType)}-{resultSuffix}.txt");
             var builder = new StringBuilder();
-            builder.AppendLine($"Serial: {serial}");
-            builder.AppendLine($"Station: {GetStationName(_currentDeviceType)}");
-            builder.AppendLine($"DateTime: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-            builder.AppendLine($"Result: {(allPassed ? "PASS" : "FAIL")}");
+            builder.AppendLine("//***********************************START TEST**********************************//");
+            builder.AppendLine();
+            builder.AppendLine($"DEVICE NAME : {GetDeviceLogName(_currentDeviceType)}");
+            builder.AppendLine($"SERIAL      : {serial}");
+            builder.AppendLine($"DATE TIME   : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            builder.AppendLine();
 
-            if (!allPassed && failedStep is not null)
+            if (TryAppendQrFailLog(builder, finalStepResults, allPassed))
             {
-                builder.AppendLine($"Error: {failedStep.StepName} failed. ({ExtractFailReason(failedStep.Message)})");
-
-                var frameLog = ExtractTxFrameLog(failedStep);
-                if (!string.IsNullOrWhiteSpace(frameLog))
-                {
-                    builder.AppendLine($"Log: {frameLog}");
-                }
+                File.AppendAllText(resultPath, builder.ToString(), Encoding.UTF8);
+                AppendLog($"[INFO] Da ghi log thiet bi vao {resultPath}");
+                return;
             }
 
-            builder.AppendLine("//*******************************END TEST**********************************//");
+            AppendPowerOnLog(builder, finalStepResults);
+            AppendCommandStepLog(builder, finalStepResults, "Button Test", "Button Test", "G6T");
+            AppendCommandStepLog(builder, finalStepResults, "UART On", "UART ON", "G6T");
+            AppendCommandStepLog(builder, finalStepResults, "Calib Set ON", "Calib Set ON", "G6T");
+
+            if (HasAnyStep(finalStepResults, "Lora Test", "Read Value Test"))
+            {
+                builder.AppendLine("[STEP] DT COM Connected");
+                builder.AppendLine();
+            }
+
+            AppendDetectorStepLog(builder, finalStepResults, "Lora Test", includeValue: false);
+            AppendDetectorStepLog(builder, finalStepResults, "Read Value Test", includeValue: true);
+
+            builder.AppendLine("[FINAL RESULT]");
+            builder.AppendLine($"TOTAL TEST : {(allPassed ? "PASS" : "FAIL")}");
+            builder.AppendLine();
+
+            AppendRestoreStateLog(builder, restoreStepResults);
+            builder.AppendLine("//***********************************END TEST***********************************//");
+
             File.AppendAllText(resultPath, builder.ToString(), Encoding.UTF8);
-            AppendLog($"[INFO] Da ghi ket qua vao {resultPath}");
+            AppendLog($"[INFO] Da ghi log thiet bi vao {resultPath}");
+        }
+
+        private IReadOnlyList<TestStepResult> BuildQrFailResults()
+        {
+            const string message = "[ACK][FAIL] QR Scan - Khong nhan duoc data QR trong 5s.";
+            var results = new List<TestStepResult>
+            {
+                new()
+                {
+                    StepName = "QR Scan",
+                    IsPassed = false,
+                    Message = message,
+                }
+            };
+
+            results.AddRange(GetCurrentDeviceTestNames().Select(testName => new TestStepResult
+            {
+                StepName = testName,
+                IsPassed = false,
+                Message = message,
+            }));
+
+            return results;
+        }
+
+        private static bool TryAppendQrFailLog(StringBuilder builder, IReadOnlyList<TestStepResult> finalStepResults, bool allPassed)
+        {
+            var qrFail = finalStepResults.FirstOrDefault(step =>
+                step.StepName.Equals("QR Scan", StringComparison.OrdinalIgnoreCase) && !step.IsPassed);
+            if (qrFail is null)
+            {
+                return false;
+            }
+
+            builder.AppendLine("[STEP] QR Scan");
+            builder.AppendLine("RESULT     : FAIL");
+            builder.AppendLine($"ERROR      : {ExtractFailReason(qrFail.Message)}");
+            builder.AppendLine();
+
+            builder.AppendLine("[TEST STATUS]");
+            foreach (var step in finalStepResults.Where(step => !step.StepName.Equals("QR Scan", StringComparison.OrdinalIgnoreCase)))
+            {
+                builder.AppendLine($"- {step.StepName} : FAIL");
+            }
+
+            builder.AppendLine();
+            builder.AppendLine("[FINAL RESULT]");
+            builder.AppendLine($"TOTAL TEST : {(allPassed ? "PASS" : "FAIL")}");
+            builder.AppendLine();
+            builder.AppendLine("[STEP] Restore State");
+            builder.AppendLine("SKIPPED     : QR Scan FAIL, test flow not started");
+            builder.AppendLine();
+            builder.AppendLine("//***********************************END TEST***********************************//");
+            return true;
         }
 
         private static string GetStationName(string deviceType)
@@ -691,6 +798,283 @@ namespace FCT.G6T.Presentation.Forms
                 "heat" => "Đầu báo nhiệt",
                 "bell" => "Đèn chuông",
                 "button" => "Nút nhấn",
+                _ => deviceType,
+            };
+        }
+
+        private static void AppendPowerOnLog(StringBuilder builder, IReadOnlyList<TestStepResult> results)
+        {
+            var powerResult = results.LastOrDefault(step =>
+                !step.StepName.StartsWith("Reset", StringComparison.OrdinalIgnoreCase) &&
+                step.Message.Contains("Command=PowerControl", StringComparison.OrdinalIgnoreCase));
+            var ledResult = results.LastOrDefault(step =>
+                step.StepName.Equals("LED ROI Detect", StringComparison.OrdinalIgnoreCase));
+            var tx = ExtractFrame(powerResult?.Message ?? string.Empty, "[TX]");
+            var rx = ExtractFrame(powerResult?.Message ?? string.Empty, "[RX]");
+
+            builder.AppendLine("[STEP] Power ON");
+            builder.AppendLine($"TX G6T COM : {FormatFrame(tx.Frame)}");
+            builder.AppendLine($"RX G6T COM : {FormatFrame(rx.Frame)}");
+            builder.AppendLine($"- G6T ACK        : {FormatStatus(powerResult)}");
+            builder.AppendLine($"- LED ROI Detect : {FormatLedRoiStatus(ledResult)}");
+            builder.AppendLine();
+        }
+
+        private static void AppendCommandStepLog(
+            StringBuilder builder,
+            IReadOnlyList<TestStepResult> results,
+            string stepName,
+            string displayName,
+            string portLabel)
+        {
+            var result = results.LastOrDefault(step => step.StepName.Equals(stepName, StringComparison.OrdinalIgnoreCase));
+            if (result is null)
+            {
+                return;
+            }
+
+            var tx = ExtractFrame(result.Message, "[TX]");
+            var rx = ExtractFrame(result.Message, "[RX]");
+
+            builder.AppendLine($"[STEP] {displayName}");
+            builder.AppendLine($"TX {portLabel} COM : {FormatFrame(tx.Frame)}");
+            builder.AppendLine($"RX {portLabel} COM : {FormatFrame(rx.Frame)}");
+            builder.AppendLine($"RESULT     : {FormatStatus(result)}");
+            builder.AppendLine();
+        }
+
+        private static void AppendDetectorStepLog(
+            StringBuilder builder,
+            IReadOnlyList<TestStepResult> results,
+            string stepName,
+            bool includeValue)
+        {
+            var result = results.LastOrDefault(step => step.StepName.Equals(stepName, StringComparison.OrdinalIgnoreCase));
+            if (result is null)
+            {
+                return;
+            }
+
+            var tx = ExtractFrame(result.Message, "[TX]");
+            var rx = ExtractFrame(result.Message, "[RX]");
+            var rxTraceLines = ExtractDetectorRxTraceLines(result.Message);
+
+            builder.AppendLine($"[STEP] {stepName}");
+            builder.AppendLine($"TX DT COM : {FormatFrame(tx.Frame)}");
+            if (rxTraceLines.Count > 0)
+            {
+                foreach (var rxTraceLine in rxTraceLines)
+                {
+                    builder.AppendLine($"RX DT COM : {rxTraceLine}");
+                }
+            }
+            else
+            {
+                builder.AppendLine($"RX DT COM : {FormatFrame(rx.Frame)}");
+            }
+
+            if (includeValue)
+            {
+                builder.AppendLine($"VALUE     : {ExtractValue(result.Message)}");
+            }
+
+            builder.AppendLine($"RESULT    : {FormatStatus(result)}");
+            builder.AppendLine();
+        }
+
+        private static void AppendRestoreStateLog(StringBuilder builder, IReadOnlyList<TestStepResult> restoreResults)
+        {
+            builder.AppendLine("[STEP] Restore State");
+            builder.AppendLine("ACK TIMEOUT : 2s");
+            builder.AppendLine("RETRY       : 1");
+            builder.AppendLine();
+            AppendRestoreCommandLog(builder, restoreResults, "Reset PowerOff", "Power OFF");
+            AppendRestoreCommandLog(builder, restoreResults, "Reset SetCalibPinOff", "Calib Set OFF");
+            AppendRestoreCommandLog(builder, restoreResults, "Reset UartOff", "UART OFF");
+            builder.AppendLine();
+        }
+
+        private static void AppendRestoreCommandLog(
+            StringBuilder builder,
+            IReadOnlyList<TestStepResult> restoreResults,
+            string stepName,
+            string displayName)
+        {
+            var attempts = restoreResults
+                .Where(step => step.StepName.Equals(stepName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (attempts.Count == 0)
+            {
+                builder.AppendLine($"- {displayName} : N/A");
+                return;
+            }
+
+            builder.AppendLine($"- {displayName}");
+            for (var i = 0; i < attempts.Count; i++)
+            {
+                var attempt = attempts[i];
+                var tx = ExtractFrame(attempt.Message, "[TX]");
+                var rx = ExtractFrame(attempt.Message, "[RX]");
+                var suffix = attempts.Count > 1 ? $" (attempt {i + 1})" : string.Empty;
+
+                builder.AppendLine($"  TX G6T COM : {FormatFrame(tx.Frame)}{suffix}");
+                builder.AppendLine($"  RX G6T COM : {FormatFrame(rx.Frame)}{suffix}");
+                builder.AppendLine($"  RESULT     : {FormatStatus(attempt)}{suffix}");
+            }
+        }
+
+        private static TestStepResult? FindStep(IReadOnlyList<TestStepResult> results, string stepName)
+        {
+            return results.LastOrDefault(step => step.StepName.Equals(stepName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool HasAnyStep(IReadOnlyList<TestStepResult> results, params string[] stepNames)
+        {
+            return results.Any(step => stepNames.Any(name => step.StepName.Equals(name, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private static string FormatStatus(TestStepResult? result)
+        {
+            return result is null ? "N/A" : result.IsPassed ? "PASS" : "FAIL";
+        }
+
+        private static string FormatLedRoiStatus(TestStepResult? result)
+        {
+            if (result is null)
+            {
+                return "N/A";
+            }
+
+            return result.IsPassed ? "PASS (Detected Red + Green LED)" : $"FAIL ({GetLedRoiFailReason(result.Message)})";
+        }
+
+        private static string GetLedRoiFailReason(string message)
+        {
+            if (message.Contains("Missing=Red,Green", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Missing Red + Green LED";
+            }
+
+            if (message.Contains("Missing=Red", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Missing Red LED";
+            }
+
+            if (message.Contains("Missing=Green", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Missing Green LED";
+            }
+
+            if (message.Contains("ROI1", StringComparison.OrdinalIgnoreCase))
+            {
+                return message;
+            }
+
+            return "LED ROI not detected";
+        }
+
+        private static string FormatFrame(string frame)
+        {
+            return string.IsNullOrWhiteSpace(frame) ? "N/A" : frame;
+        }
+
+        private static (string ComPort, string Frame) ExtractFrame(string message, string marker)
+        {
+            var line = message
+                .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                .LastOrDefault(x => x.TrimStart().StartsWith(marker, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                return (string.Empty, string.Empty);
+            }
+
+            var trimmed = line.Trim();
+            var portStart = trimmed.IndexOf('[', marker.Length);
+            var portEnd = portStart >= 0 ? trimmed.IndexOf(']', portStart + 1) : -1;
+            if (portStart < 0 || portEnd <= portStart)
+            {
+                return (string.Empty, trimmed);
+            }
+
+            var comPort = trimmed.Substring(portStart + 1, portEnd - portStart - 1);
+            var frame = portEnd + 1 < trimmed.Length ? trimmed[(portEnd + 1)..].Trim() : string.Empty;
+            return (comPort, frame);
+        }
+
+        private static string ExtractValue(string message)
+        {
+            const string marker = "Value=";
+            var index = message.LastIndexOf(marker, StringComparison.OrdinalIgnoreCase);
+            if (index < 0)
+            {
+                return "N/A";
+            }
+
+            var value = message[(index + marker.Length)..].Trim();
+            var lineBreak = value.IndexOfAny(new[] { '\r', '\n' });
+            return lineBreak >= 0 ? value[..lineBreak].Trim() : value;
+        }
+
+        private static IReadOnlyList<string> ExtractDetectorRxTraceLines(string message)
+        {
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            return message
+                .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Trim())
+                .Where(line => line.StartsWith("[TRACE] DT RX", StringComparison.OrdinalIgnoreCase))
+                .Select(FormatDetectorRxTraceLine)
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Where(line => seen.Add(line))
+                .ToList();
+        }
+
+        private static string FormatDetectorRxTraceLine(string traceLine)
+        {
+            var attemptMarker = "attempt ";
+            var attemptIndex = traceLine.IndexOf(attemptMarker, StringComparison.OrdinalIgnoreCase);
+            var colonIndex = traceLine.IndexOf(':');
+            if (attemptIndex < 0 || colonIndex <= attemptIndex)
+            {
+                return string.Empty;
+            }
+
+            var attempt = traceLine.Substring(attemptIndex + attemptMarker.Length, colonIndex - attemptIndex - attemptMarker.Length).Trim();
+            var payload = colonIndex + 1 < traceLine.Length ? traceLine[(colonIndex + 1)..].Trim() : string.Empty;
+
+            if (payload.StartsWith("timeout", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"timeout (attempt {attempt})";
+            }
+
+            if (payload.StartsWith("invalid frame", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"invalid frame (attempt {attempt})";
+            }
+
+            return $"{payload} (attempt {attempt})";
+        }
+
+        private static string NormalizeDeviceType(string deviceType)
+        {
+            return deviceType.ToLowerInvariant() switch
+            {
+                "smoke" => "smoke",
+                "heat" => "heat",
+                "bell" => "bell",
+                "button" => "button",
+                _ => string.IsNullOrWhiteSpace(deviceType) ? "unknown" : deviceType.Trim().ToLowerInvariant(),
+            };
+        }
+
+        private static string GetDeviceLogName(string deviceType)
+        {
+            return deviceType.ToLowerInvariant() switch
+            {
+                "smoke" => "Đầu báo khói",
+                "heat" => "Đầu báo nhiệt",
+                "bell" => "Chuông đèn",
+                "button" => "Nút bấm",
                 _ => deviceType,
             };
         }
@@ -830,6 +1214,11 @@ namespace FCT.G6T.Presentation.Forms
 
         private async void button1_Click(object sender, EventArgs e)
         {
+            if (CurrentQrScanMode == QrScanMode.NoUse)
+            {
+                AppendLog("[INFO] QR No use: khong cho phep ket noi.");
+                return;
+            }
             if (comboBox1.SelectedItem is not string qrComPort || string.IsNullOrWhiteSpace(qrComPort))
             {
                 AppendLog("Vui lòng chọn QR COM trước khi connect.");
@@ -842,6 +1231,7 @@ namespace FCT.G6T.Presentation.Forms
 
                 if (_qrCodeScanService.IsConnected)
                 {
+                    await _qrCodeScanService.StopScanAsync().ConfigureAwait(true);
                     await _qrCodeScanService.DisconnectAsync().ConfigureAwait(true);
                     AppendLog($"Disconnect QR COM: {qrComPort}");
                 }
@@ -917,7 +1307,7 @@ namespace FCT.G6T.Presentation.Forms
             }
         }
 
-        private async Task ScanQrToSerialAsync(string qrComPort, CancellationToken ct)
+        private async Task<bool> ScanQrToSerialAsync(string qrComPort, CancellationToken ct)
         {
             if (!_qrCodeScanService.IsConnected ||
                 !string.Equals(_qrCodeScanService.ConnectedComPort, qrComPort, StringComparison.OrdinalIgnoreCase))
@@ -935,17 +1325,31 @@ namespace FCT.G6T.Presentation.Forms
                 var qrData = await _qrCodeScanService.ScanAsync(qrCts.Token).ConfigureAwait(true);
                 txtSerial.Text = qrData.Value;
                 AppendLog($"[QR][PASS] Serial={qrData.Value}");
+                return true;
             }
             catch (TimeoutException ex)
             {
-                AppendLog($"[QR][WARN] Khong nhan duoc data QR trong 5s: {ex.Message}");
+                AppendLog($"[QR][FAIL] Khong nhan duoc data QR trong 5s: {ex.Message}");
             }
             catch (OperationCanceledException) when (!ct.IsCancellationRequested)
             {
-                AppendLog("[QR][WARN] Khong nhan duoc data QR trong 5s.");
+                AppendLog("[QR][FAIL] Khong nhan duoc data QR trong 5s.");
+            }
+            finally
+            {
+                try
+                {
+                    await _qrCodeScanService.StopScanAsync(ct).ConfigureAwait(true);
+                }
+                catch (Exception ex) when (ex is InvalidOperationException or HardwareException)
+                {
+                    AppendLog($"[ERROR] QR stop scan that bai: {ex.Message}");
+                }
+
+                UpdateQrConnectButtonText();
             }
 
-            UpdateQrConnectButtonText();
+            return false;
         }
 
         private void radioButton8_CheckedChanged(object sender, EventArgs e)
@@ -960,7 +1364,7 @@ namespace FCT.G6T.Presentation.Forms
 
         private void radioButton7_CheckedChanged(object sender, EventArgs e)
         {
-
+            UpdateSerialInputState();
         }
     }
 }

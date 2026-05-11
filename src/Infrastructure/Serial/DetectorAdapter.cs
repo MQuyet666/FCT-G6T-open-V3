@@ -123,65 +123,77 @@ public class DetectorAdapter : IDetectorAdapter
         var tx = BuildRequest(payload);
         var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
         Exception? lastError = null;
+        var traceLines = new List<string>();
 
         for (var attempt = 1; attempt <= _retryCount + 1; attempt++)
         {
             var txMessage = $"DT TX [{portName}] attempt {attempt}: {ToHex(tx)}";
+            traceLines.Add(txMessage);
             _logger.LogInformation("{Message}", txMessage);
             Trace?.Invoke(this, new DetectorTraceEventArgs(txMessage));
             await _port.SendAsync(tx, CancellationToken.None).ConfigureAwait(false);
 
-            byte[] rx;
             using (var attemptCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
             {
                 attemptCts.CancelAfter(_ackTimeout);
-                try
+
+                while (!attemptCts.IsCancellationRequested)
                 {
-                    rx = await _port.ReceiveAsync(Stx, Etx, attemptCts.Token).ConfigureAwait(false);
-                }
-                catch (TimeoutException ex)
-                {
-                    if (ct.IsCancellationRequested)
+                    byte[] rx;
+                    try
                     {
-                        throw new OperationCanceledException(ct);
+                        rx = await _port.ReceiveAsync(Stx, Etx, attemptCts.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    catch (TimeoutException ex)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            throw new OperationCanceledException(ct);
+                        }
+
+                        lastError = ex;
+                        break;
                     }
 
-                    lastError = ex;
-                    var timeoutMessage = $"DT RX [{portName}] attempt {attempt}: timeout";
-                    _logger.LogWarning("{Message}", timeoutMessage);
-                    Trace?.Invoke(this, new DetectorTraceEventArgs(timeoutMessage));
-                    continue;
+                    try
+                    {
+                        var parsedPayload = ParseResponse(rx, expectedPrefix);
+                        var rxMessage = $"DT RX [{portName}] attempt {attempt}: {ToHex(rx)}";
+                        traceLines.Add(rxMessage);
+                        _logger.LogDebug("{Message}", rxMessage);
+                        Trace?.Invoke(this, new DetectorTraceEventArgs(rxMessage));
+                        return new DetectorResponse
+                        {
+                            ComPort = portName,
+                            TxFrame = tx,
+                            RxFrame = rx,
+                            Payload = parsedPayload,
+                            Value = ExtractValue(parsedPayload),
+                            TraceLines = traceLines.ToList(),
+                        };
+                    }
+                    catch (InvalidDataException ex)
+                    {
+                        lastError = new InvalidDataException($"{ex.Message} | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] {ToHex(rx)}", ex);
+                        var retryMessage = $"DT RX [{portName}] attempt {attempt}: invalid frame, retry";
+                        traceLines.Add(retryMessage);
+                        _logger.LogWarning("{Message}", retryMessage);
+                        Trace?.Invoke(this, new DetectorTraceEventArgs(retryMessage));
+                    }
                 }
             }
 
-            try
+            if (attempt <= _retryCount)
             {
-                var parsedPayload = ParseResponse(rx, expectedPrefix);
-                var rxMessage = $"DT RX [{portName}] attempt {attempt}: {ToHex(rx)}";
-                _logger.LogDebug("{Message}", rxMessage);
-                Trace?.Invoke(this, new DetectorTraceEventArgs(rxMessage));
-                return new DetectorResponse
-                {
-                    ComPort = portName,
-                    TxFrame = tx,
-                    RxFrame = rx,
-                    Payload = parsedPayload,
-                    Value = ExtractValue(parsedPayload),
-                };
-            }
-            catch (InvalidDataException ex)
-            {
-                lastError = new InvalidDataException($"{ex.Message} | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] {ToHex(rx)}", ex);
-                if (attempt <= _retryCount)
-                {
-                    var retryMessage = $"DT RX [{portName}] attempt {attempt}: invalid frame, retry after {InvalidFrameRetryDelay.TotalSeconds:0.#}s";
-                    _logger.LogWarning("{Message}", retryMessage);
-                    Trace?.Invoke(this, new DetectorTraceEventArgs(retryMessage));
-                    await Task.Delay(InvalidFrameRetryDelay, ct).ConfigureAwait(false);
-                    continue;
-                }
-
-                throw lastError;
+                var retryMessage = $"DT RX [{portName}] attempt {attempt}: timeout/invalid frame, retry after {InvalidFrameRetryDelay.TotalSeconds:0.#}s";
+                traceLines.Add(retryMessage);
+                _logger.LogWarning("{Message}", retryMessage);
+                Trace?.Invoke(this, new DetectorTraceEventArgs(retryMessage));
+                await Task.Delay(InvalidFrameRetryDelay, ct).ConfigureAwait(false);
             }
         }
 

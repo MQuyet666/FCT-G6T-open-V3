@@ -10,4 +10,5 @@ public interface IQrCodeReaderAdapter : IDisposable
     Task DisconnectAsync(CancellationToken ct = default);
     Task<QrCodeData> ReadAsync(CancellationToken ct = default);
     Task<QrCodeData> ScanAsync(CancellationToken ct = default);
+    Task StopScanAsync(CancellationToken ct = default);
 }
