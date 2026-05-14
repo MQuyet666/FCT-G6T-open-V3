@@ -3,48 +3,48 @@
     "device_name": "smoke",
     "status": "FAIL",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\smoke\\fail\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "smoke",
     "status": "PASS",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\smoke\\pass\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "heat",
     "status": "FAIL",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\heat\\fail\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "heat",
     "status": "PASS",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\heat\\pass\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "bell",
     "status": "FAIL",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\bell\\fail\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "bell",
     "status": "PASS",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\bell\\pass\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "button",
     "status": "FAIL",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\button\\fail\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\{yyyyMMddHH}.txt"
   },
   {
     "device_name": "button",
     "status": "PASS",
     "file_name": "{yyyyMMddHH}.txt",
-    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\button\\pass\\{yyyyMMddHH}.txt"
+    "file_path": "D:\\KTDT\\PCCC\\GS06\\button\\{yyyyMMddHH}.txt"
   }
 ]

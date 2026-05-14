@@ -1,13 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\HardwareTestApp",
-    "\\HardwareTestApp\\src",
-    "\\HardwareTestApp\\src\\HAL",
-    "\\HardwareTestApp\\src\\HAL\\references",
-    "\\HardwareTestApp\\src\\Presentation",
-    "\\HardwareTestApp\\src\\Presentation\\Forms"
+    ""
   ],
-  "SelectedNode": "\\HardwareTestApp\\Program.cs",
   "PreviewInSolutionExplorer": false
 }
