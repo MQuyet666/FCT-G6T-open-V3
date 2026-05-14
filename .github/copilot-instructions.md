@@ -1,4 +1,4 @@
-# Copilot Instructions
+# Hướng dẫn Copilot
 
-## Project Guidelines
-- Repo uses Rule.md coding convention: Clean Architecture 5 layers, UI must not call Infrastructure/HAL directly, constructor injection required, avoid hardcoded camera index/timeout, use async/await without .Wait/.Result, and camera UI updates via Invoke.
+## Quy định dự án
+- Repo dùng quy ước trong `Rule.md`: Clean Architecture 5 layer, UI không gọi trực tiếp `Infrastructure`/`HAL`, bắt buộc constructor injection, tránh hardcoded camera index/timeout, dùng `async`/`await` không `.Wait()`/`.Result`, và cập nhật UI camera qua `Invoke`.

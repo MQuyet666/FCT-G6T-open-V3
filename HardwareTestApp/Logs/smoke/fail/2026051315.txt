@@ -1,0 +1,40 @@
+﻿//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo khói
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 15:02:05
+
+[STEP] QR Scan
+[RESULT ]    : FAIL
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo khói
+SERIAL      : https://geic.vn/bo-bao-chay-lien-gia-v2/
+DATE TIME   : 2026-05-13 15:06:32
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : PASS (Detected Red + Green LED)
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+
+TX : 01 52 31 02 31 2E 30 2E 35 28 29 03 57
+RX : <empty>
+VALUE     : N/A
+
+
+[RESULT] : FAIL READ VALUE
+
+
+//***********************************END TEST***********************************//

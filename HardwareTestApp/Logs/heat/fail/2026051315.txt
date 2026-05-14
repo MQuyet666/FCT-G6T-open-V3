@@ -1,0 +1,133 @@
+﻿//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 99962001251208D05101223
+DATE TIME   : 2026-05-13 15:02:27
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL (Missing Red + Green LED)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 15:03:00
+
+[STEP] QR Scan
+[RESULT ]    : FAIL
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 3131https://geic.vn/bo-bao-chay-lien-gia-v2/
+DATE TIME   : 2026-05-13 15:03:08
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL (Missing Red + Green LED)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 15:03:19
+
+[STEP] QR Scan
+[RESULT ]    : FAIL
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 313199962001251208D05101223
+DATE TIME   : 2026-05-13 15:03:29
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL (Missing Red + Green LED)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 15:03:42
+
+[STEP] QR Scan
+[RESULT ]    : FAIL
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 313199962001251208D05101223
+DATE TIME   : 2026-05-13 15:03:49
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL (Missing Red + Green LED)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 15:04:04
+
+[STEP] QR Scan
+[RESULT ]    : FAIL
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 313199962001251208D05101223
+DATE TIME   : 2026-05-13 15:04:14
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL (Missing Red + Green LED)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 313199962001251208D05101223
+DATE TIME   : 2026-05-13 15:04:32
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : PASS (Detected Red + Green LED)
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 15 F9
+
+
+[RESULT] : FAIL BUZZER
+
+
+//***********************************END TEST***********************************//

@@ -1,0 +1,50 @@
+[
+  {
+    "device_name": "smoke",
+    "status": "FAIL",
+    "file_name": "device-smoke-fail.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-smoke-fail.txt"
+  },
+  {
+    "device_name": "smoke",
+    "status": "PASS",
+    "file_name": "device-smoke-pass.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-smoke-pass.txt"
+  },
+  {
+    "device_name": "heat",
+    "status": "FAIL",
+    "file_name": "device-heat-fail.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-heat-fail.txt"
+  },
+  {
+    "device_name": "heat",
+    "status": "PASS",
+    "file_name": "device-heat-pass.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-heat-pass.txt"
+  },
+  {
+    "device_name": "bell",
+    "status": "FAIL",
+    "file_name": "device-bell-fail.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-bell-fail.txt"
+  },
+  {
+    "device_name": "bell",
+    "status": "PASS",
+    "file_name": "device-bell-pass.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-bell-pass.txt"
+  },
+  {
+    "device_name": "button",
+    "status": "FAIL",
+    "file_name": "device-button-fail.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-button-fail.txt"
+  },
+  {
+    "device_name": "button",
+    "status": "PASS",
+    "file_name": "device-button-pass.txt",
+    "file_path": "D:\\New folder\\FCT-G6T-Open\\V3\\FCT-G6T-open-V3\\HardwareTestApp\\Logs\\device-button-pass.txt"
+  }
+]

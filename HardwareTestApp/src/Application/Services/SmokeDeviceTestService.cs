@@ -1,10 +1,10 @@
 using FCT.G6T.Application.Interfaces;
+using FCT.G6T.Domain.Exceptions;
 using FCT.G6T.Domain.Interfaces;
 using FCT.G6T.Domain.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -24,8 +24,9 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
 
     private readonly TestOrchestrator _testOrchestrator;
     private readonly IG6TAdapter _g6tAdapter;
-    private readonly IDetectorAdapter _detectorAdapter;
+    protected readonly IDetectorAdapter _detectorAdapter;
     private readonly ICameraPreviewAppService _cameraPreview;
+    private readonly ILedDetectionService _ledDetectionService;
     private readonly ILogger<SmokeDeviceTestService> _logger;
 
     public SmokeDeviceTestService(
@@ -33,6 +34,7 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         IG6TAdapter g6tAdapter,
         IDetectorAdapter detectorAdapter,
         ICameraPreviewAppService cameraPreview,
+        ILedDetectionService ledDetectionService,
         ILogger<SmokeDeviceTestService> logger,
         int g6tBaudRate,
         int detectorBaudRate,
@@ -46,6 +48,7 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         _g6tAdapter = g6tAdapter;
         _detectorAdapter = detectorAdapter;
         _cameraPreview = cameraPreview;
+        _ledDetectionService = ledDetectionService;
         _logger = logger;
         _g6tBaudRate = g6tBaudRate;
         _detectorBaudRate = detectorBaudRate;
@@ -67,35 +70,47 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
     public bool IsConnected => _g6tAdapter.IsConnected;
     public bool IsDetectorConnected => _detectorAdapter.IsConnected;
 
-    public void Connect(string g6tComPort)
+    public Task ConnectAsync(string g6tComPort, CancellationToken ct = default)
     {
-        _g6tAdapter.Connect(g6tComPort, _g6tBaudRate);
+        if (_detectorAdapter.IsConnected && string.Equals(_detectorAdapter.ConnectedComPort, g6tComPort, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"G6T COM trùng với DT COM ({g6tComPort}). Hãy chọn cổng khác.");
+        }
+
+        return _g6tAdapter.ConnectAsync(g6tComPort, _g6tBaudRate, ct);
     }
 
-    public void Disconnect()
+    public Task DisconnectAsync(CancellationToken ct = default)
     {
-        _g6tAdapter.Disconnect();
+        return _g6tAdapter.DisconnectAsync(ct);
     }
 
-    public void ConnectDetector(string detectorComPort)
+    public Task ConnectDetectorAsync(string detectorComPort, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(detectorComPort))
         {
             throw new ArgumentException("Chưa chọn DT COM.", nameof(detectorComPort));
         }
 
-        _detectorAdapter.Connect(detectorComPort, _detectorBaudRate);
+        if (_g6tAdapter.IsConnected && string.Equals(_g6tAdapter.ConnectedComPort, detectorComPort, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"DT COM trùng với G6T COM ({detectorComPort}). Hãy chọn cổng khác.");
+        }
+
+        return _detectorAdapter.ConnectAsync(detectorComPort, _detectorBaudRate, ct);
     }
 
-    public void DisconnectDetector()
+    public Task DisconnectDetectorAsync(CancellationToken ct = default)
     {
-        _detectorAdapter.Disconnect();
+        return _detectorAdapter.DisconnectAsync(ct);
     }
 
     public async Task<IReadOnlyList<TestStepResult>> RunStartSequenceAsync(
         string g6tComPort,
         string detectorComPort,
-        Rectangle roi1,
+        RoiRegion roi1,
+        string deviceType,
+        IReadOnlyList<RoiRegion>? buttonRois = null,
         IProgress<string>? progress = null,
         CancellationToken ct = default)
     {
@@ -109,9 +124,14 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
             throw new ArgumentException("Chưa chọn DT COM.", nameof(detectorComPort));
         }
 
+        if (string.Equals(g6tComPort, detectorComPort, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"G6T COM trùng với DT COM ({g6tComPort}). Hãy chọn cổng khác.");
+        }
+
         if (!_g6tAdapter.IsConnected)
         {
-            _g6tAdapter.Connect(g6tComPort, _g6tBaudRate);
+            await _g6tAdapter.ConnectAsync(g6tComPort, _g6tBaudRate, ct).ConfigureAwait(false);
             progress?.Report($"[STEP] Kết nối G6T COM: {g6tComPort}");
         }
 
@@ -123,34 +143,41 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
 
         var results = new List<TestStepResult>();
 
-        // Step 1: Power ON (0x01 0x01)
+        // Step 1: Power ON and LED detect run together. LED Test requires both G6T ACK and PC LED detection.
         progress?.Report("[STEP] Cấp nguồn: gửi frame tới G6T, chờ ACK 3s");
-        var powerResult = await ExecuteCommandStepAsync(
+        progress?.Report("[STEP] LED ROI Detect: chờ detect đủ màu đỏ + xanh");
+        progress?.Report("[ROI1][RESET]");
+
+        var powerResults = new List<TestStepResult>();
+        var powerTask = ExecuteCommandStepWithRetryAsync(
             stepName: "Cấp nguồn",
             timeout: _ackTimeout,
             commandFunc: token => _testOrchestrator.PowerOnAsync(token),
             expectedCommandId: G6TCommandId.PowerControl,
-            progress: progress,
-            ct: ct).ConfigureAwait(false);
-        results.Add(powerResult);
-        if (!powerResult.IsPassed)
-        {
-            progress?.Report("[STEP] Bỏ qua DT COM: Cấp nguồn FAIL.");
-            return results;
-        }
+            results: powerResults,
+            progress: null,
+            ct: ct);
+        var ledDetectTask = _ledDetectionService.DetectSmokeLedColorsAsync(roi1, _ledDetectTimeout, _ledDetectPollDelay, progress, ct);
 
-        progress?.Report("[STEP] LED ROI Detect: chờ detect đủ màu đỏ + xanh");
-        progress?.Report("[ROI1][RESET]");
-        var ledDetectResult = await DetectLedColorsAsync(roi1, _ledDetectTimeout, ct, progress).ConfigureAwait(false);
-        results.Add(ledDetectResult);
+        await Task.WhenAll(powerTask, ledDetectTask).ConfigureAwait(false);
+
+        var powerResult = await powerTask.ConfigureAwait(false);
+        var ledDetectResult = await ledDetectTask.ConfigureAwait(false);
 
         var ledTestPassed = powerResult.IsPassed && ledDetectResult.IsPassed;
+        var ledTestMessage = ledTestPassed
+            ? "[ACK][PASS] LED Test - ACK G6T PASS, LED ROI PASS"
+            : $"[ACK][FAIL] LED Test - ACK G6T={(powerResult.IsPassed ? "PASS" : "FAIL")}, LED ROI={(ledDetectResult.IsPassed ? "PASS" : "FAIL")}";
+
+        progress?.Report(ledTestMessage);
         results.Add(new TestStepResult
         {
             StepName = "LED Test",
             IsPassed = ledTestPassed,
-            Message = ledTestPassed ? "PASS LED Test" : "FAIL LED Test",
+            Message = ledTestMessage,
         });
+        results.AddRange(powerResults);
+        results.Add(ledDetectResult);
 
         if (!ledTestPassed)
         {
@@ -207,14 +234,14 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         // After Button Test PASS, send UART_On frame to G6T (RelayOutput 0x08, data {0x05,0x01})
         progress?.Report("[STEP] UART_On: gửi frame tới G6T, chờ ACK 3s");
         var uartOnCmd = new G6TCommand { CommandId = G6TCommandId.RelayOutput, Data = new byte[] { 0x05, 0x01 } };
-        var uartOnResult = await ExecuteCommandStepAsync(
+        var uartOnResult = await ExecuteCommandStepWithRetryAsync(
             stepName: "UART On",
             timeout: _ackTimeout,
             commandFunc: token => _g6tAdapter.SendCommandAsync(uartOnCmd, token),
             expectedCommandId: G6TCommandId.RelayOutput,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(uartOnResult);
         if (!uartOnResult.IsPassed)
         {
             // Log failure but continue with detector reads
@@ -222,92 +249,90 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         }
         // After UART_On, set Calib Pin ON on G6T, then proceed to DT COM reads
         progress?.Report("[STEP] Calib Set ON: gửi frame tới G6T, chờ ACK 3s");
-        var calibSetOnResult = await ExecuteCommandStepAsync(
+        var calibSetOnResult = await ExecuteCommandStepWithRetryAsync(
             stepName: "Calib Set ON",
             timeout: _ackTimeout,
             commandFunc: token => _testOrchestrator.SetCalibPinAsync(true, token),
             expectedCommandId: G6TCommandId.SetCalibPin,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(calibSetOnResult);
 
         if (!calibSetOnResult.IsPassed)
         {
             progress?.Report("[ACK][WARN] Calib Set ON thất bại - tiếp tục chu trình nhưng kiểm tra thiết bị.");
         }
 
-        // If user selected 'smock' device type, immediately request LoRa value from detector
-        if (_currentDeviceTypeEquals("smock"))
-        {
-            progress?.Report("[STEP] Gửi Read_Lora tới DT COM sau UART_On và Calib Set");
-            var loraResult = await ExecuteDetectorReadStepAsync(
-                stepName: "Lora Test",
-                timeout: _detectorAckTimeout,
-                readFunc: token => _detectorAdapter.ReadLoraAsync(token),
-                progress: progress,
-                ct: ct).ConfigureAwait(false);
-            results.Add(loraResult);
-
-            if (!loraResult.IsPassed)
-            {
-                progress?.Report("[STEP] Bỏ qua Read_smock: Lora Test FAIL.");
-                return results;
-            }
-
-            progress?.Report("[STEP] Read_smock: gửi frame tới DT COM, chờ ACK 3s");
-            var smokeAfterLoraResult = await ExecuteDetectorReadStepAsync(
-                stepName: "Read Smoke",
-                timeout: _detectorAckTimeout,
-                readFunc: token => _detectorAdapter.ReadSmokeAsync(token),
-                progress: progress,
-                ct: ct).ConfigureAwait(false);
-            results.Add(smokeAfterLoraResult);
-
-            return results;
-        }
-
-        progress?.Report("[STEP] DT COM: bắt đầu đọc giá trị nhiệt và khói.");
+        progress?.Report("[STEP] DT COM: bắt đầu đọc giá trị LoRa, nhiệt và khói.");
         if (!_detectorAdapter.IsConnected)
         {
-            _detectorAdapter.Connect(detectorComPort, _detectorBaudRate);
-            progress?.Report($"[STEP] Kết nối DT COM: {detectorComPort}");
+            try
+            {
+                await _detectorAdapter.ConnectAsync(detectorComPort, _detectorBaudRate, ct).ConfigureAwait(false);
+                progress?.Report($"[STEP] Kết nối DT COM: {detectorComPort}");
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or HardwareException or UnauthorizedAccessException or IOException)
+            {
+                var message = $"[ACK][FAIL] DT COM - Khong mo duoc {detectorComPort}: {ex.Message}";
+                progress?.Report(message);
+                results.Add(new TestStepResult
+                {
+                    StepName = "DT COM",
+                    IsPassed = false,
+                    Message = message,
+                });
+                return results;
+            }
         }
         else
         {
             progress?.Report($"[STEP] DT COM đã kết nối: {_detectorAdapter.ConnectedComPort}");
         }
 
-        var tempResult = await ExecuteDetectorReadStepAsync(
-            stepName: "Read Temperature",
+        var loraLabel = string.Equals(deviceType, "smoke", StringComparison.OrdinalIgnoreCase)
+            ? "đầu báo khói"
+            : "đầu báo nhiệt";
+        progress?.Report($"[STEP] Lora Test: gửi frame tới {loraLabel}, chờ ACK 3s");
+        var loraResult = await ExecuteDetectorReadStepAsync(
+            stepName: "Lora Test",
             timeout: _detectorAckTimeout,
-            readFunc: token => _detectorAdapter.ReadTemperatureAsync(token),
+            readFunc: token => _detectorAdapter.ReadLoraAsync(token),
+            validateFunc: response => string.Equals(response.Payload, "1.0.H(\u0001)", StringComparison.Ordinal),
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(tempResult);
-        if (!tempResult.IsPassed)
+        results.Add(loraResult);
+        if (!loraResult.IsPassed)
         {
             return results;
         }
 
-        var smokeResult = await ExecuteDetectorReadStepAsync(
-            stepName: "Read Smoke",
+        var readValueResult = await ExecuteDetectorReadStepAsync(
+            stepName: "Read Value Test",
             timeout: _detectorAckTimeout,
-            readFunc: token => _detectorAdapter.ReadSmokeAsync(token),
+            readFunc: ReadDetectorValueAsync,
+            validateFunc: ValidateDetectorValueResponse,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(smokeResult);
-        if (!smokeResult.IsPassed)
-        {
-            return results;
-        }
-
+        results.Add(readValueResult);
         return results;
+    }
+
+    protected virtual Task<DetectorResponse> ReadDetectorValueAsync(CancellationToken ct)
+    {
+        return _detectorAdapter.ReadSmokeAsync(ct);
+    }
+
+    protected virtual bool ValidateDetectorValueResponse(DetectorResponse response)
+    {
+        return response.Payload.StartsWith("1.0.5(", StringComparison.Ordinal) &&
+            response.Payload.EndsWith(")", StringComparison.Ordinal);
     }
 
     private async Task<TestStepResult> ExecuteDetectorReadStepAsync(
         string stepName,
         TimeSpan timeout,
         Func<CancellationToken, Task<DetectorResponse>> readFunc,
+        Func<DetectorResponse, bool>? validateFunc,
         IProgress<string>? progress,
         CancellationToken ct)
     {
@@ -318,12 +343,7 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
 
             var response = await readFunc(ct).ConfigureAwait(false);
 
-            // Special-case validation for LoRa: expect payload value == 0x01 (SOH)
-            var passed = true;
-            if (stepName.IndexOf("lora", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                passed = response.Value.Length == 1 && response.Value[0] == (char)1;
-            }
+            var passed = validateFunc?.Invoke(response) ?? true;
 
             var statusText = passed ? "PASS" : "FAIL";
             var message =
@@ -331,6 +351,12 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
                 $"[TX][{response.ComPort}] {ToHex(response.TxFrame)}{Environment.NewLine}" +
                 $"[RX][{response.ComPort}] {ToHex(response.RxFrame)}{Environment.NewLine}" +
                 $"[ACK][{statusText}] {stepName} - Value={FormatDetectorValue(response.Value)}";
+            if (response.TraceLines.Count > 0)
+            {
+                message += Environment.NewLine + string.Join(
+                    Environment.NewLine,
+                    response.TraceLines.Select(line => $"[TRACE] {line}"));
+            }
 
             progress?.Report(message);
             return new TestStepResult
@@ -353,17 +379,50 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         }
     }
 
-    public Task SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default)
+
+    public async Task<IReadOnlyList<TestStepResult>> SendResetAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        // Fire-and-forget from UI: ensure reset executed after UI showed final result
+        // Ensure reset executed after UI showed final result (ACK wait, retry handled by adapter)
         // g6tComPort is accepted for compatibility with UI, adapter uses its connected port internally
-        return SendResetSequenceAsync(new List<TestStepResult>(), progress, ct);
+        var results = new List<TestStepResult>();
+        await SendResetSequenceAsync(results, progress, ct).ConfigureAwait(false);
+        return results;
     }
 
     public Task PrepareOnConnectAsync(string g6tComPort, IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        // Immediately put DUT into safe initial state after connect: PowerOff + SetCalibPinOff
-        return SendResetSequenceAsync(new List<TestStepResult>(), progress, ct);
+        // Immediately put DUT into safe initial state after connect without blocking on ACK.
+        return SendResetSequenceNoAckAsync(progress, ct);
+    }
+
+    private async Task SendResetSequenceNoAckAsync(IProgress<string>? progress, CancellationToken ct)
+    {
+        var powerOffCommand = new G6TCommand
+        {
+            CommandId = G6TCommandId.PowerControl,
+            Data = new byte[] { (byte)G6TPowerState.Off },
+        };
+
+        progress?.Report("[STEP] RESET: gửi lệnh Cấp nguồn OFF (no-ack)");
+        await _g6tAdapter.SendCommandNoAckAsync(powerOffCommand, ct).ConfigureAwait(false);
+
+        var calibOffCommand = new G6TCommand
+        {
+            CommandId = G6TCommandId.SetCalibPin,
+            Data = new[] { (byte)G6TCalibPinState.Unset },
+        };
+
+        progress?.Report("[STEP] RESET: gửi lệnh Set Calib Pin OFF (no-ack)");
+        await _g6tAdapter.SendCommandNoAckAsync(calibOffCommand, ct).ConfigureAwait(false);
+
+        var uartOffCommand = new G6TCommand
+        {
+            CommandId = G6TCommandId.RelayOutput,
+            Data = new byte[] { 0x05, 0x00 },
+        };
+
+        progress?.Report("[STEP] RESET: gửi lệnh UART OFF (no-ack)");
+        await _g6tAdapter.SendCommandNoAckAsync(uartOffCommand, ct).ConfigureAwait(false);
     }
 
     private async Task SendResetSequenceAsync(
@@ -371,26 +430,43 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         IProgress<string>? progress,
         CancellationToken ct)
     {
+        var restoreAckTimeout = TimeSpan.FromSeconds(2);
+
         // Send PowerOff first then SetCalibPin OFF as requested
-        progress?.Report("[STEP] RESET: gửi lệnh Cấp nguồn OFF, chờ ACK 3s");
-        var powerOffResult = await ExecuteCommandStepAsync(
+        progress?.Report("[STEP] RESET: gửi lệnh Cấp nguồn OFF, chờ ACK 2s");
+        await ExecuteCommandStepWithRetryAsync(
             stepName: "Reset PowerOff",
-            timeout: _ackTimeout,
+            timeout: restoreAckTimeout,
             commandFunc: token => _testOrchestrator.PowerOffAsync(token),
             expectedCommandId: G6TCommandId.PowerControl,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(powerOffResult);
 
-        progress?.Report("[STEP] RESET: gửi lệnh Set Calib Pin OFF, chờ ACK 3s");
-        var calibOffResult = await ExecuteCommandStepAsync(
+        progress?.Report("[STEP] RESET: gửi lệnh Set Calib Pin OFF, chờ ACK 2s");
+        await ExecuteCommandStepWithRetryAsync(
             stepName: "Reset SetCalibPinOff",
-            timeout: _ackTimeout,
+            timeout: restoreAckTimeout,
             commandFunc: token => _testOrchestrator.SetCalibPinAsync(false, token),
             expectedCommandId: G6TCommandId.SetCalibPin,
+            results: results,
             progress: progress,
             ct: ct).ConfigureAwait(false);
-        results.Add(calibOffResult);
+
+        progress?.Report("[STEP] RESET: gửi lệnh UART OFF, chờ ACK 2s");
+        var uartOffCommand = new G6TCommand
+        {
+            CommandId = G6TCommandId.RelayOutput,
+            Data = new byte[] { 0x05, 0x00 },
+        };
+        await ExecuteCommandStepWithRetryAsync(
+            stepName: "Reset UartOff",
+            timeout: restoreAckTimeout,
+            commandFunc: token => _g6tAdapter.SendCommandAsync(uartOffCommand, token),
+            expectedCommandId: G6TCommandId.RelayOutput,
+            results: results,
+            progress: progress,
+            ct: ct).ConfigureAwait(false);
     }
 
     private async Task<TestStepResult> ExecuteCommandStepAsync(
@@ -404,13 +480,14 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         try
         {
             // Report real-time sending + waiting status to UI
-            var portName = (_g6tAdapter as dynamic)?.ConnectedComPort as string ?? "UNKNOWN";
+            var portName = string.IsNullOrWhiteSpace(_g6tAdapter.ConnectedComPort) ? "UNKNOWN" : _g6tAdapter.ConnectedComPort;
             progress?.Report($"[SENDING] {stepName} -> {portName}");
             progress?.Report($"[WAITING] {stepName} - chờ ACK {timeout.TotalSeconds:0.#}s");
 
-            // Do not cancel the commandFunc from here based on step timeout.
-            // Adapter implements per-frame timeout and retry and will throw TimeoutException with TX/RX info.
-            var response = await commandFunc(ct).ConfigureAwait(false);
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeoutCts.CancelAfter(timeout);
+
+            var response = await commandFunc(timeoutCts.Token).ConfigureAwait(false);
             var passed = response.IsSuccess && response.CommandId == expectedCommandId;
             var ackStatus = passed ? "PASS" : "FAIL";
             var message =
@@ -430,7 +507,9 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         }
         catch (OperationCanceledException)
         {
-            var message = $"[ACK][FAIL] {stepName} - canceled";
+            var message = ct.IsCancellationRequested
+                ? $"[ACK][FAIL] {stepName} - canceled"
+                : $"[ACK][FAIL] {stepName} - timeout";
             _logger.LogWarning("{Message}", message);
             progress?.Report(message);
             return new TestStepResult
@@ -464,7 +543,74 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
                 Message = message,
             };
         }
+        catch (HardwareException ex)
+        {
+            var message = $"[ACK][FAIL] {stepName} - hardware error: {ex.Message}";
+            _logger.LogError(ex, "{Message}", message);
+            progress?.Report(message);
+            return new TestStepResult
+            {
+                StepName = stepName,
+                IsPassed = false,
+                Message = message,
+            };
+        }
 
+    }
+
+    private async Task<TestStepResult> ExecuteCommandStepWithRetryAsync(
+        string stepName,
+        TimeSpan timeout,
+        Func<CancellationToken, Task<G6TResponse>> commandFunc,
+        G6TCommandId expectedCommandId,
+        List<TestStepResult> results,
+        IProgress<string>? progress,
+        CancellationToken ct)
+    {
+        TestStepResult? result = null;
+        const int maxAttempts = 2; // initial + 1 retry
+
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            if (attempt > 1)
+            {
+                progress?.Report($"[INFO] {stepName} - retry attempt {attempt}");
+            }
+
+            result = await ExecuteCommandStepAsync(
+                stepName: stepName,
+                timeout: timeout,
+                commandFunc: commandFunc,
+                expectedCommandId: expectedCommandId,
+                progress: progress,
+                ct: ct).ConfigureAwait(false);
+
+            results.Add(result);
+
+            if (result.IsPassed)
+            {
+                break;
+            }
+
+            if (attempt < maxAttempts)
+            {
+                try
+                {
+                    await Task.Delay(150, ct).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+            }
+        }
+
+        return result ?? new TestStepResult
+        {
+            StepName = stepName,
+            IsPassed = false,
+            Message = $"[ACK][FAIL] {stepName} - canceled",
+        };
     }
 
     private static string ToHex(byte[] data)
@@ -536,93 +682,5 @@ public class SmokeDeviceTestService : ISmokeDeviceTestService
         return string.Join(Environment.NewLine, lines);
     }
 
-    private async Task<TestStepResult> DetectLedColorsAsync(
-        Rectangle roi1,
-        TimeSpan timeout,
-        CancellationToken ct,
-        IProgress<string>? progress)
-    {
-        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        timeoutCts.CancelAfter(timeout);
-
-        var redDetected = false;
-        var greenDetected = false;
-
-        while (!timeoutCts.IsCancellationRequested)
-        {
-            using var frame = await _cameraPreview.CaptureFrameAsync().ConfigureAwait(false);
-            var boundedRoi = Rectangle.Intersect(new Rectangle(Point.Empty, frame.Size), roi1);
-            if (boundedRoi.Width <= 0 || boundedRoi.Height <= 0)
-            {
-                return new TestStepResult
-                {
-                    StepName = "LED ROI Detect",
-                    IsPassed = false,
-                    Message = "ROI1 nằm ngoài khung ảnh.",
-                };
-            }
-
-            AnalyzeColors(frame, boundedRoi, ref redDetected, ref greenDetected);
-            if (redDetected && greenDetected)
-            {
-                var passMessage = "LED ROI Detect: phát hiện đủ màu đỏ và xanh.";
-                _logger.LogInformation("{Message}", passMessage);
-                progress?.Report("[ROI1][PASS]");
-                progress?.Report($"[ACK][PASS] LED ROI Detect - {passMessage}");
-                return new TestStepResult
-                {
-                    StepName = "LED ROI Detect",
-                    IsPassed = true,
-                    Message = $"[ACK][PASS] LED ROI Detect - {passMessage}",
-                };
-            }
-
-            try
-            {
-                await Task.Delay(_ledDetectPollDelay, timeoutCts.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-        }
-
-        var failMessage = $"[ACK][FAIL] LED ROI Detect - không thấy đủ đỏ + xanh trong {timeout.TotalSeconds:0.#}s.";
-        progress?.Report(failMessage);
-        return new TestStepResult
-        {
-            StepName = "LED ROI Detect",
-            IsPassed = false,
-            Message = failMessage,
-        };
-    }
-
-    private static void AnalyzeColors(Bitmap frame, Rectangle roi, ref bool redDetected, ref bool greenDetected)
-    {
-        const int sampleStep = 4;
-
-        for (var y = roi.Top; y < roi.Bottom; y += sampleStep)
-        {
-            for (var x = roi.Left; x < roi.Right; x += sampleStep)
-            {
-                var color = frame.GetPixel(x, y);
-
-                if (!redDetected && color.R > 180 && color.G < 120 && color.B < 120)
-                {
-                    redDetected = true;
-                }
-
-                if (!greenDetected && color.G > 150 && color.R < 150 && color.B < 150)
-                {
-                    greenDetected = true;
-                }
-
-                if (redDetected && greenDetected)
-                {
-                    return;
-                }
-            }
-        }
-    }
 }
 

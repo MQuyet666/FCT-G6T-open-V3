@@ -2,8 +2,10 @@ using System.IO;
 using System.Text;
 using FCT.G6T.Domain.Interfaces;
 using FCT.G6T.Domain.Models;
-using FCT.G6T.HAL;
+using FCT.G6T.HAL.Serial;
 using Microsoft.Extensions.Logging;
+using DomainHardwareException = FCT.G6T.Domain.Exceptions.HardwareException;
+using HalHardwareException = FCT.G6T.HAL.Serial.HardwareException;
 
 namespace FCT.G6T.Infrastructure.Serial;
 
@@ -16,10 +18,13 @@ public class DetectorAdapter : IDetectorAdapter
     private const byte Soh = 0x01;
     private const byte Stx = 0x02;
     private const byte Etx = 0x03;
+    private static readonly TimeSpan InvalidFrameRetryDelay = TimeSpan.FromSeconds(1);
 
     private readonly ISerialPortWrapper _port;
     private readonly ILogger<DetectorAdapter> _logger;
     private string _connectedComPort = string.Empty;
+
+    public event EventHandler<DetectorTraceEventArgs>? Trace;
 
     public DetectorAdapter(ISerialPortWrapper port, ILogger<DetectorAdapter> logger, TimeSpan ackTimeout, int retryCount)
     {
@@ -32,7 +37,7 @@ public class DetectorAdapter : IDetectorAdapter
     public bool IsConnected => _port.IsOpen;
     public string ConnectedComPort => _connectedComPort;
 
-    public void Connect(string comPort, int baudRate)
+    public async Task ConnectAsync(string comPort, int baudRate, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(comPort))
         {
@@ -41,20 +46,36 @@ public class DetectorAdapter : IDetectorAdapter
 
         if (_port.IsOpen)
         {
-            _port.Close();
+            await _port.CloseAsync(ct).ConfigureAwait(false);
         }
 
         var effectiveBaudRate = baudRate > 0 ? baudRate : DefaultBaudRate;
-        _port.Open(comPort, effectiveBaudRate);
+        try
+        {
+            await _port.OpenAsync(comPort, effectiveBaudRate, ct).ConfigureAwait(false);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            throw new InvalidOperationException($"COM {comPort} đang bị chiếm. Hãy đóng ứng dụng khác đang sử dụng cổng.", ex);
+        }
+        catch (HalHardwareException ex) when (ex.InnerException is UnauthorizedAccessException)
+        {
+            throw new InvalidOperationException($"COM {comPort} đang bị chiếm. Hãy đóng ứng dụng khác đang sử dụng cổng.", ex);
+        }
+        catch (HalHardwareException ex)
+        {
+            throw new InvalidOperationException($"Không mở được COM {comPort}. {ex.Message}", ex);
+        }
+
         _connectedComPort = comPort;
         _logger.LogInformation("Detector connected on {ComPort} @ {BaudRate}", comPort, effectiveBaudRate);
     }
 
-    public void Disconnect()
+    public async Task DisconnectAsync(CancellationToken ct = default)
     {
         if (_port.IsOpen)
         {
-            _port.Close();
+            await _port.CloseAsync(ct).ConfigureAwait(false);
         }
 
         _connectedComPort = string.Empty;
@@ -74,9 +95,19 @@ public class DetectorAdapter : IDetectorAdapter
         return SendReadCommandAsync(ReadTemperatureValuePayload, ReadTemperatureValuePrefix, ct);
     }
 
+    public Task<DetectorResponse> ReadTemperatureAsync(CancellationToken ct = default)
+    {
+        return ReadTemperatureValueAsync(ct);
+    }
+
     public Task<DetectorResponse> ReadSmokeValueAsync(CancellationToken ct = default)
     {
         return SendReadCommandAsync(ReadSmokeValuePayload, ReadSmokeValuePrefix, ct);
+    }
+
+    public Task<DetectorResponse> ReadSmokeAsync(CancellationToken ct = default)
+    {
+        return ReadSmokeValueAsync(ct);
     }
 
     public Task<DetectorResponse> ReadLoraRssiAsync(CancellationToken ct = default)
@@ -84,44 +115,98 @@ public class DetectorAdapter : IDetectorAdapter
         return SendReadCommandAsync(ReadLoraRssiPayload, ReadLoraRssiPrefix, ct);
     }
 
+    public Task<DetectorResponse> ReadLoraAsync(CancellationToken ct = default)
+    {
+        return ReadLoraRssiAsync(ct);
+    }
+
     private async Task<DetectorResponse> SendReadCommandAsync(string payload, string expectedPrefix, CancellationToken ct)
     {
         var tx = BuildRequest(payload);
         var portName = string.IsNullOrWhiteSpace(_connectedComPort) ? "UNKNOWN" : _connectedComPort;
         Exception? lastError = null;
+        var traceLines = new List<string>();
 
         for (var attempt = 1; attempt <= _retryCount + 1; attempt++)
         {
-            await _port.WriteAsync(tx, CancellationToken.None).ConfigureAwait(false);
+            var txMessage = $"DT TX [{portName}] attempt {attempt}: {ToHex(tx)}";
+            traceLines.Add(txMessage);
+            _logger.LogInformation("{Message}", txMessage);
+            Trace?.Invoke(this, new DetectorTraceEventArgs(txMessage));
+            try
+            {
+                await _port.SendAsync(tx, CancellationToken.None).ConfigureAwait(false);
+            }
+            catch (HalHardwareException ex)
+            {
+                throw new DomainHardwareException($"Detector COM {portName} hardware error while sending frame.", ex);
+            }
 
-            byte[] rx;
             using (var attemptCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
             {
                 attemptCts.CancelAfter(_ackTimeout);
-                rx = await _port.ReadVariableFrameAsync(Stx, Etx, attemptCts.Token).ConfigureAwait(false);
-            }
 
-            try
-            {
-                var parsedPayload = ParseResponse(rx, expectedPrefix);
-                return new DetectorResponse
+                while (!attemptCts.IsCancellationRequested)
                 {
-                    ComPort = portName,
-                    TxFrame = tx,
-                    RxFrame = rx,
-                    Payload = parsedPayload,
-                    Value = ExtractValue(parsedPayload),
-                };
-            }
-            catch (InvalidDataException ex)
-            {
-                lastError = new InvalidDataException($"{ex.Message} | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] {ToHex(rx)}", ex);
-                if (attempt <= _retryCount)
-                {
-                    continue;
+                    byte[] rx;
+                    try
+                    {
+                        rx = await _port.ReceiveAsync(Stx, Etx, attemptCts.Token).ConfigureAwait(false);
+                    }
+                    catch (HalHardwareException ex)
+                    {
+                        throw new DomainHardwareException($"Detector COM {portName} hardware error while receiving response.", ex);
+                    }
+                    catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    catch (TimeoutException ex)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            throw new OperationCanceledException(ct);
+                        }
+
+                        lastError = ex;
+                        break;
+                    }
+
+                    try
+                    {
+                        var parsedPayload = ParseResponse(rx, expectedPrefix);
+                        var rxMessage = $"DT RX [{portName}] attempt {attempt}: {ToHex(rx)}";
+                        traceLines.Add(rxMessage);
+                        _logger.LogDebug("{Message}", rxMessage);
+                        Trace?.Invoke(this, new DetectorTraceEventArgs(rxMessage));
+                        return new DetectorResponse
+                        {
+                            ComPort = portName,
+                            TxFrame = tx,
+                            RxFrame = rx,
+                            Payload = parsedPayload,
+                            Value = ExtractValue(parsedPayload),
+                            TraceLines = traceLines.ToList(),
+                        };
+                    }
+                    catch (InvalidDataException ex)
+                    {
+                        lastError = new InvalidDataException($"{ex.Message} | [TX][{portName}] {ToHex(tx)} | [RX][{portName}] {ToHex(rx)}", ex);
+                        var retryMessage = $"DT RX [{portName}] attempt {attempt}: invalid frame, retry";
+                        traceLines.Add(retryMessage);
+                        _logger.LogWarning("{Message}", retryMessage);
+                        Trace?.Invoke(this, new DetectorTraceEventArgs(retryMessage));
+                    }
                 }
+            }
 
-                throw lastError;
+            if (attempt <= _retryCount)
+            {
+                var retryMessage = $"DT RX [{portName}] attempt {attempt}: timeout/invalid frame, retry after {InvalidFrameRetryDelay.TotalSeconds:0.#}s";
+                traceLines.Add(retryMessage);
+                _logger.LogWarning("{Message}", retryMessage);
+                Trace?.Invoke(this, new DetectorTraceEventArgs(retryMessage));
+                await Task.Delay(InvalidFrameRetryDelay, ct).ConfigureAwait(false);
             }
         }
 
@@ -176,7 +261,7 @@ public class DetectorAdapter : IDetectorAdapter
             throw new InvalidDataException($"STX không hợp lệ: 0x{frame[0]:X2}");
         }
 
-        var etxIndex = Array.IndexOf(frame, Etx);
+        var etxIndex = Array.IndexOf(frame, Etx, 1);
         if (etxIndex < 0 || etxIndex >= frame.Length - 1)
         {
             throw new InvalidDataException("Không tìm thấy ETX/BCC hợp lệ trong response.");
@@ -234,7 +319,7 @@ public class DetectorAdapter : IDetectorAdapter
 
     public void Dispose()
     {
-        Disconnect();
+        _connectedComPort = string.Empty;
         _port.Dispose();
     }
 }

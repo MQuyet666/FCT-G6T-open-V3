@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup>
+    <_LastSelectedProfileId>D:\New folder\FCT-G6T-Open\V3\FCT-G6T-open-V3\HardwareTestApp\Properties\PublishProfiles\FolderProfile5.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Update="src\Presentation\Controls\CameraPreviewControl.cs">
       <SubType>UserControl</SubType>

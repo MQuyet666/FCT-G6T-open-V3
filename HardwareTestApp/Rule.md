@@ -1,6 +1,6 @@
-# Hardware Test WinForms — Coding Convention
+# Quy ước coding WinForms Hardware Test
 
-**Version 1.1  |  C# .NET  |  WinForms + OpenCvSharp**
+**Phiên bản 1.1  |  C# .NET  |  WinForms + OpenCvSharp**
 
 ---
 
@@ -20,7 +20,7 @@ Project tuân theo Clean Architecture 5 layer. Mỗi layer chỉ được phép 
 
 ✅ **Luồng đúng:** UI → Application (qua interface) → Infrastructure → HAL.
 
-### Forbidden imports (vi phạm layer)
+### Import bị cấm (vi phạm layer)
 
 | Layer | Cấm import |
 |---|---|
@@ -35,7 +35,7 @@ Toàn bộ dependency injection được wire tại một điểm duy nhất: `P
 
 ---
 
-## 2. Naming Convention
+## 2. Quy ước đặt tên
 
 | Loại | Quy tắc | Ví dụ |
 |---|---|---|
@@ -47,7 +47,7 @@ Toàn bộ dependency injection được wire tại một điểm duy nhất: `P
 | Enum type & member | PascalCase | `enum LedColor { Red, Green, Off }` |
 | Event | PascalCase + `EventArgs` suffix | `FrameReadyEventArgs` |
 | Async method | Suffix `Async` | `CaptureFrameAsync()` |
-| Test method | `Should_When` format | `Should_ReturnPass_When_LedOn` |
+| Test method | Định dạng `Should_When` | `Should_ReturnPass_When_LedOn` |
 
 ### Namespace
 
@@ -57,7 +57,7 @@ Ví dụ: `FCT.G6T.Infrastructure.Camera`, `FCT.G6T.Application`, `FCT.G6T.Domai
 
 ---
 
-## 3. File & Folder
+## 3. File & Thư mục
 
 - Mỗi file `.cs` chỉ chứa 1 class hoặc interface.
 - Tên file phải khớp chính xác tên class: `CameraService.cs` ↔ `class CameraService`.
@@ -82,9 +82,9 @@ FCT-G6T/
 
 ---
 
-## 4. Code Style
+## 4. Phong cách code
 
-### 4.1 Thread Safety — Camera
+### 4.1 An toàn luồng — Camera
 
 `CaptureLoop` chạy trên background `Task`. Mọi cập nhật UI phải qua `Invoke`:
 
@@ -109,7 +109,7 @@ else
 
 **Đồng thời hóa TestOrchestrator:** Mỗi lần chỉ được chạy 1 test run. Trong khi đang test, button `[START TEST]` phải bị disable. Không cho phép chạy song song 2 test run.
 
-### 4.2 Dependency Injection
+### 4.2 Tiêm phụ thuộc
 
 - Constructor injection — **không** dùng Service Locator hoặc static factory.
 - UI Form nhận interface qua constructor, không `new` trực tiếp Infrastructure class.
@@ -121,7 +121,7 @@ public CameraPreviewControl(ICameraService cameraService)
 }
 ```
 
-### 4.3 Error Handling
+### 4.3 Xử lý lỗi
 
 **Phân loại exception:**
 
@@ -136,17 +136,17 @@ public CameraPreviewControl(ICameraService cameraService)
 - `TestCase` FAIL phải kèm `Message` mô tả nguyên nhân — không trả về FAIL trống.
 - Dùng `ILogger` (Microsoft.Extensions.Logging) — **cấm** `Console.WriteLine` và `Debug.Print`.
 
-**Log level:**
+**Mức log:**
 
-| Level | Khi nào dùng |
+| Mức | Khi nào dùng |
 |---|---|
 | `LogInformation` | Flow bình thường: bắt đầu step, kết quả PASS, kết nối thành công |
 | `LogWarning` | Timeout lần đầu, retry, giá trị ngoài ngưỡng nhưng chưa fail |
 | `LogError` | Hardware error, test FAIL, exception recoverable |
 
-**Log file:** Xuất ra `logs/fct-{yyyy-MM-dd}.log`, daily rolling, giữ tối đa **30 ngày**.
+**File log:** Xuất ra `logs/fct-{yyyy-MM-dd}.log`, rolling theo ngày, giữ tối đa **30 ngày**.
 
-### 4.4 Async / Await
+### 4.4 Async/Await
 
 - Mọi thao tác I/O (camera, UART, file) phải `async`.
 - **Không** dùng `.Result` hoặc `.Wait()` — gây deadlock trên UI thread.
@@ -190,14 +190,14 @@ private async void BtnStartTest_Click(object sender, EventArgs e)
 
 ---
 
-## 5. Test Case Convention
+## 5. Quy ước Test Case
 
 - Mỗi `TestCase` là một class kế thừa `ITestStrategy`.
 - Test case phải **idempotent** — chạy nhiều lần liên tiếp cho cùng kết quả.
 - Mỗi `TestStep` có `Timeout` riêng — mặc định **5000 ms**.
 - Kết quả trả về `TestResult { Status, Message, ActualValue, ExpectedValue }`.
 
-### ID naming
+### Quy ước ID
 
 Schema bắt buộc: `TC_{DEVICE}_{SEQ:02d}`
 
@@ -235,27 +235,27 @@ Mỗi `TestCase` **phải** định nghĩa `teardown` steps — chạy dù PASS 
 }
 ```
 
-### Retry
+### Thử lại
 
 Mỗi `TestStep` có field `maxRetry` (mặc định `0`). Nếu `0`: fail ngay khi timeout. Nếu `> 0`: thử lại tối đa `maxRetry` lần trước khi FAIL.
 
 ---
 
-## 6. Git Convention
+## 6. Quy ước Git
 
-### Branch
+### Nhánh
 
 Branch **luôn** rẽ từ `develop`, merge về `develop`. `main` chỉ nhận release merge.
 
 ```
-main       ← release only
-develop    ← integration branch
+main       ← chỉ cho phát hành
+develop    ← nhánh tích hợp
   └── feature/ten-tinh-nang
   └── fix/mo-ta-loi
   └── refactor/ten-module
 ```
 
-### Commit message
+### Thông điệp commit
 
 ```
 [feat] Thêm LedColorDetector với HSV threshold
@@ -263,10 +263,10 @@ develop    ← integration branch
 [refactor] Tách CaptureLoop ra HAL layer
 ```
 
-### Merge strategy
+### Chiến lược merge
 
 - **Feature → develop**: Squash merge (giữ history gọn).
-- **Develop → main** (release): Merge commit (giữ traceability).
+- **Develop → main** (phát hành): Merge commit (giữ traceability).
 
 ### Khác
 

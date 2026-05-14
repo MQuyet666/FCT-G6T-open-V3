@@ -1,0 +1,175 @@
+﻿//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:24:26
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:25:54
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:29:26
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:31:40
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:40:59
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:41:23
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-12 14:45:37
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 07 00 E8
+RX : 1F 2F 3F FF 01 07 06 EF
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+
+//***********************************END TEST***********************************//

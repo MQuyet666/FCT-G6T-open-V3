@@ -58,14 +58,17 @@ namespace FCT.G6T.Presentation.Forms
             radioButton4 = new RadioButton();
             radioButton5 = new RadioButton();
             comboBox1 = new ComboBox();
-            btnStop = new Button();
             groupBox1 = new GroupBox();
             button1 = new Button();
             button2 = new Button();
             button3 = new Button();
             btnClear = new Button();
+            groupBox2 = new GroupBox();
+            radioButton7 = new RadioButton();
+            radioButton9 = new RadioButton();
             grpTest.SuspendLayout();
             groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // pnlCamera
@@ -114,7 +117,7 @@ namespace FCT.G6T.Presentation.Forms
             // 
             txtSerial.Location = new Point(717, 111);
             txtSerial.Name = "txtSerial";
-            txtSerial.Size = new Size(510, 27);
+            txtSerial.Size = new Size(323, 27);
             txtSerial.TabIndex = 10;
             txtSerial.TextChanged += txtSerial_TextChanged;
             // 
@@ -249,6 +252,7 @@ namespace FCT.G6T.Presentation.Forms
             pnlStatus.Name = "pnlStatus";
             pnlStatus.Size = new Size(600, 68);
             pnlStatus.TabIndex = 1;
+            pnlStatus.Paint += pnlStatus_Paint;
             // 
             // radioButton2
             // 
@@ -256,10 +260,10 @@ namespace FCT.G6T.Presentation.Forms
             radioButton2.Checked = true;
             radioButton2.Location = new Point(20, 36);
             radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(74, 24);
+            radioButton2.Size = new Size(75, 24);
             radioButton2.TabIndex = 17;
             radioButton2.TabStop = true;
-            radioButton2.Text = "Smock";
+            radioButton2.Text = "Smoke";
             radioButton2.UseVisualStyleBackColor = true;
             radioButton2.CheckedChanged += radioButton2_CheckedChanged;
             // 
@@ -268,9 +272,9 @@ namespace FCT.G6T.Presentation.Forms
             radioButton3.AutoSize = true;
             radioButton3.Location = new Point(119, 36);
             radioButton3.Name = "radioButton3";
-            radioButton3.Size = new Size(70, 24);
+            radioButton3.Size = new Size(62, 24);
             radioButton3.TabIndex = 18;
-            radioButton3.Text = "Heate";
+            radioButton3.Text = "Heat";
             radioButton3.UseVisualStyleBackColor = true;
             radioButton3.CheckedChanged += radioButton3_CheckedChanged;
             // 
@@ -303,13 +307,6 @@ namespace FCT.G6T.Presentation.Forms
             comboBox1.Size = new Size(100, 28);
             comboBox1.TabIndex = 20;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-            // 
-            // btnStop
-            // 
-            btnStop.Location = new Point(0, 0);
-            btnStop.Name = "btnStop";
-            btnStop.Size = new Size(75, 23);
-            btnStop.TabIndex = 21;
             // 
             // groupBox1
             // 
@@ -365,9 +362,46 @@ namespace FCT.G6T.Presentation.Forms
             btnClear.UseVisualStyleBackColor = true;
             btnClear.Click += btnClear_Click;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(radioButton7);
+            groupBox2.Controls.Add(radioButton9);
+            groupBox2.Location = new Point(1059, 81);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(168, 57);
+            groupBox2.TabIndex = 20;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "QR";
+            groupBox2.Enter += groupBox2_Enter;
+            // 
+            // radioButton7
+            // 
+            radioButton7.AutoSize = true;
+            radioButton7.Checked = true;
+            radioButton7.Location = new Point(6, 26);
+            radioButton7.Name = "radioButton7";
+            radioButton7.Size = new Size(54, 24);
+            radioButton7.TabIndex = 17;
+            radioButton7.TabStop = true;
+            radioButton7.Text = "Use";
+            radioButton7.UseVisualStyleBackColor = true;
+            radioButton7.CheckedChanged += radioButton7_CheckedChanged;
+            // 
+            // radioButton9
+            // 
+            radioButton9.AutoSize = true;
+            radioButton9.Location = new Point(86, 26);
+            radioButton9.Name = "radioButton9";
+            radioButton9.Size = new Size(76, 24);
+            radioButton9.TabIndex = 18;
+            radioButton9.Text = "No use";
+            radioButton9.UseVisualStyleBackColor = true;
+            radioButton9.CheckedChanged += radioButton7_CheckedChanged;
+            // 
             // Mainform
             // 
             ClientSize = new Size(1239, 628);
+            Controls.Add(groupBox2);
             Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(btnClear);
@@ -383,7 +417,6 @@ namespace FCT.G6T.Presentation.Forms
             Controls.Add(txtSerial);
             Controls.Add(grpTest);
             Controls.Add(txtLog);
-            Controls.Add(btnStop);
             Name = "Mainform";
             Text = "FCT G6T";
             Load += Mainform_Load;
@@ -391,6 +424,8 @@ namespace FCT.G6T.Presentation.Forms
             grpTest.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -425,12 +460,14 @@ namespace FCT.G6T.Presentation.Forms
         private RadioButton radioButton4;
         private RadioButton radioButton5;
         private ComboBox comboBox1;
-        private Button btnStop;
         private GroupBox groupBox1;
         private Panel panel1;
         private Button button1;
         private Button button2;
         private Button button3;
         private Button btnClear;
+        private GroupBox groupBox2;
+        private RadioButton radioButton7;
+        private RadioButton radioButton9;
     }
 }

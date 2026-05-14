@@ -1,304 +1,309 @@
+using System.IO;
 using System.IO.Ports;
+using System.Text;
+using System.Threading;
 
-namespace FCT.G6T.HAL;
+namespace FCT.G6T.HAL.Serial;
 
 public class SerialPortWrapper : ISerialPortWrapper
 {
-    private readonly int _readTimeoutMs;
-    private readonly int _writeTimeoutMs;
     private const int ResponseLength = 8;
 
     private SerialPort? _port;
-    private readonly object _ioLock = new();
-
-    public SerialPortWrapper(int readTimeoutMs, int writeTimeoutMs)
-    {
-        _readTimeoutMs = readTimeoutMs;
-        _writeTimeoutMs = writeTimeoutMs;
-    }
+    private readonly SemaphoreSlim _ioLock = new(1, 1);
 
     public bool IsOpen => _port?.IsOpen ?? false;
 
-    public void Open(string portName, int baudRate)
+    public SerialPortWrapper()
     {
-        _port?.Dispose();
-        var port = new SerialPort(portName, baudRate)
-        {
-            ReadTimeout = _readTimeoutMs,
-            WriteTimeout = _writeTimeoutMs,
-            DataBits = 8,
-            Parity = Parity.None,
-            StopBits = StopBits.One,
-            Handshake = Handshake.None,
-        };
+    }
 
-        var opened = false;
+    public async Task OpenAsync(string portName, int baudRate, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(portName))
+        {
+            throw new ArgumentException("COM port không hợp lệ.", nameof(portName));
+        }
+
+        SerialPort? port = null;
+        Exception? openFailure = null;
         try
         {
-            port.Open();
-            port.DiscardInBuffer();
-            port.DiscardOutBuffer();
-
-            // Test write to verify port is actually available
-            // Some ports may open successfully but fail on first write
-            try
+            port = new SerialPort(portName, baudRate)
             {
+                DataBits = 8,
+                Parity = Parity.None,
+                StopBits = StopBits.One,
+                Handshake = Handshake.None,
+            };
+
+            await Task.Run(() =>
+            {
+                ct.ThrowIfCancellationRequested();
+                try
+                {
+                    port.Open();
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or InvalidOperationException)
+                {
+                    openFailure = ex;
+                    return;
+                }
+
+                port.DiscardInBuffer();
+                port.DiscardOutBuffer();
+
                 port.Write(new byte[] { 0x00 }, 0, 1);
                 port.BaseStream.Flush();
-            }
-            catch (Exception)
+            }, ct).ConfigureAwait(false);
+
+            if (openFailure is not null)
             {
                 port.Dispose();
-                throw new InvalidOperationException($"Không thể ghi vào cổng {portName}: cổng không khả dụng hoặc không kết nối.");
+                var message = openFailure is UnauthorizedAccessException
+                    ? $"COM {portName} dang bi chiem. Hay dong ung dung khac dang su dung cong."
+                    : $"Khong mo duoc COM {portName}. {openFailure.Message}";
+                throw new HardwareException(message, openFailure);
             }
 
+            _port?.Dispose();
             _port = port;
-            opened = true;
         }
-        catch (UnauthorizedAccessException ex)
+        catch (OperationCanceledException)
         {
-            port.Dispose();
-            throw new InvalidOperationException($"Không thể mở cổng {portName}: cổng đang bị chiếm hoặc không có quyền truy cập.", ex);
+            port?.Dispose();
+            throw;
         }
-        catch (IOException ex)
+        catch (HardwareException)
         {
-            port.Dispose();
-            throw new InvalidOperationException($"Không thể mở cổng {portName}: lỗi I/O khi mở cổng.", ex);
+            port?.Dispose();
+            throw;
         }
-        catch (ArgumentException ex)
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or ArgumentException or InvalidOperationException)
         {
-            port.Dispose();
-            throw new InvalidOperationException($"Không thể mở cổng {portName}: tên cổng không hợp lệ.", ex);
+            port?.Dispose();
+            throw new HardwareException($"SerialPort {portName} failed to open", ex);
+        }
+    }
+
+    public async Task SendAsync(byte[] data, CancellationToken ct = default)
+    {
+        var port = _port ?? throw new InvalidOperationException("Serial port chưa được khởi tạo.");
+        if (!port.IsOpen)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected");
+        }
+
+        await _ioLock.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            await port.BaseStream.WriteAsync(data, 0, data.Length, ct).ConfigureAwait(false);
+            await port.BaseStream.FlushAsync(ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected", ex);
         }
         finally
         {
-            if (!opened)
+            _ioLock.Release();
+        }
+    }
+
+    public async Task<byte[]> ReceiveAsync(byte startByte, byte endByte, CancellationToken ct = default)
+    {
+        var port = _port ?? throw new InvalidOperationException("Serial port chưa được khởi tạo.");
+        if (!port.IsOpen)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected");
+        }
+
+        await _ioLock.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            var buffer = new List<byte>();
+            var started = false;
+            while (true)
             {
-                port.Dispose();
+                ct.ThrowIfCancellationRequested();
+
+                if (port.BytesToRead <= 0)
+                {
+                    await Task.Delay(5, ct).ConfigureAwait(false);
+                    continue;
+                }
+
+                var current = (byte)port.ReadByte();
+                if (!started)
+                {
+                    if (current == startByte)
+                    {
+                        started = true;
+                        buffer.Add(current);
+                    }
+
+                    continue;
+                }
+
+                buffer.Add(current);
+                if (current == endByte)
+                {
+                    while (port.BytesToRead <= 0)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        await Task.Delay(5, ct).ConfigureAwait(false);
+                    }
+
+                    var bcc = (byte)port.ReadByte();
+                    buffer.Add(bcc);
+                    return buffer.ToArray();
+                }
             }
         }
-    }
-
-    public async Task WriteAsync(byte[] data, CancellationToken ct = default)
-    {
-        SerialPort? portSnapshot = null;
-        lock (_ioLock)
+        catch (OperationCanceledException)
         {
-            portSnapshot = _port;
+            throw;
         }
-        if (portSnapshot == null)
-            throw new InvalidOperationException("Serial port chưa được khởi tạo.");
-        if (!portSnapshot.IsOpen)
-            throw new InvalidOperationException("Serial port chưa mở.");
-
-        try
+        catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {
-            await Task.Run(() =>
-            {
-                lock (_ioLock)
-                {
-                    if (portSnapshot == null)
-                        throw new InvalidOperationException("Serial port chưa được khởi tạo.");
-                    if (!portSnapshot.IsOpen)
-                        throw new InvalidOperationException("Serial port chưa mở.");
-                    try
-                    {
-                        portSnapshot.Write(data, 0, data.Length);
-                        portSnapshot.BaseStream.Flush();
-                    }
-                    catch (ObjectDisposedException ex)
-                    {
-                        throw new InvalidOperationException("Serial port đã bị dispose khi ghi.", ex);
-                    }
-                }
-            }, ct).ConfigureAwait(false);
+            throw new HardwareException($"SerialPort {port.PortName} disconnected", ex);
         }
-        catch (TimeoutException ex)
+        finally
         {
-            var portName = portSnapshot?.PortName ?? "(unknown)";
-            throw new TimeoutException($"Ghi dữ liệu vào cổng {portName} timeout sau {_writeTimeoutMs}ms.", ex);
-        }
-        catch (IOException ex)
-        {
-            var portName = portSnapshot?.PortName ?? "(unknown)";
-            throw new IOException($"Lỗi I/O khi ghi vào cổng {portName}: cổng có thể đã bị ngắt kết nối.", ex);
-        }
-        catch (InvalidOperationException ex)
-        {
-            var portName = portSnapshot?.PortName ?? "(unknown)";
-            throw new InvalidOperationException($"Cổng {portName} không còn hợp lệ để ghi.", ex);
+            _ioLock.Release();
         }
     }
 
-    public async Task<byte[]> ReadVariableFrameAsync(byte startByte, byte endByte, CancellationToken ct = default)
+    public async Task<byte[]> ReceiveAsync(CancellationToken ct = default)
     {
         var port = _port ?? throw new InvalidOperationException("Serial port chưa được khởi tạo.");
+        if (!port.IsOpen)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected");
+        }
 
+        await _ioLock.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            return await Task.Run(() =>
+            var buffer = new byte[ResponseLength];
+            var offset = 0;
+            while (offset < ResponseLength)
             {
-                lock (_ioLock)
+                ct.ThrowIfCancellationRequested();
+
+                if (port.BytesToRead <= 0)
                 {
-                    var buffer = new List<byte>();
-                    var started = false;
-
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            return Array.Empty<byte>();
-                        }
-
-                        if (!port.IsOpen)
-                        {
-                            return Array.Empty<byte>();
-                        }
-
-                        if (port.BytesToRead <= 0)
-                        {
-                            Thread.Sleep(5);
-                            continue;
-                        }
-
-                        var value = port.ReadByte();
-                        if (value < 0)
-                        {
-                            continue;
-                        }
-
-                        var current = (byte)value;
-                        if (!started)
-                        {
-                            if (current == startByte)
-                            {
-                                started = true;
-                                buffer.Add(current);
-                            }
-
-                            continue;
-                        }
-
-                        buffer.Add(current);
-                        if (current == endByte)
-                        {
-                            while (port.BytesToRead <= 0)
-                            {
-                                if (ct.IsCancellationRequested)
-                                {
-                                    return Array.Empty<byte>();
-                                }
-
-                                if (!port.IsOpen)
-                                {
-                                    return Array.Empty<byte>();
-                                }
-
-                                Thread.Sleep(5);
-                            }
-
-                            var bcc = port.ReadByte();
-                            if (bcc < 0)
-                            {
-                                return Array.Empty<byte>();
-                            }
-
-                            buffer.Add((byte)bcc);
-                            return buffer.ToArray();
-                        }
-                    }
+                    await Task.Delay(5, ct).ConfigureAwait(false);
+                    continue;
                 }
-            }, ct).ConfigureAwait(false);
+
+                buffer[offset] = (byte)port.ReadByte();
+                offset++;
+            }
+
+            return buffer;
         }
-        catch (TimeoutException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout sau {_readTimeoutMs}ms.", ex);
+            throw;
         }
-        catch (IOException ex)
+        catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {
-            throw new IOException($"Lỗi I/O khi đọc từ cổng {port.PortName}: cổng có thể đã bị ngắt kết nối.", ex);
+            throw new HardwareException($"SerialPort {port.PortName} disconnected", ex);
         }
-        catch (InvalidOperationException ex)
+        finally
         {
-            throw new InvalidOperationException($"Cổng {port.PortName} không còn hợp lệ để đọc.", ex);
+            _ioLock.Release();
         }
     }
 
-    public async Task<byte[]> ReadFrameAsync(CancellationToken ct = default)
+    public async Task<string> ReceiveLineAsync(CancellationToken ct = default)
     {
         var port = _port ?? throw new InvalidOperationException("Serial port chưa được khởi tạo.");
+        if (!port.IsOpen)
+        {
+            throw new HardwareException($"SerialPort {port.PortName} disconnected");
+        }
 
+        await _ioLock.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            return await Task.Run(() =>
+            using var buffer = new MemoryStream();
+            while (true)
             {
-                lock (_ioLock)
+                ct.ThrowIfCancellationRequested();
+
+                if (port.BytesToRead <= 0)
                 {
-                    var buffer = new byte[ResponseLength];
-                    var read = 0;
+                    await Task.Delay(5, ct).ConfigureAwait(false);
+                    continue;
+                }
 
-                    while (read < ResponseLength)
+                var current = (byte)port.ReadByte();
+                if (current is (byte)'\r' or (byte)'\n')
+                {
+                    if (buffer.Length == 0)
                     {
-                        if (ct.IsCancellationRequested)
-                        {
-                            return Array.Empty<byte>();
-                        }
-
-                        if (!port.IsOpen)
-                        {
-                            return Array.Empty<byte>();
-                        }
-
-                        if (port.BytesToRead <= 0)
-                        {
-                            // small sleep to avoid busy loop
-                            Thread.Sleep(5);
-                            continue;
-                        }
-
-                        try
-                        {
-                            var value = port.ReadByte();
-                            if (value < 0)
-                            {
-                                continue;
-                            }
-
-                            buffer[read++] = (byte)value;
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            throw new InvalidOperationException("Serial port không còn hợp lệ khi đọc dữ liệu.");
-                        }
+                        continue;
                     }
 
-                    return buffer;
+                    return Encoding.UTF8.GetString(buffer.ToArray());
                 }
-            }, ct).ConfigureAwait(false);
+
+                buffer.WriteByte(current);
+            }
         }
-        catch (TimeoutException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"Đọc dữ liệu từ cổng {port.PortName} timeout sau {_readTimeoutMs}ms.", ex);
+            throw;
         }
-        catch (IOException ex)
+        catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException or IOException)
         {
-            throw new IOException($"Lỗi I/O khi đọc từ cổng {port.PortName}: cổng có thể đã bị ngắt kết nối.", ex);
+            throw new HardwareException($"SerialPort {port.PortName} disconnected", ex);
         }
-        catch (InvalidOperationException ex)
+        finally
         {
-            throw new InvalidOperationException($"Cổng {port.PortName} không còn hợp lệ để đọc.", ex);
+            _ioLock.Release();
         }
     }
 
-    public void Close()
+    public async Task CloseAsync(CancellationToken ct = default)
     {
-        _port?.Close();
+        await _ioLock.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            _port?.Close();
+            _port?.Dispose();
+            _port = null;
+        }
+        finally
+        {
+            _ioLock.Release();
+        }
     }
 
     public void Dispose()
     {
-        Close();
+        _port?.Close();
         _port?.Dispose();
+        _port = null;
+        _ioLock.Dispose();
+    }
+
+    private static async Task<byte> ReadByteAsync(SerialPort port, CancellationToken ct)
+    {
+        var buffer = new byte[1];
+        var read = await port.BaseStream.ReadAsync(buffer, 0, 1, ct).ConfigureAwait(false);
+        if (read == 0)
+        {
+            throw new IOException("Serial port closed.");
+        }
+
+        return buffer[0];
     }
 }
 

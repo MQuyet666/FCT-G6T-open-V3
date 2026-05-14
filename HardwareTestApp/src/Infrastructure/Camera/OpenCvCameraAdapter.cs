@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using FCT.G6T.Domain.Interfaces;
 using FCT.G6T.Domain.Models;
 using OpenCvSharp;
@@ -100,9 +102,10 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
         {
             FrameReady?.Invoke(this, new FrameReadyEventArgs
             {
-                Frame = latest,
+                Frame = ToCameraFrame(latest, DateTime.Now),
                 Timestamp = DateTime.Now
             });
+            latest.Dispose();
         }
     }
 
@@ -124,7 +127,7 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
         IsRunning = false;
     }
 
-    public async Task<Bitmap> CaptureFrameAsync()
+    public async Task<CameraFrame> CaptureFrameAsync()
     {
         if (_capture is null || !_capture.IsOpened())
         {
@@ -133,7 +136,8 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
 
         using var mat = new Mat();
         await Task.Run(() => _capture.Read(mat)).ConfigureAwait(false);
-        return ConvertMatToBitmap(mat);
+        using var bitmap = ConvertMatToBitmap(mat);
+        return ToCameraFrame(bitmap, DateTime.Now);
     }
 
     private static Bitmap ConvertMatToBitmap(Mat mat)
@@ -142,6 +146,35 @@ public class OpenCvCameraAdapter : ICameraService, IDisposable
         using var ms = new MemoryStream(imageBytes);
         using var temp = new Bitmap(ms);
         return new Bitmap(temp);
+    }
+
+    private static CameraFrame ToCameraFrame(Bitmap bitmap, DateTime timestamp)
+    {
+        var stride = bitmap.Width * 3;
+        var data = new byte[stride * bitmap.Height];
+        var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+        try
+        {
+            for (var row = 0; row < bitmap.Height; row++)
+            {
+                var source = IntPtr.Add(bitmapData.Scan0, row * bitmapData.Stride);
+                Marshal.Copy(source, data, row * stride, stride);
+            }
+        }
+        finally
+        {
+            bitmap.UnlockBits(bitmapData);
+        }
+
+        return new CameraFrame
+        {
+            Bgr24Data = data,
+            Width = bitmap.Width,
+            Height = bitmap.Height,
+            Stride = stride,
+            Timestamp = timestamp,
+        };
     }
 
     public void Dispose() => StopPreview();

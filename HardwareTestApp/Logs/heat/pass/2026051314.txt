@@ -1,0 +1,210 @@
+﻿//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 14:16:11
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 
+DATE TIME   : 2026-05-13 14:16:32
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 
+DATE TIME   : 2026-05-13 14:17:16
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 
+DATE TIME   : 2026-05-13 14:17:31
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 3199962001251208D05101223
+DATE TIME   : 2026-05-13 14:26:46
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 3131https://geic.vn/bo-bao-chay-lien-gia-v2/
+DATE TIME   : 2026-05-13 14:28:43
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//
+//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : 313199962001251208D05101223
+DATE TIME   : 2026-05-13 14:29:16
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+LED: PASS
+
+TX : 1F 2F 3F FF 00 02 00 ED
+RX : 1F 2F 3F FF 01 02 06 EA
+BUTTON: PASS
+
+TX : 1F 2F 3F FF 00 08 05 01 E3
+RX : 1F 2F 3F FF 01 08 06 E0
+TX : 1F 2F 3F FF 00 03 01 ED
+RX : 1F 2F 3F FF 01 03 06 EB
+
+TX : 01 52 31 02 31 2E 30 2E 48 28 29 03 2A
+RX : 02 31 2E 30 2E 48 28 01 29 03 4A
+LORA: PASS
+
+TX : 01 52 31 02 31 2E 30 2E 33 28 29 03 51
+RX : 02 31 2E 30 2E 33 28 32 38 2E 31 31 29 03 14
+VALUE     : 28.11
+SENSOR: PASS
+
+
+//***********************************END TEST***********************************//

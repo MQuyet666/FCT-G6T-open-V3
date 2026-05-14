@@ -1,0 +1,15 @@
+﻿//***********************************START TEST**********************************//
+
+DEVICE NAME : Đầu báo nhiệt
+SERIAL      : https://geic.vn/bo-bao-chay-lien-gia-v2/
+DATE TIME   : 2026-05-13 13:08:19
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL (Missing Red + Green LED)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//

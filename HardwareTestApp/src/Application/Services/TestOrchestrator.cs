@@ -90,6 +90,11 @@ public class TestOrchestrator
         }, ct);
     }
 
+    public Task<G6TResponse> ActivateTheButtonAsync(TimeSpan ackTimeout, CancellationToken ct = default)
+    {
+        return _g6t.SendActivateTheButtonAsync(ackTimeout, ct);
+    }
+
     public Task<G6TResponse> SetRelayAsync(byte relayId, bool active, CancellationToken ct = default)
     {
         if (relayId < 1 || relayId > 5)

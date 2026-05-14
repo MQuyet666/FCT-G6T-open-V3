@@ -1,27 +1,125 @@
 [
-    {
-        "id": "TC_BUTTON_01",
-        "name": "Button Test",
-        "deviceType": "BUTTON",
-        "steps": [
-            {
-                "order": 1,
-                "description": "Trigger button test",
-                "command": "BTN_TEST",
-                "expectedLed": "",
-                "timeout": 15000,
-                "maxRetry": 1
-            }
-        ],
-        "teardown": [
-            {
-                "order": 1,
-                "description": "Reset button test",
-                "command": "BTN_RESET",
-                "expectedLed": "",
-                "timeout": 3000,
-                "maxRetry": 0
-            }
-        ]
-    }
+  {
+    "id": "TC_BUTTON_01",
+    "name": "LED Test",
+    "deviceType": "BUTTON",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Enable power and detect red, blue, yellow LEDs in ROI",
+        "command": "POWER_ON_AND_LED_DETECT",
+        "expectedLed": "RED,BLUE,YELLOW",
+        "timeout": 5000,
+        "maxRetry": 1
+      }
+    ],
+    "teardown": [
+      {
+        "order": 1,
+        "description": "Turn off power",
+        "command": "POWER_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      },
+      {
+        "order": 2,
+        "description": "Reset calib pin",
+        "command": "CALIB_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      },
+      {
+        "order": 3,
+        "description": "Turn off UART relay",
+        "command": "UART_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      }
+    ]
+  },
+  {
+    "id": "TC_BUTTON_02",
+    "name": "Button Test",
+    "deviceType": "BUTTON",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Send activate_the_button and detect red LED in ROI3",
+        "command": "ACTIVATE_THE_BUTTON",
+        "expectedLed": "ROI3=RED",
+        "timeout": 15000,
+        "maxRetry": 1
+      }
+    ],
+    "teardown": [
+      {
+        "order": 1,
+        "description": "Turn off power",
+        "command": "POWER_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      },
+      {
+        "order": 2,
+        "description": "Reset calib pin",
+        "command": "CALIB_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      },
+      {
+        "order": 3,
+        "description": "Turn off UART relay",
+        "command": "UART_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      }
+    ]
+  },
+  {
+    "id": "TC_BUTTON_03",
+    "name": "Lora Test",
+    "deviceType": "BUTTON",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Read LoRa value",
+        "command": "READ_LORA",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 1
+      }
+    ],
+    "teardown": [
+      {
+        "order": 1,
+        "description": "Turn off power",
+        "command": "POWER_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      },
+      {
+        "order": 2,
+        "description": "Reset calib pin",
+        "command": "CALIB_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      },
+      {
+        "order": 3,
+        "description": "Turn off UART relay",
+        "command": "UART_OFF",
+        "expectedLed": "",
+        "timeout": 3000,
+        "maxRetry": 0
+      }
+    ]
+  }
 ]

@@ -6,7 +6,7 @@ using FCT.G6T.Application.Interfaces;
 using FCT.G6T.Application.Services;
 using FCT.G6T.Domain.Interfaces;
 using FCT.G6T.Domain.Models;
-using FCT.G6T.HAL;
+using FCT.G6T.HAL.Serial;
 using FCT.G6T.Infrastructure.Camera;
 using FCT.G6T.Infrastructure.Configuration;
 using FCT.G6T.Infrastructure.Logging;
@@ -31,7 +31,6 @@ namespace FCT.G6T
             var serialSettings = configuration.GetSection("Serial").Get<SerialSettings>() ?? new SerialSettings();
             var testTimeouts = configuration.GetSection("TestTimeouts").Get<TestTimeoutSettings>() ?? new TestTimeoutSettings();
             var cameraRuntime = configuration.GetSection("CameraRuntime").Get<CameraRuntimeSettings>() ?? new CameraRuntimeSettings();
-            var loggingSettings = configuration.GetSection("Logging").Get<LoggingSettings>() ?? new LoggingSettings();
 
             var cameraConfig = LoadCameraConfig(baseDirectory);
             var services = new ServiceCollection();
@@ -39,8 +38,6 @@ namespace FCT.G6T
             services.AddLogging(builder =>
             {
                 builder.SetMinimumLevel(LogLevel.Information);
-                var logDirectory = Path.Combine(baseDirectory, loggingSettings.Directory);
-                builder.AddProvider(new FileLoggerProvider(logDirectory, loggingSettings.FilePrefix, loggingSettings.RetentionDays));
             });
 
             services.AddSingleton(cameraConfig);
@@ -48,9 +45,10 @@ namespace FCT.G6T
             services.AddSingleton<ICameraService>(_ =>
                 new SdkCameraAdapter(TimeSpan.FromSeconds(cameraRuntime.CameraRetryIntervalSeconds), cameraRuntime.FrameBufferSize));
             services.AddSingleton<ICameraPreviewAppService, CameraPreviewAppService>();
+            services.AddSingleton<ILedDetectionService, LedDetectionService>();
 
             services.AddTransient<ISerialPortWrapper>(_ =>
-                new SerialPortWrapper(serialSettings.ReadTimeoutMs, serialSettings.WriteTimeoutMs));
+                new SerialPortWrapper());
             services.AddSingleton<IG6TAdapter>(sp =>
                 new G6TAdapter(
                     sp.GetRequiredService<ISerialPortWrapper>(),
@@ -63,6 +61,14 @@ namespace FCT.G6T
                     sp.GetRequiredService<ILogger<DetectorAdapter>>(),
                     TimeSpan.FromSeconds(serialSettings.DetectorAckTimeoutSeconds),
                     serialSettings.DetectorRetryCount));
+            services.AddSingleton<IQrCodeReaderAdapter>(sp =>
+                new QrCodeReaderAdapter(
+                    sp.GetRequiredService<ISerialPortWrapper>(),
+                    sp.GetRequiredService<ILogger<QrCodeReaderAdapter>>(),
+                    TimeSpan.FromSeconds(serialSettings.QrReadTimeoutSeconds),
+                    serialSettings.QrBaudRate));
+            services.AddSingleton<IQrCodeScanService, QrCodeScanService>();
+            services.AddSingleton<IHardwareTraceService, HardwareTraceService>();
             services.AddSingleton<TestOrchestrator>();
             services.AddSingleton<ISmokeDeviceTestService>(sp =>
                 new SmokeDeviceTestService(
@@ -70,7 +76,38 @@ namespace FCT.G6T
                     sp.GetRequiredService<IG6TAdapter>(),
                     sp.GetRequiredService<IDetectorAdapter>(),
                     sp.GetRequiredService<ICameraPreviewAppService>(),
+                    sp.GetRequiredService<ILedDetectionService>(),
                     sp.GetRequiredService<ILogger<SmokeDeviceTestService>>(),
+                    serialSettings.G6tBaudRate,
+                    serialSettings.DetectorBaudRate,
+                    TimeSpan.FromSeconds(testTimeouts.CommandAckTimeoutSeconds),
+                    TimeSpan.FromSeconds(serialSettings.DetectorAckTimeoutSeconds),
+                    TimeSpan.FromSeconds(testTimeouts.LedDetectTimeoutSeconds),
+                    TimeSpan.FromSeconds(testTimeouts.ButtonTestTimeoutSeconds),
+                    TimeSpan.FromMilliseconds(testTimeouts.LedDetectPollDelayMs)));
+            services.AddSingleton<IHeatDeviceTestService>(sp =>
+                new HeatDeviceTestService(
+                    sp.GetRequiredService<TestOrchestrator>(),
+                    sp.GetRequiredService<IG6TAdapter>(),
+                    sp.GetRequiredService<IDetectorAdapter>(),
+                    sp.GetRequiredService<ICameraPreviewAppService>(),
+                    sp.GetRequiredService<ILedDetectionService>(),
+                    sp.GetRequiredService<ILogger<SmokeDeviceTestService>>(),
+                    serialSettings.G6tBaudRate,
+                    serialSettings.DetectorBaudRate,
+                    TimeSpan.FromSeconds(testTimeouts.CommandAckTimeoutSeconds),
+                    TimeSpan.FromSeconds(serialSettings.DetectorAckTimeoutSeconds),
+                    TimeSpan.FromSeconds(testTimeouts.LedDetectTimeoutSeconds),
+                    TimeSpan.FromSeconds(testTimeouts.ButtonTestTimeoutSeconds),
+                    TimeSpan.FromMilliseconds(testTimeouts.LedDetectPollDelayMs)));
+            services.AddSingleton<IButtonDeviceTestService>(sp =>
+                new ButtonDeviceTestService(
+                    sp.GetRequiredService<TestOrchestrator>(),
+                    sp.GetRequiredService<IG6TAdapter>(),
+                    sp.GetRequiredService<IDetectorAdapter>(),
+                    sp.GetRequiredService<ICameraPreviewAppService>(),
+                    sp.GetRequiredService<ILedDetectionService>(),
+                    sp.GetRequiredService<ILogger<ButtonDeviceTestService>>(),
                     serialSettings.G6tBaudRate,
                     serialSettings.DetectorBaudRate,
                     TimeSpan.FromSeconds(testTimeouts.CommandAckTimeoutSeconds),
@@ -81,6 +118,7 @@ namespace FCT.G6T
 
             services.AddSingleton<ITestCaseProvider>(_ =>
                 new JsonTestCaseProvider(Path.Combine(baseDirectory, "config")));
+            services.AddSingleton<IDeviceTestLogWriter, DeviceTestLogWriter>();
             services.AddSingleton<Presentation.Forms.Mainform>();
 
             using var serviceProvider = services.BuildServiceProvider();

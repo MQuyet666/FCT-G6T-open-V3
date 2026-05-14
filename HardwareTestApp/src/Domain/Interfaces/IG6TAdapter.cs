@@ -4,9 +4,12 @@ namespace FCT.G6T.Domain.Interfaces;
 
 public interface IG6TAdapter : IDisposable
 {
-    void Connect(string comPort, int baudRate);
-    void Disconnect();
+    event EventHandler<G6TTraceEventArgs>? Trace;
+    Task ConnectAsync(string comPort, int baudRate, CancellationToken ct = default);
+    Task DisconnectAsync(CancellationToken ct = default);
     Task<G6TResponse> SendCommandAsync(G6TCommand command, CancellationToken ct = default);
+    Task<G6TResponse> SendActivateTheButtonAsync(TimeSpan ackTimeout, CancellationToken ct = default);
+    Task SendCommandNoAckAsync(G6TCommand command, CancellationToken ct = default);
     bool IsConnected { get; }
     string ConnectedComPort { get; }
 }

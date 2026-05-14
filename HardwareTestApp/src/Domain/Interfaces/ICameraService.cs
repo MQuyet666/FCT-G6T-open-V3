@@ -7,7 +7,7 @@ public interface ICameraService
     event EventHandler<FrameReadyEventArgs> FrameReady;
     void StartPreview(CameraConfig config);
     void StopPreview();
-    Task<Bitmap> CaptureFrameAsync();
+    Task<CameraFrame> CaptureFrameAsync();
     bool IsRunning { get; }
 }
 

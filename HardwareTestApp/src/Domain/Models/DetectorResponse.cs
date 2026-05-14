@@ -7,5 +7,6 @@ public class DetectorResponse
     public byte[] RxFrame { get; init; } = Array.Empty<byte>();
     public string Payload { get; init; } = string.Empty;
     public string Value { get; init; } = string.Empty;
+    public IReadOnlyList<string> TraceLines { get; init; } = Array.Empty<string>();
 }
 

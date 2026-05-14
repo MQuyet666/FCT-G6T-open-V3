@@ -11,3 +11,23 @@ public class G6TResponse
     public bool IsSuccess => Status == G6TStatus.Success;
 }
 
+public sealed class DetectorTraceEventArgs : EventArgs
+{
+    public DetectorTraceEventArgs(string message)
+    {
+        Message = message;
+    }
+
+    public string Message { get; }
+}
+
+public sealed class G6TTraceEventArgs : EventArgs
+{
+    public G6TTraceEventArgs(string message)
+    {
+        Message = message;
+    }
+
+    public string Message { get; }
+}
+

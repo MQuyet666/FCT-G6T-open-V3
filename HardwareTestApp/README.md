@@ -1,67 +1,65 @@
-# FCT-G6T — Functional Circuit Test (Automated Fire Detection Device Testing)
+# FCT-G6T — Kiểm tra mạch chức năng (Tự động kiểm tra thiết bị báo cháy)
 
 > Phần mềm kiểm tra chức năng thiết bị báo cháy tự động dành cho công nhân vận hành dây chuyền sản xuất.
 
-**Automated testing application for fire safety detection devices (smoke detectors, heat detectors, alarm bells, buttons) with real-time LED verification via USB camera and hardware-in-the-loop control via UART communication.**
+**Ứng dụng kiểm thử tự động cho thiết bị báo cháy (đầu báo khói, đầu báo nhiệt, chuông đèn, nút bấm), kiểm tra LED theo thời gian thực qua USB camera và điều khiển phần cứng qua UART.**
 
 ---
 
-## 📋 Mục tiêu / Objectives
+## 📋 Mục tiêu
 
-FCT-G6T giúp công nhân kiểm tra nhanh các thiết bị phòng cháy chữa cháy trước khi xuất xưởng. Mỗi thiết bị trải qua một bộ bài test tự động, kết quả trả về **PASS / FAIL** rõ ràng mà không yêu cầu công nhân có kiến thức kỹ thuật sâu.
-
-**Purpose:** Enable production line operators to rapidly verify fire detection device functionality with minimal technical knowledge. Automated test suite executes with clear **PASS / FAIL** results for each device type.
+FCT-G6T giúp công nhân kiểm tra nhanh các thiết bị phòng cháy chữa cháy trước khi xuất xưởng. Mỗi thiết bị trải qua bộ bài test tự động, kết quả **PASS / FAIL** rõ ràng mà không yêu cầu kiến thức kỹ thuật sâu.
 
 ---
 
-## ✨ Tính năng chính / Key Features
+## ✨ Tính năng chính
 
-| Tính năng / Feature | Mô tả / Description |
+| Tính năng | Mô tả |
 |---|---|
-| **Chọn loại thiết bị / Device Selection** | Đầu báo khói · Đầu báo nhiệt · Chuông đèn · Nút bấm (Smoke Detector, Heat Detector, Alarm Bell, Push Button) |
-| **Cấu hình cổng COM / COM Port Setup** | Setup riêng cho G6T board và DUT (Device Under Test) với baud rate tùy chỉnh |
-| **Kiểm tra tự động / Automated Testing** | Thực thi từng test step theo kịch bản JSON, hiển thị tiến độ real-time |
-| **Phát hiện LED bằng camera / LED Detection via Camera** | OpenCV phân tích khung hình từ USB camera (1280×720 @ 30 FPS) để detect LED (HSV color matching) |
-| **Kết quả PASS / FAIL / Results** | Hiển thị trực quan, ghi log chi tiết với timestamp, hex dump UART traffic |
-| **Điều khiển GPIO / GPIO Control** | PC ↔ G6T board giao tiếp UART, kiểm soát relay, đọc tín hiệu GPIO |
-| **Ghi log tự động / Automatic Logging** | Daily rolling logs (`logs/fct-{yyyy-MM-dd}.log`), retention 30 days |
+| **Chọn loại thiết bị** | Đầu báo khói · Đầu báo nhiệt · Chuông đèn · Nút bấm |
+| **Cấu hình cổng COM** | Thiết lập riêng cho G6T board và DUT với baud rate tùy chỉnh |
+| **Kiểm tra tự động** | Thực thi từng test step theo kịch bản JSON, hiển thị tiến độ theo thời gian thực |
+| **Phát hiện LED bằng camera** | OpenCV phân tích khung hình từ USB camera (1280×720 @ 30 FPS) để nhận diện LED (HSV color matching) |
+| **Kết quả PASS / FAIL** | Hiển thị trực quan, ghi log chi tiết với timestamp, hex dump UART traffic |
+| **Điều khiển GPIO** | PC ↔ G6T board giao tiếp UART, điều khiển relay, đọc tín hiệu GPIO |
+| **Ghi log tự động** | Log rolling theo ngày (`logs/fct-{yyyy-MM-dd}.log`), lưu 30 ngày |
 
 ---
 
-## 🏗️ Kiến trúc hệ thống / System Architecture
+## 🏗️ Kiến trúc hệ thống
 
-### **Sơ đồ Vật Lý / Physical Diagram**
+### **Sơ đồ vật lý**
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│            PC (FCT-G6T WinForms Application)         │
+│            PC (Ứng dụng WinForms FCT-G6T)            │
 │                                                      │
 │  ┌─────────────────────────────────────────────┐    │
-│  │   Presentation Layer (WinForms UI)          │    │
-│  │   • Mainform (device selection, buttons)    │    │
-│  │   • CameraPreviewControl (live camera)      │    │
+│  │   Layer Presentation (UI WinForms)          │    │
+│  │   • Mainform (chọn thiết bị, nút điều khiển) │    │
+│  │   • CameraPreviewControl (preview camera)   │    │
 │  └──────────────────┬──────────────────────────┘    │
 │                     │                                │
 │  ┌──────────────────▼──────────────────────────┐    │
-│  │   Application Layer                         │    │
+│  │   Layer Application                          │    │
 │  │   • TestOrchestrator                        │    │
 │  │   • SmokeDeviceTestService                  │    │
 │  │   • CameraPreviewAppService                 │    │
 │  └──────────────────┬──────────────────────────┘    │
 │                     │                                │
 │  ┌──────────────────▼──────────────────────────┐    │
-│  │   Infrastructure Layer                      │    │
-│  │   • G6TAdapter (UART control)               │    │
-│  │   • DetectorAdapter (UART data readout)     │    │
-│  │   • SdkCameraAdapter (DVPCamera SDK)        │    │
-│  │   • JsonTestCaseProvider (load config)      │    │
-│  │   • FileLogger (rolling logs)               │    │
+│  │   Layer Infrastructure                       │    │
+│  │   • G6TAdapter (điều khiển UART)            │    │
+│  │   • DetectorAdapter (đọc dữ liệu UART)      │    │
+│  │   • SdkCameraAdapter (SDK DVPCamera)        │    │
+│  │   • JsonTestCaseProvider (tải cấu hình)     │    │
+│  │   • FileLogger (log rolling)                │    │
 │  └──────────────────┬──────────────────────────┘    │
 │                     │                                │
 │  ┌──────────────────▼──────────────────────────┐    │
-│  │   HAL Layer (Hardware Abstraction)          │    │
+│  │   Layer HAL (Trừu tượng phần cứng)          │    │
 │  │   • SerialPortWrapper (System.IO.Ports)     │    │
-│  │   • DVPCamera SDK (native DLL)              │    │
+│  │   • DVPCamera SDK (DLL native)              │    │
 │  └─────────────────────────────────────────────┘    │
 └───────────┬──────────────────┬──────────────────────┘
             │                  │
@@ -72,62 +70,62 @@ FCT-G6T giúp công nhân kiểm tra nhanh các thiết bị phòng cháy chữa
     └───────┬──────┘    └──────┬────────┘
             │                  │
     ┌───────▼──────────────────▼─────┐
-    │   Dual UART Communication      │
-    │   Frame + CRC validation       │
-    │   ACK/Timeout handling         │
+    │   Giao tiếp UART kép           │
+    │   Xác thực frame + CRC         │
+    │   Xử lý ACK/timeout            │
     └────────┬──────────────┬────────┘
              │              │
       ┌──────▼──┐      ┌────▼──────┐
       │ G6T     │      │   DUT     │
-      │ Board   │      │  Device   │
-      │ (GPIO   │      │  (Sensor  │
-      │ Control)│      │  Readout) │
+      │ Board   │      │  Thiết bị │
+      │ (GPIO   │      │  (Đọc     │
+      │ Control)│      │  cảm biến)│
       └─────────┘      └───────────┘
 
-   Camera: USB Video Device (1280×720 @ 30 FPS)
-   LED Detection: OpenCV + HSV color matching
+   Camera: Thiết bị USB Video (1280×720 @ 30 FPS)
+   Phát hiện LED: OpenCV + HSV color matching
 ```
 
-### **Clean Architecture 5 Layers**
+### **Clean Architecture 5 lớp**
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │ 5. PRESENTATION                                     │
-│    (WinForms UI, user-facing components)            │
+│    (WinForms UI, thành phần hiển thị cho người dùng)│
 ├─────────────────────────────────────────────────────┤
 │ 4. APPLICATION                                      │
-│    (Business logic orchestration, test services)    │
+│    (Điều phối nghiệp vụ, dịch vụ test)              │
 ├─────────────────────────────────────────────────────┤
 │ 3. DOMAIN                                           │
-│    (Pure logic, models, interfaces—no dependencies) │
+│    (Logic thuần, model, interface — không phụ thuộc)│
 ├─────────────────────────────────────────────────────┤
 │ 2. INFRASTRUCTURE                                   │
-│    (Adapt domain interfaces to external services)   │
+│    (Thích nghi interface Domain với dịch vụ ngoài)  │
 ├─────────────────────────────────────────────────────┤
-│ 1. HAL (Hardware Abstraction Layer)                │
-│    (Thin wrapper over hardware/OS APIs)             │
+│ 1. HAL (Hardware Abstraction Layer)                 │
+│    (Wrapper mỏng cho API phần cứng/OS)              │
 └─────────────────────────────────────────────────────┘
 
-Key Rules:
-✅ UI calls Application (via interfaces)
-✅ Application calls Domain & Infrastructure
-✅ Infrastructure adapts Domain interfaces
-✅ No backwards dependency
-⛔ UI cannot directly call Infrastructure/HAL
-✅ Constructor injection, no service locator
-✅ Async/await throughout (no .Wait()/.Result)
+Quy tắc chính:
+✅ UI gọi Application (qua interface)
+✅ Application gọi Domain & Infrastructure
+✅ Infrastructure thích nghi interface Domain
+✅ Không phụ thuộc ngược
+⛔ UI không gọi trực tiếp Infrastructure/HAL
+✅ Constructor injection, không dùng service locator
+✅ Async/await xuyên suốt (không .Wait()/.Result)
 ```
 
 ---
 
-## 📦 Các thiết bị được hỗ trợ / Supported Devices
+## 📦 Các thiết bị được hỗ trợ
 
-| Thiết bị / Device | Mã / Code | Bài test / Test Type |
+| Thiết bị | Mã | Bài test |
 |---|---|---|
-| Đầu báo khói / Smoke Detector | `SMOKE` | Kích thử báo động, kiểm tra LED (RED), đọc tín hiệu phản hồi |
-| Đầu báo nhiệt / Heat Detector | `HEAT` | Kích thử báo động, kiểm tra LED (YELLOW), đọc nhiệt độ |
-| Chuông đèn / Alarm Bell/Light | `BELL` | Kích chuông (LoRa), detect đèn nhấp nháy, đo thời gian phản hồi |
-| Nút bấm / Push Button | `BUTTON` | Nhấn GPIO, kiểm tra tín hiệu trả về, LED xác nhận |
+| Đầu báo khói | `SMOKE` | Kích thử báo động, kiểm tra LED (Đỏ), đọc tín hiệu phản hồi |
+| Đầu báo nhiệt | `HEAT` | Kích thử báo động, kiểm tra LED (Vàng), đọc nhiệt độ |
+| Chuông đèn | `BELL` | Kích chuông (LoRa), phát hiện đèn nhấp nháy, đo thời gian phản hồi |
+| Nút bấm | `BUTTON` | Nhấn GPIO, kiểm tra tín hiệu trả về, LED xác nhận |
 
 ---
 
@@ -135,32 +133,32 @@ Key Rules:
 
 ```
 HardwareTestApp/
-├── Program.cs                      # Entry point, DI container setup
-├── README.md                       # This file
-├── Rule.md                         # Coding conventions & architecture rules
-├── HardwareTestApp.csproj         # Project file (net7.0-windows, WinForms)
+├── Program.cs                      # Điểm vào, cấu hình DI container
+├── README.md                       # Tài liệu này
+├── Rule.md                         # Quy ước coding & kiến trúc
+├── HardwareTestApp.csproj         # File project (net7.0-windows, WinForms)
 │
-├── src/                            # Source code (5-layer architecture)
-│   ├── Presentation/               # Layer 5: WinForms UI
+├── src/                            # Mã nguồn (kiến trúc 5 layer)
+│   ├── Presentation/               # Layer 5: UI WinForms
 │   │   ├── Forms/
-│   │   │   ├── Mainform.cs        # Main window (device selection, test control)
+│   │   │   ├── Mainform.cs        # Cửa sổ chính (chọn thiết bị, điều khiển test)
 │   │   │   ├── Mainform.Designer.cs
-│   │   │   └── Mainform.resx      # Embedded resources
+│   │   │   └── Mainform.resx      # Tài nguyên nhúng
 │   │   └── Controls/
-│   │       └── CameraPreviewControl.cs  # Live camera preview user control
+│   │       └── CameraPreviewControl.cs  # Control preview camera live
 │   │
-│   ├── Application/                # Layer 4: Business logic services
+│   ├── Application/                # Layer 4: Dịch vụ điều phối nghiệp vụ
 │   │   ├── Services/
-│   │   │   ├── TestOrchestrator.cs      # G6T command dispatcher
-│   │   │   ├── SmokeDeviceTestService.cs # Main test execution engine
-│   │   │   └── CameraPreviewAppService.cs # UI-safe camera wrapper
+│   │   │   ├── TestOrchestrator.cs      # Điều phối lệnh G6T
+│   │   │   ├── SmokeDeviceTestService.cs # Engine chạy test chính
+│   │   │   └── CameraPreviewAppService.cs # Wrapper camera an toàn cho UI
 │   │   └── Interfaces/
 │   │       ├── ITestCaseProvider.cs
 │   │       ├── ICameraPreviewAppService.cs
 │   │       ├── ISmokeDeviceTestService.cs
 │   │       └── IComPortProvider.cs
 │   │
-│   ├── Domain/                     # Layer 3: Pure domain logic (no dependencies)
+│   ├── Domain/                     # Layer 3: Logic domain thuần (không phụ thuộc)
 │   │   ├── Models/
 │   │   │   ├── TestCase.cs, TestStep.cs, TestStepResult.cs
 │   │   │   ├── G6TCommand.cs, G6TResponse.cs, DetectorResponse.cs
@@ -171,142 +169,142 @@ HardwareTestApp/
 │   │       ├── IG6TAdapter.cs
 │   │       └── IDetectorAdapter.cs
 │   │
-│   ├── Infrastructure/             # Layer 2: External service implementations
+│   ├── Infrastructure/             # Layer 2: Triển khai dịch vụ ngoài
 │   │   ├── Serial/
-│   │   │   ├── G6TAdapter.cs       # UART communication with G6T board
-│   │   │   ├── DetectorAdapter.cs  # UART communication with DUT device
-│   │   │   └── ComPortProvider.cs  # List available COM ports
+│   │   │   ├── G6TAdapter.cs       # UART giao tiếp G6T board
+│   │   │   ├── DetectorAdapter.cs  # UART giao tiếp thiết bị DUT
+│   │   │   └── ComPortProvider.cs  # Liệt kê cổng COM
 │   │   ├── Camera/
-│   │   │   ├── SdkCameraAdapter.cs # DVPCamera SDK integration
-│   │   │   └── OpenCvCameraAdapter.cs # Alternative OpenCV implementation
+│   │   │   ├── SdkCameraAdapter.cs # Tích hợp DVPCamera SDK
+│   │   │   └── OpenCvCameraAdapter.cs # Triển khai OpenCV thay thế
 │   │   ├── Configuration/
-│   │   │   └── JsonTestCaseProvider.cs # Load test cases from JSON files
+│   │   │   └── JsonTestCaseProvider.cs # Tải test case từ file JSON
 │   │   └── Logging/
 │   │       ├── FileLogger.cs
-│   │       └── FileLoggerProvider.cs  # Custom ILoggerProvider
+│   │       └── FileLoggerProvider.cs  # ILoggerProvider tuỳ biến
 │   │
 │   └── HAL/                        # Layer 1: Hardware Abstraction Layer
-│       ├── SerialPortWrapper.cs    # Wrapper over System.IO.Ports.SerialPort
-│       ├── ISerialPortWrapper.cs   # Abstract interface
-│       └── sdk1/                   # DVPCamera SDK binaries
-│           ├── DVPCameraCS64.dll   # Managed C# wrapper
-│           ├── DVPCamera64.dll     # Native camera driver
-│           └── DVPCameraTL64.cti   # Camera transport layer
+│       ├── SerialPortWrapper.cs    # Wrapper cho System.IO.Ports.SerialPort
+│       ├── ISerialPortWrapper.cs   # Interface trừu tượng
+│       └── sdk1/                   # Thư viện DVPCamera SDK
+│           ├── DVPCameraCS64.dll   # Wrapper C# managed
+│           ├── DVPCamera64.dll     # Driver camera native
+│           └── DVPCameraTL64.cti   # Transport layer camera
 │
-├── config/                         # Configuration & test definitions
-│   ├── appsettings.json           # Runtime settings (timeouts, baud rates, etc.)
-│   ├── camera.json                # Camera device index & resolution
-│   ├── smoke-test-cases.json      # Test scenarios for smoke detectors
-│   ├── heat-test-cases.json       # Test scenarios for heat detectors
-│   ├── bell-test-cases.json       # Test scenarios for alarm bells
-│   └── button-test-cases.json     # Test scenarios for buttons
+├── config/                         # Cấu hình & kịch bản test
+│   ├── appsettings.json           # Thiết lập runtime (timeout, baud rate, ...)
+│   ├── camera.json                # Index camera & độ phân giải
+│   ├── smoke-test-cases.json      # Kịch bản test đầu báo khói
+│   ├── heat-test-cases.json       # Kịch bản test đầu báo nhiệt
+│   ├── bell-test-cases.json       # Kịch bản test chuông đèn
+│   └── button-test-cases.json     # Kịch bản test nút bấm
 │
-├── logs/                           # Auto-generated daily log files
+├── logs/                           # Log tự động theo ngày
 │   ├── fct-2026-04-28.log
 │   └── fct-2026-04-27.log
 │
-├── bin/Debug & bin/Release/       # Compiled output
-└── obj/                            # Build artifacts
+├── bin/Debug & bin/Release/       # Output biên dịch
+└── obj/                            # Tệp build
 ```
 
 ---
 
-## 🛠️ Technology Stack & Dependencies
+## 🛠️ Công nghệ & phụ thuộc
 
-### **.NET & Core Frameworks**
+### **.NET & Framework cốt lõi**
 
-| Package | Version | Purpose |
+| Gói | Phiên bản | Mục đích |
 |---------|---------|---------|
-| **.NET** | 7.0-windows | Desktop application runtime |
-| **WinForms** | (implicit in 7.0-windows) | UI framework |
-| **System.IO.Ports** | 8.0.0 | Serial port communication (UART) |
+| **.NET** | 7.0-windows | Runtime ứng dụng desktop |
+| **WinForms** | (implicit trong 7.0-windows) | Framework UI |
+| **System.IO.Ports** | 8.0.0 | Giao tiếp cổng serial (UART) |
 
 ### **Dependency Injection & Configuration**
 
-| Package | Version | Purpose |
+| Gói | Phiên bản | Mục đích |
 |---------|---------|---------|
-| **Microsoft.Extensions.DependencyInjection** | 8.0.0 | DI container (service registration) |
-| **Microsoft.Extensions.Configuration** | 8.0.0 | Settings management |
-| **Microsoft.Extensions.Configuration.Json** | 8.0.0 | JSON config file binding |
-| **Microsoft.Extensions.Configuration.Binder** | 8.0.0 | Type-safe config deserialization |
-| **Microsoft.Extensions.Logging** | 8.0.0 | Logging abstraction |
-| **Microsoft.Extensions.Logging.Abstractions** | 8.0.0 | Logger interfaces |
+| **Microsoft.Extensions.DependencyInjection** | 8.0.0 | DI container (đăng ký dịch vụ) |
+| **Microsoft.Extensions.Configuration** | 8.0.0 | Quản lý cấu hình |
+| **Microsoft.Extensions.Configuration.Json** | 8.0.0 | Binding file cấu hình JSON |
+| **Microsoft.Extensions.Configuration.Binder** | 8.0.0 | Deserialize cấu hình type-safe |
+| **Microsoft.Extensions.Logging** | 8.0.0 | Trừu tượng logging |
+| **Microsoft.Extensions.Logging.Abstractions** | 8.0.0 | Interface logger |
 
-### **Image Processing & Computer Vision**
+### **Xử lý ảnh & thị giác máy tính**
 
-| Package | Version | Purpose |
+| Gói | Phiên bản | Mục đích |
 |---------|---------|---------|
-| **OpenCvSharp4** | 4.13.0.20260302 | OpenCV bindings (LED detection via HSV color matching) |
-| **OpenCvSharp4.runtime.win** | 4.13.0.20260302 | OpenCV native libraries (Windows x64) |
+| **OpenCvSharp4** | 4.13.0.20260302 | Binding OpenCV (phát hiện LED theo HSV) |
+| **OpenCvSharp4.runtime.win** | 4.13.0.20260302 | Thư viện OpenCV native (Windows x64) |
 
-### **Hardware SDKs**
+### **SDK phần cứng**
 
-| Package | Type | Purpose |
+| Gói | Loại | Mục đích |
 |---------|------|---------|
-| **DVPCameraCS64** | Local DLL in `src/HAL/sdk1/` | Hikvision DVP Camera SDK (proprietary) |
-| **System.IO.Ports** | Built-in .NET | Serial port communication for UART |
+| **DVPCameraCS64** | DLL cục bộ trong `src/HAL/sdk1/` | SDK camera DVP Hikvision (độc quyền) |
+| **System.IO.Ports** | Tích hợp sẵn trong .NET | Giao tiếp cổng serial cho UART |
 
 ---
 
-## ⚙️ Configuration Files / Tệp cấu hình
+## ⚙️ Tệp cấu hình
 
-### **1. `appsettings.json`** — Runtime Settings
+### **1. `appsettings.json`** — Thiết lập runtime
 
 ```json
 {
   "Serial": {
-    "G6tBaudRate": 9600,              // G6T board baud rate
-    "DetectorBaudRate": 9600,         // DUT device baud rate
-    "ReadTimeoutMs": 100,             // Serial read timeout (ms)
-    "WriteTimeoutMs": 1000,           // Serial write timeout (ms)
-    "FrameRetryCount": 1,             // G6T frame retries
-    "DetectorRetryCount": 1,          // DUT frame retries
-    "FrameAckTimeoutSeconds": 3,      // G6T ACK timeout (seconds)
-    "DetectorAckTimeoutSeconds": 3    // DUT ACK timeout (seconds)
+    "G6tBaudRate": 9600,              // Baud rate của G6T board
+    "DetectorBaudRate": 9600,         // Baud rate của thiết bị DUT
+    "ReadTimeoutMs": 100,             // Timeout đọc serial (ms)
+    "WriteTimeoutMs": 1000,           // Timeout ghi serial (ms)
+    "FrameRetryCount": 1,             // Số lần retry frame G6T
+    "DetectorRetryCount": 1,          // Số lần retry frame DUT
+    "FrameAckTimeoutSeconds": 3,      // Timeout ACK G6T (giây)
+    "DetectorAckTimeoutSeconds": 3    // Timeout ACK DUT (giây)
   },
   "TestTimeouts": {
-    "CommandAckTimeoutSeconds": 3,    // G6T command ACK wait time
-    "LedDetectTimeoutSeconds": 5,     // LED detection wait time (from camera)
-    "ButtonTestTimeoutSeconds": 15,   // Button test response timeout
-    "LedDetectPollDelayMs": 100       // Poll interval for LED detection
+    "CommandAckTimeoutSeconds": 3,    // Thời gian chờ ACK lệnh G6T
+    "LedDetectTimeoutSeconds": 5,     // Thời gian chờ phát hiện LED (từ camera)
+    "ButtonTestTimeoutSeconds": 15,   // Timeout phản hồi test nút bấm
+    "LedDetectPollDelayMs": 100       // Chu kỳ poll phát hiện LED
   },
   "CameraRuntime": {
-    "FrameBufferSize": 3,             // Max queued frames in buffer
-    "CameraRetryIntervalSeconds": 2   // Retry interval if camera unavailable
+    "FrameBufferSize": 3,             // Số frame tối đa trong buffer
+    "CameraRetryIntervalSeconds": 2   // Khoảng thời gian retry nếu camera lỗi
   },
   "Logging": {
-    "Directory": "logs",              // Log output directory
-    "FilePrefix": "fct-",             // Log filename prefix
-    "RetentionDays": 30               // Auto-delete logs older than 30 days
+    "Directory": "logs",              // Thư mục log
+    "FilePrefix": "fct-",             // Tiền tố tên file log
+    "RetentionDays": 30               // Tự xóa log quá 30 ngày
   }
 }
 ```
 
-### **2. `camera.json`** — Camera Configuration
+### **2. `camera.json`** — Cấu hình camera
 
 ```json
 {
-  "DeviceIndex": 0,      // USB camera device index (0 = first camera)
-  "Width": 1280,         // Frame width (pixels)
-  "Height": 720,         // Frame height (pixels)
-  "TargetFps": 30        // Target frames per second
+  "DeviceIndex": 0,      // Index camera USB (0 = camera đầu tiên)
+  "Width": 1280,         // Chiều rộng frame (pixel)
+  "Height": 720,         // Chiều cao frame (pixel)
+  "TargetFps": 30        // FPS mục tiêu
 }
 ```
 
-### **3. Test Case Files** — Device-Specific Workflows
+### **3. File Test Case** — Kịch bản theo từng thiết bị
 
-Example: `smoke-test-cases.json`
+Ví dụ: `smoke-test-cases.json`
 
 ```json
 [
   {
     "id": "TC_SMOKE_01",
-    "name": "Power On LED Test",
+    "name": "Kiểm tra LED khi bật nguồn",
     "deviceType": "SMOKE",
     "steps": [
       {
         "order": 1,
-        "description": "Enable power and wait for red LED",
+        "description": "Bật nguồn và chờ LED đỏ",
         "command": "POWER_ON",
         "expectedLed": "RED",
         "timeout": 5000,
@@ -314,7 +312,7 @@ Example: `smoke-test-cases.json`
       },
       {
         "order": 2,
-        "description": "Test button buzzer (DUT smoke sensor)",
+        "description": "Test buzzer nút bấm (thiết bị khói DUT)",
         "command": "TEST_BUTTON_BUZZER",
         "expectedLed": "",
         "timeout": 15000,
@@ -324,7 +322,7 @@ Example: `smoke-test-cases.json`
     "teardown": [
       {
         "order": 1,
-        "description": "Power off device",
+        "description": "Tắt nguồn thiết bị",
         "command": "POWER_OFF",
         "expectedLed": "",
         "timeout": 3000,
@@ -335,149 +333,149 @@ Example: `smoke-test-cases.json`
 ]
 ```
 
-**Structure:**
+**Cấu trúc:**
 
-- **`steps`** — Main test sequence (executed in order)
-- **`teardown`** — Cleanup operations (always executed, even on failure)
-- **`expectedLed`** — Expected LED color (RED, YELLOW, GREEN, or empty)
-- **`timeout`** — Milliseconds to wait for step completion
-- **`maxRetry`** — Number of retries if step fails
+- **`steps`** — Chuỗi test chính (thực thi theo thứ tự)
+- **`teardown`** — Bước dọn dẹp (luôn chạy kể cả khi fail)
+- **`expectedLed`** — Màu LED kỳ vọng (RED, YELLOW, GREEN, hoặc rỗng)
+- **`timeout`** — Thời gian chờ hoàn thành step (ms)
+- **`maxRetry`** — Số lần thử lại nếu step fail
 
 ---
 
-## 🚀 Build & Run / Xây dựng & chạy
+## 🚀 Xây dựng & chạy
 
-### **Prerequisites / Yêu cầu**
+### **Yêu cầu**
 
 - **Windows 10/11** (x64)
-- **.NET SDK 7.0** or later
-- **Visual Studio 2022** (or VS Code + C# Dev Kit)
-- **USB Camera** (DVPCamera SDK compatible, typically HikVision cameras)
-- **Hardware:** G6T board, DUT device, 2× USB-to-UART adapters (for COM ports)
+- **.NET SDK 7.0** hoặc mới hơn
+- **Visual Studio 2022** (hoặc VS Code + C# Dev Kit)
+- **USB Camera** (tương thích DVPCamera SDK, thường là HikVision)
+- **Phần cứng:** G6T board, thiết bị DUT, 2× USB-to-UART (cho cổng COM)
 
 ### **Build**
 
 ```powershell
-# Restore NuGet packages
+# Restore gói NuGet
 dotnet restore
 
-# Build in Debug mode
+# Build ở chế độ Debug
 dotnet build --configuration Debug
 
-# Build in Release mode (optimized)
+# Build ở chế độ Release (tối ưu)
 dotnet build --configuration Release
 ```
 
 ### **Run**
 
 ```powershell
-# Run directly
+# Chạy trực tiếp
 dotnet run --project HardwareTestApp.csproj
 
-# Or run compiled executable
+# Hoặc chạy file thực thi đã build
 ./bin/Debug/net7.0-windows/HardwareTestApp.exe
 ```
 
-### **Build & Run from VS Code**
+### **Build & Run từ VS Code**
 
-Press `Ctrl+Shift+B` to see available build tasks, or `F5` to debug (requires launch configuration).
+Nhấn `Ctrl+Shift+B` để xem task build, hoặc `F5` để debug (cần cấu hình launch).
 
 ---
 
-## 🧪 How to Use / Cách sử dụng
+## 🧪 Cách sử dụng
 
-### **Step-by-Step Test Procedure**
+### **Quy trình test từng bước**
 
-1. **Prepare Hardware / Chuẩn bị phần cứng**
-   - Connect G6T board to PC via USB-UART adapter (note the COM port, e.g., COM3)
-   - Connect DUT device to PC via separate USB-UART adapter (note the COM port, e.g., COM4)
-   - Mount USB camera pointing at device under test
-   - Position camera so LED is in Region of Interest (ROI)
-   - Power up hardware (G6T board and DUT should be powered)
+1. **Chuẩn bị phần cứng**
+   - Kết nối G6T board với PC qua USB-UART (ghi lại COM, ví dụ COM3)
+   - Kết nối thiết bị DUT qua USB-UART riêng (ghi lại COM, ví dụ COM4)
+   - Gắn USB camera hướng vào thiết bị cần test
+   - Căn chỉnh camera để LED nằm trong ROI
+   - Cấp nguồn cho phần cứng (G6T board và DUT)
 
-2. **Launch Application / Khởi động ứng dụng**
+2. **Khởi động ứng dụng**
 
    ```powershell
    dotnet run --project HardwareTestApp.csproj
    ```
 
-3. **Configure COM Ports / Cấu hình cổng COM**
-   - **G6T COM Port:** Select from dropdown (e.g., COM3)
-   - **DUT COM Port:** Select from dropdown (e.g., COM4)
+3. **Cấu hình cổng COM**
+   - **Cổng COM G6T:** Chọn từ dropdown (ví dụ COM3)
+   - **Cổng COM DUT:** Chọn từ dropdown (ví dụ COM4)
 
-4. **Select Device Type / Chọn loại thiết bị**
-   - Radio buttons: Smoke Detector, Heat Detector, Alarm Bell, Button
-   - Example: Select "Smoke Detector" for smoke sensor test
+4. **Chọn loại thiết bị**
+   - Radio buttons: Đầu báo khói, Đầu báo nhiệt, Chuông đèn, Nút bấm
+   - Ví dụ: Chọn "Đầu báo khói" để test cảm biến khói
 
-5. **Adjust Camera ROI (optional) / Điều chỉnh vùng quan sát camera**
-   - Live camera preview shows in control
-   - Click + drag on preview to reposition ROI rectangle
-   - ROI border turns **GREEN** when LED detected, **RED** if no LED
+5. **Điều chỉnh vùng ROI camera (tùy chọn)**
+   - Preview camera hiển thị trong control
+   - Click + kéo để di chuyển hình chữ nhật ROI
+   - Viền ROI chuyển **XANH** khi phát hiện LED, **ĐỎ** khi không thấy LED
 
-6. **Click START / Nhấn nút START**
-   - Test runs automatically: power on → capture LED → test button → power off
-   - Progress log updates in real-time (RTB textbox)
-   - LED status indicator: Red (OFF), Green (ON)
+6. **Nhấn nút START**
+   - Test chạy tự động: bật nguồn → bắt LED → test nút → tắt nguồn
+   - Log tiến độ cập nhật theo thời gian thực (RTB textbox)
+   - Đèn trạng thái: Đỏ (OFF), Xanh (ON)
 
-7. **View Results / Xem kết quả**
-   - **PASS** → All test steps passed, device ships
-   - **FAIL** → One or more steps failed, device rejected with reason logged
-   - Check `logs/fct-{yyyy-MM-dd}.log` for detailed troubleshooting
+7. **Xem kết quả**
+   - **PASS** → Tất cả step đạt, thiết bị đạt
+   - **FAIL** → Có step lỗi, thiết bị bị loại kèm lý do trong log
+   - Kiểm tra `logs/fct-{yyyy-MM-dd}.log` để chẩn đoán chi tiết
 
-8. **Repeat or Stop / Lặp lại hoặc dừng**
-   - Click START again to run next device test
-   - Close application to stop (logs auto-saved)
+8. **Lặp lại hoặc dừng**
+   - Nhấn START để test thiết bị tiếp theo
+   - Đóng ứng dụng để dừng (log tự lưu)
 
 ---
 
-## 🔧 Development Guide / Hướng dẫn phát triển
+## 🔧 Hướng dẫn phát triển
 
-### **Code Conventions (from `Rule.md`)**
+### **Quy ước code (theo `Rule.md`)**
 
-✅ **Clean Architecture 5 Layers**
+✅ **Clean Architecture 5 lớp**
 
-- Strict separation: UI → Application → Domain ← Infrastructure ← HAL
-- No backward dependencies
+- Phân tách nghiêm ngặt: UI → Application → Domain ← Infrastructure ← HAL
+- Không phụ thuộc ngược
 
 ✅ **Dependency Injection**
 
-- All services registered in `Program.cs` DI container
-- No `new` keyword in production code (factories only)
-- Constructor injection enforced
+- Mọi service đăng ký trong DI container `Program.cs`
+- Không dùng `new` trong production code (trừ factory)
+- Bắt buộc constructor injection
 
 ✅ **Async/Await**
 
-- All I/O operations async: `Task`, `Task<T>`
-- **Forbidden:** `.Wait()`, `.Result`, `.GetAwaiter().GetResult()`
-- Use `await` at every level
+- Mọi thao tác I/O đều async: `Task`, `Task<T>`
+- **Cấm:** `.Wait()`, `.Result`, `.GetAwaiter().GetResult()`
+- Dùng `await` ở mọi tầng
 
-✅ **Camera UI Updates**
+✅ **Cập nhật UI Camera**
 
-- All frame updates use `Control.InvokeRequired` check
-- Never update UI from background thread directly
-- Use `this.Invoke(delegate { /* UI update */ })` pattern
+- Mọi cập nhật frame đều kiểm tra `Control.InvokeRequired`
+- Không cập nhật UI trực tiếp từ background thread
+- Dùng pattern `this.Invoke(delegate { /* cập nhật UI */ })`
 
-✅ **Test Concurrency**
+✅ **Đồng thời hóa test**
 
-- Only **1 test runs at a time**
-- START button disabled while test running
-- Prevents race conditions in UART communication
+- Chỉ **1 test chạy tại một thời điểm**
+- Nút START bị disable khi đang test
+- Tránh race condition trong giao tiếp UART
 
-✅ **Hardware Configuration**
+✅ **Cấu hình phần cứng**
 
-- **No hardcoded COM ports** — Always read from config/dropdown
-- **No hardcoded camera index** — Read from `camera.json`
-- **No hardcoded timeouts** — Always from `appsettings.json`
+- **Không hardcode COM port** — luôn đọc từ config/dropdown
+- **Không hardcode camera index** — đọc từ `camera.json`
+- **Không hardcode timeout** — luôn lấy từ `appsettings.json`
 
-### **Adding a New Device Type**
+### **Thêm loại thiết bị mới**
 
-1. **Create test case JSON** (e.g., `config/my-device-test-cases.json`)
+1. **Tạo test case JSON** (ví dụ `config/my-device-test-cases.json`)
 
    ```json
    [
      {
        "id": "TC_MYDEV_01",
-       "name": "My Device Test",
+       "name": "Test thiết bị của tôi",
        "deviceType": "MYDEVICE",
        "steps": [ ... ],
        "teardown": [ ... ]
@@ -485,34 +483,34 @@ Press `Ctrl+Shift+B` to see available build tasks, or `F5` to debug (requires la
    ]
    ```
 
-2. **Add to Application Service** (e.g., `SmokeDeviceTestService.cs`)
-   - Add case in switch statement for new `deviceType`
-   - Reuse `TestOrchestrator` for G6T commands
-   - Reuse `DetectorAdapter` for DUT reading
+2. **Thêm vào Application Service** (ví dụ `SmokeDeviceTestService.cs`)
+   - Thêm case trong switch cho `deviceType` mới
+   - Dùng lại `TestOrchestrator` cho lệnh G6T
+   - Dùng lại `DetectorAdapter` để đọc DUT
 
-3. **Update UI** (`Mainform.cs`)
-   - Add radio button or dropdown option for new device type
-   - Bind selection to `deviceType` variable
+3. **Cập nhật UI** (`Mainform.cs`)
+   - Thêm radio button hoặc option dropdown cho loại thiết bị mới
+   - Bind lựa chọn vào biến `deviceType`
 
-4. **Test Thoroughly**
-   - Verify UART communication logs (check `logs/fct-*.log`)
-   - Verify LED detection with camera preview
-   - Test timeout & retry scenarios
+4. **Test kỹ**
+   - Kiểm tra log UART (`logs/fct-*.log`)
+   - Kiểm tra phát hiện LED qua preview camera
+   - Test các kịch bản timeout & retry
 
-### **How to Add a New G6T Command**
+### **Cách thêm lệnh G6T mới**
 
-1. **Add to enum** (`Domain/Models/G6TCommandId.cs`)
+1. **Thêm vào enum** (`Domain/Models/G6TCommandId.cs`)
 
    ```csharp
    public enum G6TCommandId
    {
        PowerControl = 0x01,
        TestButton = 0x02,
-       MyNewCommand = 0x0A  // ← Add here
+       MyNewCommand = 0x0A  // ← Thêm ở đây
    }
    ```
 
-2. **Add to `TestOrchestrator`** (`Application/Services/TestOrchestrator.cs`)
+2. **Thêm vào `TestOrchestrator`** (`Application/Services/TestOrchestrator.cs`)
 
    ```csharp
    public async Task<G6TResponse> MyNewCommandAsync()
@@ -520,19 +518,19 @@ Press `Ctrl+Shift+B` to see available build tasks, or `F5` to debug (requires la
        var command = new G6TCommand 
        { 
            CommandId = G6TCommandId.MyNewCommand,
-           Data = new byte[] { /* payload */ }
+           Data = new byte[] { /* dữ liệu */ }
        };
        return await _g6tAdapter.SendCommandAsync(command, cancellationToken);
    }
    ```
 
-3. **Call from Service**
+3. **Gọi từ Service**
 
    ```csharp
    var response = await _testOrchestrator.MyNewCommandAsync();
    ```
 
-### **Logging Best Practices**
+### **Thực hành logging tốt**
 
 ```csharp
 using Microsoft.Extensions.Logging;
@@ -548,195 +546,195 @@ public class MyService
     
     public async Task DoSomethingAsync()
     {
-        _logger.LogInformation("Starting operation");
+        _logger.LogInformation("Bắt đầu thao tác");
         try
         {
-            // ... do work
-            _logger.LogInformation("Operation completed");
+            // ... thực hiện xử lý
+            _logger.LogInformation("Hoàn tất thao tác");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Operation failed");
+            _logger.LogError(ex, "Thao tác thất bại");
             throw;
         }
     }
 }
 ```
 
-Logs go to `logs/fct-{yyyy-MM-dd}.log` (daily rolling).
+Log xuất ra `logs/fct-{yyyy-MM-dd}.log` (rolling theo ngày).
 
 ---
 
-## 🔌 Hardware Setup / Cấu hình phần cứng
+## 🔌 Cấu hình phần cứng
 
-### **UART Communication Protocol**
+### **Giao thức UART**
 
-**G6T Board & DUT Device** both use custom framed UART protocol:
+**G6T board & DUT** dùng giao thức UART dạng frame tùy biến:
 
 ```
-Frame Format:
+Định dạng frame:
 ┌─────────┬─────────┬────────┬──────────┬─────┐
-│ 0x1F    │ 0x2F    │ 0x3F   │ 0xFF     │ Cmd │
-│ (preamble, 4 bytes)                   │ ID  │
+│ 0x1F    │ 0x2F    │ 0x3F   │ 0xFF     │ Lệnh│
+│ (tiền tố, 4 byte)                     │ ID  │
 └─────────┴─────────┴────────┴──────────┴─────┤
   ↓
 ┌────────┬──────────┬─────────┬────────┐
-│ Length │ Data...  │ CRC16   │ Ack    │
-│ (1B)   │ (NB)     │ (2B)    │ (Opt)  │
+│ Độ dài │ Dữ liệu… │ CRC16   │ ACK    │
+│ (1B)   │ (NB)     │ (2B)    │ (Tuỳ)  │
 └────────┴──────────┴─────────┴────────┘
 
-Baud Rate: 9600 (default, configurable)
+Baud Rate: 9600 (mặc định, có thể cấu hình)
 Parity: None
 Stop Bits: 1
 Data Bits: 8
-Timeout: 3 seconds (configurable)
+Timeout: 3 giây (có thể cấu hình)
 ```
 
-### **G6T Board Commands**
+### **Lệnh G6T Board**
 
-| Command | Code | Data | Purpose |
+| Lệnh | Mã | Dữ liệu | Mục đích |
 |---------|------|------|---------|
-| **PowerControl** | 0x01 | `{On/Off}` | Enable/disable power to DUT |
+| **PowerControl** | 0x01 | `{On/Off}` | Bật/tắt nguồn DUT |
 | **TestButton** | 0x02 | `{}` | Test buzzer/relay |
-| **SetCalibPin** | 0x03 | `{Set/Unset}` | Calibration pin control |
-| **TestButton2** | 0x04 | `{}` | GPIO pin 2 test |
-| **TestButton3** | 0x05 | `{}` | GPIO pin 3 test |
+| **SetCalibPin** | 0x03 | `{Set/Unset}` | Điều khiển chân calib |
+| **TestButton2** | 0x04 | `{}` | Test GPIO pin 2 |
+| **TestButton3** | 0x05 | `{}` | Test GPIO pin 3 |
 
-### **DUT Sensor Readings**
+### **Đọc dữ liệu cảm biến DUT**
 
-| Reading | Timeout | Response Type |
+| Dữ liệu | Timeout | Kiểu phản hồi |
 |---------|---------|---|
-| **Temperature** | 3 seconds | `DetectorResponse { Temperature: float }` |
-| **Smoke Level** | 3 seconds | `DetectorResponse { SmokeLevel: int }` |
-| **LoRa Value** | 3 seconds | `DetectorResponse { LoraValue: int }` |
+| **Nhiệt độ** | 3 giây | `DetectorResponse { Temperature: float }` |
+| **Mức khói** | 3 giây | `DetectorResponse { SmokeLevel: int }` |
+| **Giá trị LoRa** | 3 giây | `DetectorResponse { LoraValue: int }` |
 
 ---
 
-## 🎥 Camera & LED Detection / Phát hiện LED bằng camera
+## 🎥 Camera & phát hiện LED
 
-### **Hardware**
+### **Phần cứng**
 
-- **Camera:** USB video device (HikVision DVPCamera SDK compatible)
-- **Resolution:** 1280×720 (configured in `camera.json`)
-- **Frame Rate:** 30 FPS (configurable)
-- **Mounting:** Fixed position, LED in frame center
+- **Camera:** USB video device (tương thích DVPCamera SDK HikVision)
+- **Độ phân giải:** 1280×720 (cấu hình trong `camera.json`)
+- **FPS:** 30 (có thể cấu hình)
+- **Lắp đặt:** Cố định, LED ở trung tâm khung hình
 
-### **LED Detection Algorithm**
+### **Thuật toán phát hiện LED**
 
-**Color-based detection via HSV:**
+**Phát hiện theo màu HSV:**
 
-1. **Capture frame** from camera (BGR24 format)
-2. **Convert to HSV** color space
-3. **Define color range** for expected LED color (e.g., RED: H 0-10 or 170-180, S 100-255, V 100-255)
-4. **Mask frame** with color range → binary image
-5. **Count white pixels** in ROI
-6. **Result:** If pixel count > threshold → LED ON (PASS), else LED OFF (FAIL)
+1. **Chụp frame** từ camera (định dạng BGR24)
+2. **Chuyển sang HSV**
+3. **Định nghĩa dải màu** cho LED kỳ vọng (ví dụ ĐỎ: H 0-10 hoặc 170-180, S 100-255, V 100-255)
+4. **Mask frame** theo dải màu → ảnh nhị phân
+5. **Đếm pixel trắng** trong ROI
+6. **Kết quả:** Nếu số pixel > ngưỡng → LED ON (PASS), ngược lại LED OFF (FAIL)
 
-**Expected LED Colors:**
+**Màu LED kỳ vọng:**
 
-- **SMOKE detector:** RED LED (H: 0-10°, S: 100-255, V: 100-255)
-- **HEAT detector:** YELLOW LED (H: 20-30°, S: 100-255, V: 100-255)
-- **ALARM bell:** GREEN/YELLOW flashing (motion-based detection)
-- **BUTTON:** GREEN confirmation LED
+- **SMOKE:** LED đỏ (H: 0-10°, S: 100-255, V: 100-255)
+- **HEAT:** LED vàng (H: 20-30°, S: 100-255, V: 100-255)
+- **BELL:** LED xanh/vàng nhấp nháy (phát hiện chuyển động)
+- **BUTTON:** LED xanh xác nhận
 
-### **Region of Interest (ROI) Adjustment**
+### **Điều chỉnh vùng ROI**
 
-Users can click + drag on camera preview to reposition ROI rectangle:
+Người dùng có thể click + kéo trên preview để di chuyển ROI:
 
-- **Default:** Center of frame, 100×100 pixels
-- **User adjusts:** Click + drag to move rectangle
-- **Visual feedback:**
-  - **GREEN border** when LED detected in ROI
-  - **RED border** when no LED in ROI
+- **Mặc định:** Trung tâm frame, 100×100 pixel
+- **Điều chỉnh:** Click + kéo để di chuyển hình chữ nhật
+- **Phản hồi trực quan:**
+  - **Viền XANH** khi phát hiện LED trong ROI
+  - **Viền ĐỎ** khi không thấy LED trong ROI
 
 ---
 
-## 📊 Logging & Diagnostics / Ghi log & chẩn đoán
+## 📊 Ghi log & chẩn đoán
 
-### **Log File Location**
+### **Vị trí file log**
 
 ```
 logs/
-├── fct-2026-04-28.log  (today)
-├── fct-2026-04-27.log  (yesterday)
+├── fct-2026-04-28.log  (hôm nay)
+├── fct-2026-04-27.log  (hôm qua)
 └── ...
 ```
 
-Daily rolling logs, auto-delete after 30 days (configurable in `appsettings.json`).
+Log rolling theo ngày, tự xóa sau 30 ngày (cấu hình trong `appsettings.json`).
 
-### **Log Levels & Examples**
+### **Mức log & ví dụ**
 
-| Level | Example | When |
+| Mức | Ví dụ | Khi nào |
 |-------|---------|------|
-| **Information** | `[2026-04-28 10:45:23.123] INFO: Starting test sequence for SMOKE device` | Normal flow |
-| **Warning** | `[2026-04-28 10:46:15.456] WARN: LED detection timeout (attempt 2/3), retrying...` | Retries, timeouts |
-| **Error** | `[2026-04-28 10:47:02.789] ERROR: Camera not found (DeviceIndex=0), aborting test` | Failures, exceptions |
+| **Information** | `[2026-04-28 10:45:23.123] INFO: Bắt đầu chuỗi test cho thiết bị SMOKE` | Luồng bình thường |
+| **Warning** | `[2026-04-28 10:46:15.456] WARN: Timeout phát hiện LED (lần 2/3), đang retry...` | Retry, timeout |
+| **Error** | `[2026-04-28 10:47:02.789] ERROR: Không tìm thấy camera (DeviceIndex=0), dừng test` | Lỗi, exception |
 
-### **Hex Dump Example**
+### **Ví dụ hex dump**
 
 ```
 [2026-04-28 10:45:30.123] INFO: G6T TX: 1F 2F 3F FF 01 01 01 AA BB
 [2026-04-28 10:45:30.456] INFO: G6T RX: 1F 2F 3F FF 01 01 01 00 CC DD
 ```
 
-(TX = transmitted, RX = received)
+(TX = gửi đi, RX = nhận về)
 
 ---
 
-## 🐛 Troubleshooting / Giải quyết vấn đề
+## 🐛 Giải quyết vấn đề
 
-| Issue | Cause | Solution |
+| Vấn đề | Nguyên nhân | Cách xử lý |
 |-------|-------|----------|
-| **"COM port not found"** | USB adapter disconnected or wrong port selected | Reconnect adapter, rescan COM ports, select correct port |
-| **"LED detection timeout"** | Camera not capturing frames or LED not visible | Check camera mounted correctly, verify lighting, adjust ROI |
-| **"G6T ACK timeout"** | G6T board not responding, baud rate mismatch | Power cycle G6T, check `appsettings.json` baud rate matches board |
-| **"Camera SDK initialization failed"** | DVPCamera DLL not found in `src/HAL/sdk1/` | Verify DLL files present, reinstall camera driver |
-| **"Test hangs"** | START button still disabled, previous test not completed | Wait for test to finish, check logs for stuck step |
-| **Logs not generated** | Log directory missing or permission issue | Check `logs/` folder exists, verify write permissions |
+| **"COM port không tìm thấy"** | USB adapter bị ngắt hoặc chọn sai cổng | Cắm lại adapter, rescan COM, chọn đúng cổng |
+| **"Timeout phát hiện LED"** | Camera không bắt frame hoặc LED không rõ | Kiểm tra camera, ánh sáng, điều chỉnh ROI |
+| **"Timeout ACK G6T"** | G6T không phản hồi, sai baud rate | Power cycle G6T, kiểm tra baud rate trong `appsettings.json` |
+| **"Khởi tạo SDK camera thất bại"** | Thiếu DLL DVPCamera trong `src/HAL/sdk1/` | Kiểm tra DLL, cài lại driver camera |
+| **"Test bị treo"** | Nút START vẫn disable, test trước chưa kết thúc | Chờ test xong, kiểm tra log xem step bị kẹt |
+| **Log không được tạo** | Thiếu thư mục log hoặc lỗi quyền | Kiểm tra thư mục `logs/`, quyền ghi |
 
-**Debug Tips:**
+**Gợi ý debug:**
 
-1. Open `logs/fct-*.log` during/after test to see detailed hex dumps
-2. Enable verbose logging: Check `appsettings.json` log level (if available)
-3. Verify hardware: Test UART with external serial monitor tool
-4. Check camera separately: Use camera manufacturer's software to verify it works
-
----
-
-## 📝 Project Rules & Conventions / Quy tắc & hội ước
-
-See [Rule.md](Rule.md) for detailed coding standards:
-
-- Clean Architecture 5 layers
-- Constructor injection required
-- No hardcoded values (camera index, timeout, COM port)
-- Async/await throughout
-- UI updates via Invoke()
-- Comprehensive logging
+1. Mở `logs/fct-*.log` trong/sau test để xem hex dump chi tiết
+2. Bật log chi tiết: kiểm tra log level trong `appsettings.json` (nếu có)
+3. Kiểm tra phần cứng: test UART bằng công cụ serial monitor
+4. Kiểm tra camera riêng: dùng phần mềm của hãng để xác nhận hoạt động
 
 ---
 
-## 📄 License & Contributing / Giấy phép & Đóng góp
+## 📝 Quy tắc & hội ước
 
-**License:** [Specify your license, e.g., MIT, Proprietary, etc.]
+Xem [Rule.md](Rule.md) để biết chuẩn coding chi tiết:
 
-**Contributing:** Please follow coding conventions in `Rule.md` before submitting PRs.
-
----
-
-## 📧 Support / Hỗ trợ
-
-For issues, questions, or feature requests:
-
-1. Check logs in `logs/fct-*.log` for error details
-2. Review troubleshooting section above
-3. Contact the development team with log files and hardware configuration
+- Clean Architecture 5 layer
+- Bắt buộc constructor injection
+- Không hardcode giá trị (camera index, timeout, COM port)
+- Async/await xuyên suốt
+- Cập nhật UI qua `Invoke()`
+- Logging đầy đủ
 
 ---
 
-**Last Updated:** 2026-04-28  
-**Version:** 3.0  
-**Status:** Active Development
+## 📄 Giấy phép & Đóng góp
+
+**Giấy phép:** [Ghi rõ giấy phép, ví dụ MIT, Proprietary, ...]
+
+**Đóng góp:** Vui lòng tuân thủ quy ước trong `Rule.md` trước khi gửi PR.
+
+---
+
+## 📧 Hỗ trợ
+
+Nếu có lỗi, câu hỏi hoặc yêu cầu tính năng:
+
+1. Kiểm tra `logs/fct-*.log` để xem chi tiết lỗi
+2. Xem lại phần xử lý sự cố bên trên
+3. Liên hệ team phát triển kèm log và cấu hình phần cứng
+
+---
+
+**Cập nhật lần cuối:** 2026-04-28  
+**Phiên bản:** 3.0  
+**Trạng thái:** Đang phát triển
 ├── tests/
 │   ├── Domain.Tests/
 │   └── Application.Tests/

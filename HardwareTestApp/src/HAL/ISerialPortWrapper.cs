@@ -1,12 +1,13 @@
-namespace FCT.G6T.HAL;
+namespace FCT.G6T.HAL.Serial;
 
 public interface ISerialPortWrapper : IDisposable
 {
     bool IsOpen { get; }
-    void Open(string portName, int baudRate);
-    void Close();
-    Task WriteAsync(byte[] data, CancellationToken ct = default);
-    Task<byte[]> ReadFrameAsync(CancellationToken ct = default);
-    Task<byte[]> ReadVariableFrameAsync(byte startByte, byte endByte, CancellationToken ct = default);
+    Task OpenAsync(string portName, int baudRate, CancellationToken ct = default);
+    Task CloseAsync(CancellationToken ct = default);
+    Task SendAsync(byte[] data, CancellationToken ct = default);
+    Task<byte[]> ReceiveAsync(CancellationToken ct = default);
+    Task<byte[]> ReceiveAsync(byte startByte, byte endByte, CancellationToken ct = default);
+    Task<string> ReceiveLineAsync(CancellationToken ct = default);
 }
 

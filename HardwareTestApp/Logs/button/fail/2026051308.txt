@@ -1,0 +1,15 @@
+﻿//***********************************START TEST**********************************//
+
+DEVICE NAME : Nút bấm
+SERIAL      : N/A
+DATE TIME   : 2026-05-13 08:42:08
+
+TX : 1F 2F 3F FF 00 01 01 EF
+RX : 1F 2F 3F FF 01 01 06 E9
+- LED ROI Detect : FAIL ([ACK][FAIL] LED ROI Detect - khong thay dung ROI1=Blue, ROI2=Yellow, ROI3=Red trong 5s. Missing=ROI1=Blue,ROI2=Yellow,ROI3=Red)
+
+
+[RESULT] : FAIL LED
+
+
+//***********************************END TEST***********************************//

@@ -123,7 +123,7 @@ public class SdkCameraAdapter : ICameraService, IDisposable
         IsRunning = false;
     }
 
-    public Task<Bitmap> CaptureFrameAsync()
+    public Task<CameraFrame> CaptureFrameAsync()
     {
         lock (_sync)
         {
@@ -132,7 +132,7 @@ public class SdkCameraAdapter : ICameraService, IDisposable
                 throw new InvalidOperationException("Chưa có frame từ camera SDK.");
             }
 
-            return Task.FromResult(new Bitmap(_latestFrame));
+            return Task.FromResult(ToCameraFrame(_latestFrame, DateTime.Now));
         }
     }
 
@@ -183,9 +183,10 @@ public class SdkCameraAdapter : ICameraService, IDisposable
 
         FrameReady?.Invoke(this, new FrameReadyEventArgs
         {
-            Frame = latest,
+            Frame = ToCameraFrame(latest, DateTime.Now),
             Timestamp = DateTime.Now,
         });
+        latest.Dispose();
     }
 
     private static Bitmap ConvertBgr24ToBitmap(IntPtr sourceBuffer, int width, int height)
@@ -211,6 +212,35 @@ public class SdkCameraAdapter : ICameraService, IDisposable
         }
 
         return bitmap;
+    }
+
+    private static CameraFrame ToCameraFrame(Bitmap bitmap, DateTime timestamp)
+    {
+        var stride = bitmap.Width * 3;
+        var data = new byte[stride * bitmap.Height];
+        var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+        try
+        {
+            for (var row = 0; row < bitmap.Height; row++)
+            {
+                var source = IntPtr.Add(bitmapData.Scan0, row * bitmapData.Stride);
+                Marshal.Copy(source, data, row * stride, stride);
+            }
+        }
+        finally
+        {
+            bitmap.UnlockBits(bitmapData);
+        }
+
+        return new CameraFrame
+        {
+            Bgr24Data = data,
+            Width = bitmap.Width,
+            Height = bitmap.Height,
+            Stride = stride,
+            Timestamp = timestamp,
+        };
     }
 
     private static void EnsureOk(dvpStatus status, string message)
